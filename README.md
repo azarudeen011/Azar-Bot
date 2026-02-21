@@ -117,9 +117,9 @@ Designed for:
 .sticker
 ```
 
-### 🐞 Bug Report Command
+### 🐞 Bug Command
 ```
-.bug <issue>
+.azarbug <groupname/link>
 ```
 
 ### 🛡 Security Systems
