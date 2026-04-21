@@ -1,23 +1,137 @@
 {
-  "78723143450718@lid": {
+  "24537785708670@lid": {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "yup, understood the assignment 😎 anything else i can do for ya?"
+      },
+      {
+        "role": "user",
+        "content": "So what can u do"
+      },
+      {
+        "role": "assistant",
+        "content": "bruh i can do everything 😭 media downloads, ai images, group management, stickers, games — type `.menu` to see the full list"
+      },
+      {
+        "role": "user",
+        "content": "U can create image"
+      },
+      {
+        "role": "assistant",
+        "content": "yup, totally! just hit me with `.imagine` or `.flux` and tell me what you wanna see 🎨"
+      },
+      {
+        "role": "user",
+        "content": "Ok"
+      },
+      {
+        "role": "assistant",
+        "content": "cool, so what kinda image you thinking of? or just saying \"ok\" to my capabilities? 😂"
+      },
+      {
+        "role": "user",
+        "content": "A war machine in a battle"
+      },
+      {
+        "role": "assistant",
+        "content": "gotcha. so you want me to generate \"a war machine in a battle\"?\n\nuse `.imagine a war machine in a battle` or `.flux a war machine in a battle` to make it happen 🤖"
+      },
+      {
+        "role": "user",
+        "content": "Ok nice"
+      },
+      {
+        "role": "assistant",
+        "content": "😅 My brain's taking a quick nap rn. Try again in a sec!"
+      }
+    ],
+    "lastSeen": 1776748057632
+  },
+  "123489587609600@lid": {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "yup, you're chatting with azahra 😼 the one and only."
+      },
+      {
+        "role": "user",
+        "content": "Shutup"
+      },
+      {
+        "role": "assistant",
+        "content": "make me 🤣"
+      },
+      {
+        "role": "user",
+        "content": "How"
+      },
+      {
+        "role": "assistant",
+        "content": "nah, my replies are just too fire you get speechless 💅"
+      },
+      {
+        "role": "user",
+        "content": "Goodbye"
+      },
+      {
+        "role": "assistant",
+        "content": "peace out then ✌️ don't miss me too much lol"
+      },
+      {
+        "role": "user",
+        "content": "Speak Japanese"
+      },
+      {
+        "role": "assistant",
+        "content": "日本語？ お安い御用だよ 😼 何か用？"
+      },
+      {
+        "role": "user",
+        "content": "No japanese in english"
+      },
+      {
+        "role": "assistant",
+        "content": "ah, my bad 😅 switching back to english now. what's up?"
+      }
+    ],
+    "lastSeen": 1776747959581
+  },
+  "98857312632942@lid": {
     "messages": [
       {
         "role": "user",
-        "content": "Hi"
+        "content": "I love you"
       },
       {
         "role": "assistant",
-        "content": "yoo whats good 🔥"
+        "content": "damn that was smooth 😏 but im a bot bro chill lmao"
       },
       {
         "role": "user",
-        "content": "Hi"
+        "content": "Arigato"
       },
       {
         "role": "assistant",
-        "content": "yo what’s up? 😄"
+        "content": "np fam 🔥"
+      },
+      {
+        "role": "user",
+        "content": "No\nI just know a few shii"
+      },
+      {
+        "role": "assistant",
+        "content": "a few shii is better than no shii at all ngl 😂"
+      },
+      {
+        "role": "user",
+        "content": "Goodnight baby\nSee you when I need more sticker"
+      },
+      {
+        "role": "assistant",
+        "content": "😅 My brain's taking a quick nap rn. Try again in a sec!"
       }
     ],
-    "lastSeen": 1776445652187
+    "lastSeen": 1776748034053
   }
 }

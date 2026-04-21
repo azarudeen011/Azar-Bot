@@ -1,6 +1,6 @@
 module.exports = {
   botOwner: "Azar",
-  ownerNumber: "917358646943",
+  ownerNumber: "12367728441",
   prefix: ".",
   version: "5.2.1",
   commandMode: "public",

@@ -1,5 +1,5 @@
 // ==============================================
-// 🧹 Azahrabot ClearTemp Command (v5.0 Clean)
+// 🧹 Azahrabot ClearTemp Command (v5.1 Clean)
 // Deletes temp + tmp files safely — owner only
 // ==============================================
 
@@ -20,15 +20,25 @@ module.exports = async (sock, msg, from) => {
     ];
 
     let totalCleared = 0;
+    let totalFailed = 0;
 
     for (const dir of tempDirs) {
       if (!fs.existsSync(dir)) continue;
       const files = fs.readdirSync(dir);
       for (const file of files) {
         try {
-          fs.rmSync(path.join(dir, file), { recursive: true, force: true });
+          const filePath = path.join(dir, file);
+          const stat = fs.lstatSync(filePath);
+          if (stat.isDirectory()) {
+            fs.rmSync(filePath, { recursive: true, force: true });
+          } else {
+            fs.unlinkSync(filePath);
+          }
           totalCleared++;
-        } catch {}
+        } catch (e) {
+          totalFailed++;
+          console.error(`Failed to delete unlockable file: ${file} -`, e.message);
+        }
       }
     }
 
@@ -37,6 +47,7 @@ module.exports = async (sock, msg, from) => {
 🧹 *Temporary Files Cleanup Complete!*
 ━━━━━━━━━━━━━━━━━━━
 🗂️ *Files Removed:* ${totalCleared}
+⚠️ *Files Locked/Failed:* ${totalFailed > 0 ? totalFailed + " (Restart bot to unlock)" : 0}
 ⚙️ *Status:* Bot is running smoothly ✅
 ━━━━━━━━━━━━━━━━━━━
 > powered by *AzarTech ⚡*
