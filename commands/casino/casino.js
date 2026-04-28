@@ -40,6 +40,11 @@ You must guess a safe target to cash out at before it explodes 💥!
 ❌ The rocket blows up at 1.4x... YOU LOSE!
 
 *💡 PRO TIP:* The bot actually animates the games in real-time by editing its messages! Play in a group for maximum hype!
+
+💸 *6. TRANSFER MONEY*
+*👉 \`.transfermoney @user <amount>\`* (Example: \`.transfermoney @user 500\`)
+Send your hard-earned (or gambled!) cash to a friend. Use \`all\` to send everything!
+*(Only works in groups — mention the person you want to pay!)*
 `.trim();
 
     await sock.sendMessage(from, { text }, { quoted: msg });

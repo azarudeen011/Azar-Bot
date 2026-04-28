@@ -1,1 +1,1 @@
-module.exports = require('./handcricket.js');
+// hc command removed — use .handcricket instead

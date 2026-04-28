@@ -68,14 +68,14 @@ module.exports = async (sock, msg, from, text, args) => {
     if (!cmd) {
         return sock.sendMessage(from, {
             text: `🏏 *HAND CRICKET* 🏏\n━━━━━━━━━━━━━━\n\n` +
-                  `\`.hc create\` — Create match in group\n` +
-                  `\`.hc join\` — Join a match\n` +
-                  `\`.hc auto\` — Play against AzahraBot!\n` +
-                  `\`.hc stop\` — Stop your match\n\n` +
+                  `\`.handcricket create\` — Create match in group\n` +
+                  `\`.handcricket join\` — Join a match\n` +
+                  `\`.handcricket auto\` — Play against AzahraBot!\n` +
+                  `\`.handcricket stop\` — Stop your match\n\n` +
                   `*Gameplay Commands (Use in DM!):*\n` +
-                  `\`.hc odd\` or \`.hc even\` — Pick toss\n` +
-                  `\`.hc bat\` or \`.hc bowl\` — Pick after winning toss\n` +
-                  `\`.hc <1-6>\` — Play a number for toss/match\n`
+                  `\`.handcricket odd\` or \`.handcricket even\` — Pick toss\n` +
+                  `\`.handcricket bat\` or \`.handcricket bowl\` — Pick after winning toss\n` +
+                  `\`.handcricket <1-6>\` — Play a number for toss/match\n`
         }, { quoted: msg });
     }
 
@@ -95,7 +95,7 @@ module.exports = async (sock, msg, from, text, args) => {
     if (cmd === "create") {
         if (!isGroup) return sock.sendMessage(from, { text: "❌ Please create games in a group!" }, { quoted: msg });
         if (activeGame) return sock.sendMessage(from, { text: "❌ You are already in a match!" }, { quoted: msg });
-        if (games[from]) return sock.sendMessage(from, { text: "❌ A game is already waiting in this group! Use \`.hc join\`" }, { quoted: msg });
+        if (games[from]) return sock.sendMessage(from, { text: "❌ A game is already waiting in this group! Use \`.handcricket join\`" }, { quoted: msg });
 
         games[from] = {
             groupJid: from,
@@ -111,7 +111,7 @@ module.exports = async (sock, msg, from, text, args) => {
             p2Move: null
         };
         saveGames(games);
-        return sock.sendMessage(from, { text: `🏏 *HANDCRICKET LOBBY CREATED!*\n━━━━━━━━━━━━━━\nWaiting for an opponent to join...\n\n👉 Type \`.hc join\` to play against @${sender.split("@")[0]}!`, mentions: [sender] }, { quoted: msg });
+        return sock.sendMessage(from, { text: `🏏 *HANDCRICKET LOBBY CREATED!*\n━━━━━━━━━━━━━━\nWaiting for an opponent to join...\n\n👉 Type \`.handcricket join\` to play against @${sender.split("@")[0]}!`, mentions: [sender] }, { quoted: msg });
     }
 
     // JOIN
@@ -129,7 +129,7 @@ module.exports = async (sock, msg, from, text, args) => {
 
         const txt = `🏏 *HANDCRICKET MATCH STARTED!* 🏏\n━━━━━━━━━━━━━━\n` +
                     `👤 @${g.p1.jid.split("@")[0]} 🆚 @${g.p2.jid.split("@")[0]}\n━━━━━━━━━━━━━━\n\n` +
-                    `🪙 @${g.p1.jid.split("@")[0]}, please choose ODD or EVEN by sending \`.hc odd\` or \`.hc even\`!`;
+                    `🪙 @${g.p1.jid.split("@")[0]}, please choose ODD or EVEN by sending \`.handcricket odd\` or \`.handcricket even\`!`;
         return sock.sendMessage(from, { text: txt, mentions: [g.p1.jid, g.p2.jid] }, { quoted: msg });
     }
 
@@ -139,7 +139,7 @@ module.exports = async (sock, msg, from, text, args) => {
         if (activeGame && activeGame.status !== "waiting") return sock.sendMessage(from, { text: "❌ You are already in a match!" }, { quoted: msg });
         
         const g = games[from];
-        if (!g || g.status !== "waiting") return sock.sendMessage(from, { text: "❌ No waiting match in this group. Type `.hc create` first!" }, { quoted: msg });
+        if (!g || g.status !== "waiting") return sock.sendMessage(from, { text: "❌ No waiting match in this group. Type `.handcricket create` first!" }, { quoted: msg });
         if (g.p1.jid !== sender) return sock.sendMessage(from, { text: "❌ Only the creator can start auto mode!" }, { quoted: msg });
 
         const botJid = sock.user.id.split(":")[0] + "@s.whatsapp.net";
@@ -149,7 +149,7 @@ module.exports = async (sock, msg, from, text, args) => {
 
         const txt = `🏏 *HANDCRICKET (AUTO MODE) STARTED!* 🏏\n━━━━━━━━━━━━━━\n` +
                     `👤 @${g.p1.jid.split("@")[0]} 🆚 🤖 Bot\n━━━━━━━━━━━━━━\n\n` +
-                    `🪙 @${g.p1.jid.split("@")[0]}, please choose ODD or EVEN by sending \`.hc odd\` or \`.hc even\`!`;
+                    `🪙 @${g.p1.jid.split("@")[0]}, please choose ODD or EVEN by sending \`.handcricket odd\` or \`.handcricket even\`!`;
         return sock.sendMessage(from, { text: txt, mentions: [g.p1.jid] }, { quoted: msg });
     }
 
@@ -161,7 +161,7 @@ module.exports = async (sock, msg, from, text, args) => {
         return sock.sendMessage(from, { text: "🛑 Handcricket match stopped." }, { quoted: msg });
     }
 
-    if (!activeGame) return sock.sendMessage(from, { text: "❌ You are not in an active match! Type \`.hc create\`" }, { quoted: msg });
+    if (!activeGame) return sock.sendMessage(from, { text: "❌ You are not in an active match! Type \`.handcricket create\`" }, { quoted: msg });
     const g = activeGame;
     const isP1 = g.p1.jid === sender;
 
@@ -179,7 +179,7 @@ module.exports = async (sock, msg, from, text, args) => {
         return announce(sock, g, `🪙 *TOSS PHASE* 🪙\n━━━━━━━━━━━━━━\n` +
                                  `👤 @${g.p1.jid.split("@")[0]} gets *${cmd.toUpperCase()}*\n` +
                                  `👤 @${g.p2.jid.split("@")[0]} gets *${p2Choice.toUpperCase()}*\n━━━━━━━━━━━━━━\n\n` +
-                                 `📱 Both players, DM me a number (1-6) like \`.hc 4\``);
+                                 `📱 Both players, DM me a number (1-6) like \`.handcricket 4\``);
     }
 
     // BAT/BOWL PICK
@@ -202,14 +202,14 @@ module.exports = async (sock, msg, from, text, args) => {
         return announce(sock, g, `🏏 Toss winner @${winnerP.jid.split("@")[0]} chose to *${cmd.toUpperCase()}*!\n\n` +
                                  `🔥 *INNINGS 1 STARTS* 🔥\n━━━━━━━━━━━━━━\n` + 
                                  `🏏 Batter: @${batter.jid.split("@")[0]}\n🥎 Bowler: @${bowler.jid.split("@")[0]}\n━━━━━━━━━━━━━━\n\n` +
-                                 `📱 Both players, DM me your numbers \`.hc <1-6>\``);
+                                 `📱 Both players, DM me your numbers \`.handcricket <1-6>\``);
     }
 
     // NUMBER PLAY (1-6)
     const num = parseInt(cmd);
     if (!isNaN(num) && num >= 1 && num <= 6) {
         if (isGroup) {
-            return sock.sendMessage(from, { text: "🤫 *Shhh!* You must send your numbers (\`.hc <1-6>\`) to me in a *Private Message (DM)* so your opponent can't see it!" }, { quoted: msg });
+            return sock.sendMessage(from, { text: "🤫 *Shhh!* You must send your numbers (\`.handcricket <1-6>\`) to me in a *Private Message (DM)* so your opponent can't see it!" }, { quoted: msg });
         }
 
         if (g.status === "toss_play") {
@@ -254,7 +254,7 @@ module.exports = async (sock, msg, from, text, args) => {
                                              `🏆 *WINNER:* 🤖 Bot\n\n🤖 Bot chose to *${botChoice.toUpperCase()}*!\n\n` +
                                              `🔥 *INNINGS 1 STARTS* 🔥\n━━━━━━━━━━━━━━\n` + 
                                              `🏏 Batter: @${batter.jid.split("@")[0].replace("s.whatsapp.net", "Bot")}\n🥎 Bowler: @${bowler.jid.split("@")[0].replace("s.whatsapp.net", "Bot")}\n━━━━━━━━━━━━━━\n\n` +
-                                             `📱 Send your number \`.hc <1-6>\` in DM!`);
+                                             `📱 Send your number \`.handcricket <1-6>\` in DM!`);
                 }
 
                 // If human wins or it's a multiplayer match
@@ -264,7 +264,7 @@ module.exports = async (sock, msg, from, text, args) => {
                                          `━━━━━━━━━━━━━━\n` +
                                          `🔢 Sum: *${sum}* (${result.toUpperCase()})\n` +
                                          `🏆 *WINNER:* ${winnerJid === g.p2.jid && g.p2.isBot ? "🤖 Bot" : `@${winnerJid.split("@")[0]}`}\n\n` +
-                                         `👉 Winner, please choose: \`.hc bat\` or \`.hc bowl\``);
+                                         `👉 Winner, please choose: \`.handcricket bat\` or \`.handcricket bowl\``);
             }
             return;
         }
@@ -311,7 +311,7 @@ module.exports = async (sock, msg, from, text, args) => {
                                   `🎯 Target: *${g.target}* runs to win\n\n` +
                                   `🏏 New Batter: ${bowlerName}\n` +
                                   `🥎 New Bowler: ${batterName}\n\n` +
-                                  `📱 Send \`.hc <1-6>\` in DM!`;
+                                  `📱 Send \`.handcricket <1-6>\` in DM!`;
                         return announce(sock, g, outMsg);
                     } else {
                         // Match Over
@@ -356,7 +356,7 @@ module.exports = async (sock, msg, from, text, args) => {
                             return announce(sock, g, runMsg);
                         }
                     } else {
-                        runMsg += `\n📱 Next ball! Send \`.hc <1-6>\` in DM!`;
+                        runMsg += `\n📱 Next ball! Send \`.handcricket <1-6>\` in DM!`;
                     }
                     
                     saveGames(games);
@@ -369,5 +369,5 @@ module.exports = async (sock, msg, from, text, args) => {
         return sock.sendMessage(from, { text: "❌ Not time to send numbers!" }, { quoted: msg });
     }
 
-    return sock.sendMessage(from, { text: "❌ Invalid HandCricket command! Type \`.hc\` for help." }, { quoted: msg });
+    return sock.sendMessage(from, { text: "❌ Invalid HandCricket command! Type \`.handcricket\` for help." }, { quoted: msg });
 };

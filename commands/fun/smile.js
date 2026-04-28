@@ -1,3 +1,3 @@
-module.exports = async (sock, msg, from, text, args) => {
-    require("./animeAction")(sock, msg, from, text, "smile");
+module.exports = (sock, msg, from, text) => {
+    return require("./animeAction")(sock, msg, from, text, "smile");
 };
