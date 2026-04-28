@@ -3,5 +3,6 @@
   "autostatusview": false,
   "autostatusreact": true,
   "autotyping": false,
-  "autoread": false
+  "autoread": false,
+  "pmblocker": false
 }

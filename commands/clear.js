@@ -18,9 +18,8 @@ module.exports = async (sock, msg, from) => {
 
     await sock.sendMessage(from, { react: { text: "🧹", key: msg.key } });
 
-    // 🧠 Directories to clear (except session)
+    // 🧠 Directories to clear (temp and session caches only)
     const dirs = [
-      path.join(__dirname, "../data"),
       path.join(__dirname, "../temp"),
       path.join(__dirname, "../session"),
     ];

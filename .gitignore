@@ -71,6 +71,7 @@ baileys_store.json
 tmp*/
 tmp_update/
 temp/
+data/
 
 # Replit / runtime specific
 .local/
@@ -80,9 +81,3 @@ temp/
 # Git & package management
 .git/
 package-lock.json
-
-# --------------------------------------------------------
-#  ANTI-THEFT AZAHRABOT PROTECTION
-# --------------------------------------------------------
-src/
-build.js
