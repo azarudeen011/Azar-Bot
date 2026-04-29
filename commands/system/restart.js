@@ -1,11 +1,10 @@
 const settings = require("../../settings");
 
+const { isPairedOwner } = require("../../lib/guards");
+
 module.exports = async (sock, msg, from) => {
     try {
-        const sender = msg.key.participant || msg.key.remoteJid;
-        const ownerNumber = settings.ownerNumber.replace(/[^0-9]/g, "");
-        const senderNumber = (sender || "").split("@")[0].split(":")[0].replace(/[^0-9]/g, "");
-        const isOwner = msg.key.fromMe || (senderNumber && ownerNumber && senderNumber === ownerNumber);
+        const isOwner = isPairedOwner(msg);
 
         if (!isOwner) {
             return await sock.sendMessage(from, { text: "❌ This command is only for the owner!" }, { quoted: msg });

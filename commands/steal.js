@@ -1,7 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+
+async function streamToBuffer(stream) {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+}
 
 // Buffer reading utilities for WebP EXIF
 const extractMetadata = (buffer) => {
@@ -99,12 +107,8 @@ module.exports = async (sock, msg, from, text, args) => {
         }
 
         // Download the sticker
-        const buffer = await downloadMediaMessage(
-            { message: quoted },
-            'buffer',
-            {},
-            { logger: require('pino')({ level: 'silent' }) }
-        );
+        const stream = await downloadContentFromMessage(quoted.stickerMessage, 'image');
+        const buffer = await streamToBuffer(stream);
 
         // Try to rewrite the EXIF data
         const newStickerBuffer = await writeExif(buffer, packname, author);

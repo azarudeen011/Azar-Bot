@@ -1,4 +1,12 @@
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+
+async function streamToBuffer(stream) {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+}
 
 module.exports = async (sock, msg, from, text, args) => {
     try {
@@ -14,12 +22,9 @@ module.exports = async (sock, msg, from, text, args) => {
 
         await sock.sendMessage(from, { react: { text: "🔍", key: msg.key } }).catch(() => {});
 
-        const buffer = await downloadMediaMessage(
-            { message: quoted },
-            'buffer',
-            {},
-            { logger: require('pino')({ level: 'silent' }) }
-        );
+        const messageType = quoted.documentMessage ? "document" : "image";
+        const stream = await downloadContentFromMessage(quoted.documentMessage || quoted.imageMessage, messageType);
+        const buffer = await streamToBuffer(stream);
 
         // NATIVE RAW METADATA EXTRACTOR (No external dependencies)
         // This extracts human-readable ASCII strings from the header of the image (first 4096 bytes)

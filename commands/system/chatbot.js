@@ -21,17 +21,10 @@ function saveChatbot(data) {
   fs.writeFileSync(chatbotPath, JSON.stringify(data, null, 2));
 }
 
-// OWNER CHECK
-function isOwner(sock, msg, from) {
-  if (msg.key.fromMe) return true;
-  const sender = msg.key.participant || msg.key.remoteJid;
-  const ownerNum = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-  const senderNum = (sender || "").split("@")[0].split(":")[0].replace(/[^0-9]/g, "");
-  return senderNum && ownerNum && senderNum === ownerNum;
-}
+const { isPairedOwner } = require("../../lib/guards");
 
 module.exports = async function chatbotController(sock, msg, from, text, args) {
-  if (!isOwner(sock, msg, from)) {
+  if (!isPairedOwner(msg)) {
     return sock.sendMessage(from, { text: "❌ Owner only command." }, { quoted: msg });
   }
 

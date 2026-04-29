@@ -1,27 +1,54 @@
 module.exports = async (sock, msg, from, rawText, args) => {
-    const text = args.join(" ");
+    const text = args.join(" ").toLowerCase().trim();
     if (!text) {
-        return sock.sendMessage(from, { text: "⚠️ Usage: `.calculate 5 + 5`\nSupports standard math and Math.sqrt, Math.pow, etc." }, { quoted: msg });
+        return sock.sendMessage(from, { 
+            text: "🔍 *Azar Math Solver*\n━━━━━━━━━━━━━━\nUsage: `.calculate 10 + 9 - 4 * 3` or `.calculate sqrt(25) + sin(pi/2)`\n\n*Supports:* +, -, *, /, %, ^, sqrt, sin, cos, tan, log, ln, pi, e" 
+        }, { quoted: msg });
     }
     
     try {
-        // Safe evaluation string manipulation
-        let cleanText = text.replace(/[^0-9+\-*/(). Math]/g, "");
-        if (!cleanText) throw new Error("Invalid characters");
+        // Pre-processing to support common human-readable symbols
+        let expression = text
+            .replace(/x/g, "*")
+            .replace(/÷/g, "/")
+            .replace(/\^/g, "**")
+            .replace(/pi/g, "Math.PI")
+            .replace(/e/g, "Math.E")
+            .replace(/sqrt/g, "Math.sqrt")
+            .replace(/sin/g, "Math.sin")
+            .replace(/cos/g, "Math.cos")
+            .replace(/tan/g, "Math.tan")
+            .replace(/log/g, "Math.log10")
+            .replace(/ln/g, "Math.log")
+            .replace(/pow/g, "Math.pow")
+            .replace(/abs/g, "Math.abs");
+
+        // Secure Regex: Allow only numbers, operators, and Math object calls
+        // We only allow specific characters and the "Math." prefix we just added
+        const allowedRegex = /^[0-9+\-*/(). %*MathPIE.sqrtincoaslgnpw]+$/;
         
-        // Handle common words like root
-        if (text.toLowerCase().includes("root") && !cleanText.includes("Math.sqrt")) {
-             const num = text.match(/\d+/);
-             if (num) cleanText = `Math.sqrt(${num[0]})`;
+        if (!allowedRegex.test(expression)) {
+            throw new Error("Invalid characters detected");
         }
         
         // eslint-disable-next-line no-eval
-        const result = eval(cleanText);
+        const result = eval(expression);
         
-        await sock.sendMessage(from, { 
-            text: `🧮 *Azar Calculator*\n━━━━━━━━━━━━━━\n*Expression:*\n\`${cleanText}\`\n\n*Result:*\n*${result}*\n━━━━━━━━━━━━━━`
-        }, { quoted: msg });
+        if (result === undefined || isNaN(result)) {
+            throw new Error("Calculation failed");
+        }
+
+        const replyMsg = `🧮 *Azar Calculator*\n━━━━━━━━━━━━━━\n` +
+                         `📝 *Input:* \`${text}\`\n` +
+                         `⚙️ *Solving:* \`${expression.replace(/Math\./g, "")}\`\n\n` +
+                         `✅ *Result:* *${result}*\n━━━━━━━━━━━━━━`;
+        
+        await sock.sendMessage(from, { text: replyMsg }, { quoted: msg });
+
     } catch (err) {
-        await sock.sendMessage(from, { text: "❌ Invalid mathematical expression!" }, { quoted: msg });
+        console.error("Calculator Error:", err);
+        await sock.sendMessage(from, { 
+            text: "❌ *Invalid Expression!*\n\nPlease ensure your math is correct. Example:\n`.calculate 10 + 5 * 2`" 
+        }, { quoted: msg });
     }
 };

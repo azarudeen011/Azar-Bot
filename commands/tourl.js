@@ -2,7 +2,15 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { downloadMediaMessage } = require('@whiskeysockets/baileys');
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+
+async function streamToBuffer(stream) {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+}
 
 module.exports = async (sock, msg, from, text, args) => {
     try {
@@ -21,21 +29,26 @@ module.exports = async (sock, msg, from, text, args) => {
         await sock.sendMessage(from, { react: { text: "⏳", key: msg.key } }).catch(() => {});
         
         let mediaMessage;
-        if (msg.message?.imageMessage || msg.message?.videoMessage) {
-            mediaMessage = msg;
-        } else {
-            mediaMessage = { message: quoted };
+        let messageType;
+        if (msg.message?.imageMessage) {
+            mediaMessage = msg.message.imageMessage;
+            messageType = 'image';
+        } else if (msg.message?.videoMessage) {
+            mediaMessage = msg.message.videoMessage;
+            messageType = 'video';
+        } else if (quoted?.imageMessage) {
+            mediaMessage = quoted.imageMessage;
+            messageType = 'image';
+        } else if (quoted?.videoMessage) {
+            mediaMessage = quoted.videoMessage;
+            messageType = 'video';
         }
 
-        const buffer = await downloadMediaMessage(
-            mediaMessage,
-            'buffer',
-            {},
-            { logger: require('pino')({ level: 'silent' }) }
-        );
+        const stream = await downloadContentFromMessage(mediaMessage, messageType);
+        const buffer = await streamToBuffer(stream);
 
         // Save to temp file
-        const isVideo = !!(mediaMessage.message?.videoMessage);
+        const isVideo = messageType === 'video';
         const ext = isVideo ? '.mp4' : '.jpg';
         const tempPath = path.join(os.tmpdir(), `temp_tourl_${Date.now()}${ext}`);
         

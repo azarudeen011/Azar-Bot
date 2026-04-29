@@ -30,11 +30,10 @@ function setMode(mode) {
   fs.writeFileSync(dataFile, JSON.stringify({ mode }, null, 2));
 }
 
+const { isPairedOwner } = require("../lib/guards");
+
 module.exports = async (sock, msg, from, text, args) => {
-  const sender =
-    msg.key.participant || msg.key.remoteJid || msg.participant || "unknown";
-  const ownerNumber = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-  const isOwner = msg.key.fromMe || sender.includes(ownerNumber);
+  const isOwner = isPairedOwner(msg);
 
   const mode = getMode();
   const newMode = args[0]?.toLowerCase();

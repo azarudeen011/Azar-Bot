@@ -34,5 +34,42 @@
       "fromMe": true,
       "id": "3EB0761A08A6F14C826F3D"
     }
+  },
+  "120363343188727330@g.us": {
+    "status": "playing",
+    "creatorJid": "92780588216445@lid",
+    "lastUpdate": 1777464274190,
+    "players": [
+      {
+        "jid": "92780588216445@lid",
+        "color": "red",
+        "coins": [
+          -1,
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "jid": "111794374869152@lid",
+        "color": "blue",
+        "coins": [
+          -1,
+          -1,
+          9,
+          -1
+        ]
+      }
+    ],
+    "turnIndex": 1,
+    "hasRolled": false,
+    "diceValue": 0,
+    "finishedOrder": [],
+    "mode": "arrow",
+    "lastBoardMsgKey": {
+      "remoteJid": "120363343188727330@g.us",
+      "fromMe": true,
+      "id": "3EB0221238663FDCC43BD6"
+    }
   }
 }

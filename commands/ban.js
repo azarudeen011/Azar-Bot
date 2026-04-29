@@ -22,14 +22,16 @@ module.exports = async (sock, msg, from) => {
         text: "🚫 You are not allowed to use ban command."
       }, { quoted: msg });
 
-    const owner = settings.ownerNumber.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+    const { isPairedOwner } = require("../lib/guards");
+    const ownerJid = settings.ownerNumber.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
+    const ownerLid = settings.ownerLid || "";
 
     // 🧩 Fetch admin list
     const metadata = await sock.groupMetadata(from);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || isPairedOwner(msg);
 
-    if (!isAdmin && sender !== owner)
+    if (!isAdmin)
       return sock.sendMessage(from, {
         text: "❌ Only admins or the bot owner can use this command."
       }, { quoted: msg });
@@ -42,7 +44,7 @@ module.exports = async (sock, msg, from) => {
         text: "⚠️ Tag or reply to the user you want to ban."
       }, { quoted: msg });
 
-    if (target === owner)
+    if (target === ownerJid || target === ownerLid)
       return sock.sendMessage(from, {
         text: "😎 You can’t ban the bot owner."
       }, { quoted: msg });
