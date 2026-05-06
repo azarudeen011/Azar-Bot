@@ -1,1 +1,1 @@
-module.exports = require("../src/lib/lgbt");
+module.exports = require("../lib/lgbt");

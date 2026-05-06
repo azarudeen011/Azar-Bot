@@ -14,6 +14,12 @@ module.exports = async (sock, msg, from, text, args) => {
     const { isPairedOwner } = require("../lib/guards");
     const isAdmin = metadata.participants.some(p => p.id === sender && p.admin);
     const isOwner = isPairedOwner(msg);
+    let settings;
+    try {
+        settings = require("./settings");
+    } catch {
+        try { settings = require("../settings"); } catch { settings = require("../../settings"); }
+    }
 
     if (!isAdmin && !isOwner) {
         return sock.sendMessage(from, { text: "❌ Only group admins can toggle the welcome system." }, { quoted: msg });
@@ -38,6 +44,12 @@ module.exports = async (sock, msg, from, text, args) => {
         return sock.sendMessage(from, { text: "❌ Welcome messages DISABLED for this group." }, { quoted: msg });
     } else {
         const status = welcomeData[from] ? "ON ✅" : "OFF ❌";
-        return sock.sendMessage(from, { text: `👋 *Welcome Configuration*\n\nCurrent Status: *${status}*\n\nUsage:\n\`.welcome on\`\n\`.welcome off\`` }, { quoted: msg });
+        const globalStatus = settings.welcome ? "Active ✅" : "Disabled in Settings ⚠️";
+        return sock.sendMessage(from, { 
+            text: `👋 *Welcome Configuration*\n\n` +
+                  `Group Status: *${status}*\n` +
+                  `Global System: *${globalStatus}*\n\n` +
+                  `Usage:\n\`.welcome on\`\n\`.welcome off\`` 
+        }, { quoted: msg });
     }
 };

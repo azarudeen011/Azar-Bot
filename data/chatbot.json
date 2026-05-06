@@ -1,4 +1,3 @@
 {
-  "enabled": false,
-  "engine": "gpt"
+  "enabled": true
 }

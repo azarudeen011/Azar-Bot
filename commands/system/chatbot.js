@@ -24,7 +24,7 @@ function saveChatbot(data) {
 const { isPairedOwner } = require("../../lib/guards");
 
 module.exports = async function chatbotController(sock, msg, from, text, args) {
-  if (!isPairedOwner(msg)) {
+  if (!(await isPairedOwner(sock, msg))) {
     return sock.sendMessage(from, { text: "❌ Owner only command." }, { quoted: msg });
   }
 

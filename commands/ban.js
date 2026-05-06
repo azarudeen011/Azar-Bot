@@ -29,7 +29,7 @@ module.exports = async (sock, msg, from) => {
     // 🧩 Fetch admin list
     const metadata = await sock.groupMetadata(from);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || isPairedOwner(msg);
+    const isAdmin = admins.includes(sender) || (await isPairedOwner(sock, msg));
 
     if (!isAdmin)
       return sock.sendMessage(from, {

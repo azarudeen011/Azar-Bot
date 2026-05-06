@@ -12,7 +12,7 @@ const { isPairedOwner } = require("../lib/guards");
 
 module.exports = async (sock, msg, from) => {
   try {
-    const isOwner = isPairedOwner(msg);
+    const isOwner = await isPairedOwner(sock, msg);
 
     if (!isOwner) {
       return await sock.sendMessage(from, { text: "❌ This command is only for the owner!" }, { quoted: msg });

@@ -33,7 +33,7 @@ function setMode(mode) {
 const { isPairedOwner } = require("../lib/guards");
 
 module.exports = async (sock, msg, from, text, args) => {
-  const isOwner = isPairedOwner(msg);
+  const isOwner = await isPairedOwner(sock, msg);
 
   const mode = getMode();
   const newMode = args[0]?.toLowerCase();

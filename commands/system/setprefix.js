@@ -6,7 +6,7 @@ const { isPairedOwner } = require("../../lib/guards");
 
 module.exports = async (sock, msg, from, text, args) => {
     try {
-      const isOwner = isPairedOwner(msg);
+      const isOwner = await isPairedOwner(sock, msg);
       
       if (!isOwner) {
         return sock.sendMessage(from, { text: "❌ Only the bot owner can use this command." }, { quoted: msg });
