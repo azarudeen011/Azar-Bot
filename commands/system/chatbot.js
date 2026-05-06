@@ -1,6 +1,11 @@
 const fs = require("fs");
 const path = require("path");
-const settings = require("../../settings");
+let settings;
+try {
+  settings = require("./settings");
+} catch {
+  try { settings = require("../settings"); } catch { settings = require("../../settings"); }
+}
 
 const chatbotPath = path.join(process.cwd(), "data", "chatbot.json");
 

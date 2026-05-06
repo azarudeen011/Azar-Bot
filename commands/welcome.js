@@ -45,11 +45,11 @@ module.exports = async (sock, msg, from, text, args) => {
     } else {
         const status = welcomeData[from] ? "ON ✅" : "OFF ❌";
         const globalStatus = settings.welcome ? "Active ✅" : "Disabled in Settings ⚠️";
-        return sock.sendMessage(from, { 
+        return sock.sendMessage(from, {
             text: `👋 *Welcome Configuration*\n\n` +
-                  `Group Status: *${status}*\n` +
-                  `Global System: *${globalStatus}*\n\n` +
-                  `Usage:\n\`.welcome on\`\n\`.welcome off\`` 
+                `Group Status: *${status}*\n` +
+                `Global System: *${globalStatus}*\n\n` +
+                `Usage:\n\`.welcome on\`\n\`.welcome off\``
         }, { quoted: msg });
     }
 };

@@ -1,4 +1,9 @@
-const settings = require("../../settings");
+let settings;
+try {
+  settings = require("./settings");
+} catch {
+  try { settings = require("../settings"); } catch { settings = require("../../settings"); }
+}
 
 const { isPairedOwner } = require("../../lib/guards");
 
