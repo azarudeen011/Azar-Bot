@@ -1,7 +1,7 @@
 module.exports = {
-  botOwner: "Azar",
-  ownerNumber: "919677690363",
-  ownerLid: "78723143450718@lid",
+  botOwner: "Azar", //  enter your name
+  ownerNumber: "919677690363", // enter your number
+  ownerLid: "", // use .lid in group by reply to your own message to get your lid.
   prefix: ".",
   botName: "AzahraBot",
   version: "5.2.1",
