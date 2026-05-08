@@ -17,10 +17,10 @@ function ensureTempDir() {
 // Fetch media URLs – try princetechn first, then eliteprotech
 // -----------------------------
 async function getMediaFromAPI(igUrl) {
-  const princetechnUrl = `https://api.princetechn.com/api/download/instadl?apikey=prince&url=${encodeURIComponent(igUrl)}`;
-  console.log("🔗 Trying princetechn API:", princetechnUrl);
-
+  // 1. Try princetechn API
   try {
+    const princetechnUrl = `https://api.princetechn.com/api/download/instadl?apikey=prince&url=${encodeURIComponent(igUrl)}`;
+    console.log("🔗 Trying princetechn API:", princetechnUrl);
     const res = await axios.get(princetechnUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36",
@@ -28,53 +28,75 @@ async function getMediaFromAPI(igUrl) {
       },
       timeout: 15000,
     });
-
     const data = res.data;
-    console.log("📦 princetechn response:", JSON.stringify(data, null, 2));
-
     if (data.status === 200 && data.success && data.result?.download_url) {
-      return [data.result.download_url]; // single direct video URL
+      console.log("✅ princetechn API success");
+      return [data.result.download_url];
     }
-    throw new Error("princetechn API returned no download_url");
   } catch (err) {
-    console.warn("⚠️ princetechn API failed, falling back to eliteprotech:", err.message);
-    // Fallback to the old eliteprotech API
-    const eliteprotechUrl = `https://eliteprotech-apis.zone.id/instagram?url=${encodeURIComponent(igUrl)}`;
-    console.log("🔗 Fallback API:", eliteprotechUrl);
+    console.warn("⚠️ princetechn API failed:", err.message);
+  }
 
-    const res2 = await axios.get(eliteprotechUrl, {
+  // 2. Try eliteprotech API
+  try {
+    const eliteprotechUrl = `https://eliteprotech-apis.zone.id/instagram?url=${encodeURIComponent(igUrl)}`;
+    console.log("🔗 Trying eliteprotech API:", eliteprotechUrl);
+    const res = await axios.get(eliteprotechUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36",
         Accept: "application/json",
         Referer: "https://eliteprotech-apis.zone.id/",
         Origin: "https://eliteprotech-apis.zone.id",
       },
-      timeout: 20000,
+      timeout: 15000,
     });
-
-    const data2 = res2.data;
-    console.log("📦 eliteprotech response:", JSON.stringify(data2, null, 2));
-
-    if (!data2.success || !data2.links || !data2.links.length) {
-      throw new Error(`eliteprotech API failed: success=${data2.success}, links length=${data2.links?.length}`);
-    }
-
-    const downloadUrls = [];
-    for (const item of data2.links) {
-      if (typeof item === "string" && item.startsWith("http")) {
-        downloadUrls.push(item);
-      } else if (item && typeof item === "object") {
-        for (const [baseUrl, queryString] of Object.entries(item)) {
-          if (baseUrl.startsWith("http")) {
-            const fullUrl = baseUrl + (queryString ? "?" + queryString : "");
-            if (fullUrl.startsWith("http")) downloadUrls.push(fullUrl);
+    const data = res.data;
+    if (data.success && data.links && data.links.length) {
+      const downloadUrls = [];
+      for (const item of data.links) {
+        if (typeof item === "string" && item.startsWith("http")) {
+          downloadUrls.push(item);
+        } else if (item && typeof item === "object") {
+          for (const [baseUrl, queryString] of Object.entries(item)) {
+            if (baseUrl.startsWith("http")) {
+              const fullUrl = baseUrl + (queryString ? "?" + queryString : "");
+              downloadUrls.push(fullUrl);
+            }
           }
         }
       }
+      if (downloadUrls.length > 0) {
+        console.log("✅ eliteprotech API success");
+        return downloadUrls;
+      }
     }
-    console.log("✅ Extracted URLs from eliteprotech:", downloadUrls);
-    return downloadUrls;
+  } catch (err) {
+    console.warn("⚠️ eliteprotech API failed:", err.message);
   }
+
+  // 3. Try anabot.my.id API (Fallback provided by user)
+  try {
+    console.log("🔗 Trying anabot.my.id API...");
+    const res = await axios.post("https://anabot.my.id/api/download/instagram", {
+      url: igUrl,
+      apikey: "freeApikey"
+    }, {
+      headers: { "Content-Type": "application/json" },
+      timeout: 20000,
+    });
+    const data = res.data;
+    if (data.success && data.data?.result) {
+      const downloadUrls = data.data.result.map(item => item.url).filter(url => url && url.startsWith("http"));
+      if (downloadUrls.length > 0) {
+        console.log("✅ anabot.my.id API success");
+        return downloadUrls;
+      }
+    }
+  } catch (err) {
+    console.error("⚠️ anabot.my.id API failed:", err.message);
+  }
+
+  return [];
 }
 
 // -----------------------------

@@ -13,17 +13,23 @@ function ensureTempDir() {
     return dir;
 }
 
-// Download file from URL to buffer
-async function downloadFile(url, timeoutMs = 30000) {
+// Robust download from URL to buffer
+async function downloadFile(url, timeoutMs = 45000) {
     const response = await axios.get(url, {
         responseType: "arraybuffer",
         timeout: timeoutMs,
-        maxContentLength: 50 * 1024 * 1024, // 50MB limit
+        maxContentLength: 100 * 1024 * 1024, // 100MB limit
         headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1",
+            "Accept": "*/*",
         },
     });
-    return Buffer.from(response.data);
+    
+    const buffer = Buffer.from(response.data);
+    if (buffer.length < 1000) {
+        throw new Error("Downloaded file too small – the link might be protected.");
+    }
+    return buffer;
 }
 
 // Extract best media from API response
@@ -46,27 +52,26 @@ function getBestMedia(mediaArray) {
     return null;
 }
 
-module.exports = async (sock, msg, from, text, args, store) => {
+module.exports = async (sock, msg, from) => {
     try {
-        // Get Pinterest URL from arguments
-        let pinterestUrl = args[0];
-        if (!pinterestUrl) {
-            return sock.sendMessage(
+        const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
+        
+        // Extract Pinterest URL
+        const match = text.match(/(https?:\/\/(?:www\.)?(?:pin\.it|pinterest\.com|pinterest\.ca|pinterest\.co\.uk)\/[^\s]+)/i);
+        
+        if (!match) {
+            return await sock.sendMessage(
                 from,
-                { text: "❌ *Usage:* `.pinterest <Pinterest URL>`\nExample: `.pinterest https://pin.it/1cR6JJNpv`" },
+                { text: "❌ Invalid URL.\nExample: `.pinterest https://pin.it/...`" },
                 { quoted: msg }
             );
         }
 
-        // Remove any extra text after URL (if user wrote more)
-        const urlMatch = pinterestUrl.match(/https?:\/\/[^\s]+/);
-        if (!urlMatch) throw new Error("Invalid URL format");
-        pinterestUrl = urlMatch[0];
-
+        const pinterestUrl = match[0];
         await sock.sendMessage(from, { react: { text: "🔍", key: msg.key } });
         await sock.sendMessage(from, { text: "📌 *Fetching Pinterest media...*" }, { quoted: msg });
 
-        // Call the API
+        // Call the PrinceTech API
         const apiCallUrl = `${API_URL}?apikey=${API_KEY}&url=${encodeURIComponent(pinterestUrl)}`;
         console.log("📡 Pinterest API:", apiCallUrl);
 
@@ -118,7 +123,7 @@ module.exports = async (sock, msg, from, text, args, store) => {
     } catch (err) {
         console.error("❌ Pinterest command error:", err.message);
         await sock.sendMessage(from, {
-            text: `❌ *Failed to download:*\n${err.message}\n\nPlease check the URL and try again.`,
+            text: `❌ *Failed to download:*\n${err.message}`,
         }, { quoted: msg });
         await sock.sendMessage(from, { react: { text: "⚠️", key: msg.key } });
     }

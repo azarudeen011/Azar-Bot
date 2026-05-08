@@ -34,32 +34,55 @@ function extractFacebookUrl(text = "") {
   return match ? match[0].split("?")[0] : null;
 }
 
-// Robust download with proper headers for fbcdn
+// Robust download with proper headers
 async function downloadMedia(url, destPath) {
   const headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-    "Accept": "video/webm,video/mp4,video/*;q=0.9,image/jpeg,image/*;q=0.8,*/*;q=0.5",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Referer": "https://www.facebook.com/",
-    "Origin": "https://www.facebook.com",
-    "Connection": "keep-alive",
+    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1",
+    "Accept": "*/*",
   };
 
-  const res = await axios({
-    url,
-    method: "GET",
-    responseType: "arraybuffer",
-    headers,
-    timeout: 30000,
-    maxRedirects: 5,
-  });
+  try {
+    const res = await axios({
+      url,
+      method: "GET",
+      responseType: "arraybuffer",
+      headers,
+      timeout: 30000,
+      maxRedirects: 10,
+    });
 
-  const buffer = Buffer.from(res.data);
-  if (buffer.length < 5000) {
-    throw new Error("Downloaded file too small – likely invalid");
+    const buffer = Buffer.from(res.data);
+    
+    // Check if the response is actually JSON metadata with a fileUrl (nested redirect)
+    if (buffer.length < 3000) {
+      try {
+        const content = buffer.toString("utf8");
+        const json = JSON.parse(content);
+        if (json.fileUrl) {
+          console.log("🔗 Found nested fileUrl in metadata, following redirect...");
+          return await downloadMedia(json.fileUrl, destPath);
+        }
+      } catch (e) {
+        // Not JSON, continue with normal size check
+      }
+    }
+
+    if (buffer.length < 2000) {
+      const content = buffer.toString("utf8").substring(0, 300);
+      console.log("🔍 [DEBUG] Small file content:", content);
+      
+      if (content.includes("Cloudflare") || content.includes("Just a moment")) {
+        throw new Error("Download blocked by Cloudflare protection on the media server.");
+      }
+      throw new Error(`Downloaded file too small (${buffer.length} bytes) – link might be expired or protected`);
+    }
+
+    fs.writeFileSync(destPath, buffer);
+  } catch (err) {
+    if (err.response?.status === 403) throw new Error("Access Forbidden (403) – The media server blocked the bot.");
+    if (err.response?.status === 404) throw new Error("Media not found (404) – The download link has expired.");
+    throw err;
   }
-
-  fs.writeFileSync(destPath, buffer);
 }
 
 module.exports = async (sock, msg, from) => {
@@ -82,23 +105,85 @@ module.exports = async (sock, msg, from) => {
     await sock.sendMessage(from, { react: { text: "📘", key: msg.key } });
     await sock.sendMessage(from, { text: "📘 *Fetching Facebook video...*" }, { quoted: msg });
 
-    // --- NEW ENDPOINT (single video URL) ---
-    const apiUrl = `https://eliteprotech-apis.zone.id/facebook?url=${encodeURIComponent(finalUrl)}`;
-    const res = await axios.get(apiUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36",
-        Accept: "application/json",
-      },
-      timeout: 25000,
-    });
+    // --- Fetch Video URL (Try multiple APIs) ---
+    let videoUrl = null;
+    let apiData = null; // Store data for caption
 
-    const data = res.data;
-
-    if (!data.success || !data.video) {
-      throw new Error("No video URL returned from API");
+    // 1. Try eliteprotech API
+    try {
+      const apiUrl = `https://eliteprotech-apis.zone.id/facebook?url=${encodeURIComponent(finalUrl)}`;
+      console.log("🔗 Trying eliteprotech FB API:", apiUrl);
+      const res = await axios.get(apiUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36",
+          Accept: "application/json",
+        },
+        timeout: 15000,
+      });
+      const data = res.data;
+      if (data.success && data.video) {
+        console.log("✅ eliteprotech FB API success");
+        videoUrl = data.video;
+        apiData = data;
+      }
+    } catch (err) {
+      console.warn("⚠️ eliteprotech FB API failed:", err.message);
     }
 
-    const videoUrl = data.video;
+    // 2. Try anabot.my.id API (Fallback with Retry)
+    if (!videoUrl) {
+      let retryCount = 0;
+      const maxRetries = 3;
+
+      while (retryCount < maxRetries && !videoUrl) {
+        try {
+          console.log(`🔗 Trying anabot.my.id FB API (Attempt ${retryCount + 1})...`);
+          const res = await axios.post("https://anabot.my.id/api/download/facebook", {
+            url: finalUrl,
+            apikey: "freeApikey"
+          }, {
+            headers: { "Content-Type": "application/json" },
+            timeout: 25000,
+          });
+
+          const data = res.data;
+          apiData = data;
+
+          if (data.success && data.data?.result?.api?.mediaItems) {
+            const items = data.data.result.api.mediaItems;
+            if (items.length > 0) {
+              // Find the best quality video or just the first one
+              const videoItem = items.find(i => i.type === "Video" && i.mediaQuality === "FHD") || 
+                                items.find(i => i.type === "Video" && i.mediaQuality === "HD") ||
+                                items.find(i => i.type === "Video");
+              
+              if (videoItem && videoItem.mediaUrl) {
+                console.log(`✅ anabot.my.id FB API success (${videoItem.mediaQuality || "N/A"})`);
+                videoUrl = videoItem.mediaUrl;
+                break;
+              }
+            }
+          }
+
+          // Handle "Processing started" or empty mediaItems with retry
+          if (data.message === "Processing started." || (data.success && (!data.data?.result?.api?.mediaItems || data.data.result.api.mediaItems.length === 0))) {
+            console.log("⏳ FB API is processing, waiting 4 seconds before retry...");
+            await new Promise(r => setTimeout(r, 4000));
+            retryCount++;
+          } else {
+            console.warn("⚠️ anabot.my.id FB API returned success:false or no items.");
+            break; 
+          }
+        } catch (err) {
+          console.error("⚠️ anabot.my.id FB API failed:", err.message);
+          break;
+        }
+      }
+    }
+
+    if (!videoUrl) {
+      throw new Error("No video URL could be extracted from any API (Try again in a few seconds if it was processing).");
+    }
 
     // --- Download and send ---
     const tempDir = ensureTempDir();
@@ -111,7 +196,7 @@ module.exports = async (sock, msg, from) => {
       from,
       {
         video: buffer,
-        caption: `📥 *Downloaded by Azahra Bot (Facebook)*\nSource: ${data.source || "Facebook"}`,
+        caption: `📥 *Downloaded by Azahra Bot (Facebook)*\nSource: ${apiData?.source || "Facebook"}`,
       },
       { quoted: msg }
     );

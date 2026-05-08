@@ -32,7 +32,7 @@ module.exports = async (sock, msg, from) => {
     let loadMsg = await sock.sendMessage(from, { text: frames[0] }, { quoted: msg });
 
     for (let i = 1; i < frames.length; i++) {
-      await delay(500);
+      await delay(200);
       await sock.sendMessage(from, { text: frames[i], edit: loadMsg.key });
     }
 
