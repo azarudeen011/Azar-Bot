@@ -1,1 +1,152 @@
-const a0_0x578195=(function(){let _0x40cb4a=!![];return function(_0x497955,_0x432774){const _0x3e70f4=_0x40cb4a?function(){if(_0x432774){const _0x2bd736=_0x432774['apply'](_0x497955,arguments);return _0x432774=null,_0x2bd736;}}:function(){};return _0x40cb4a=![],_0x3e70f4;};}()),a0_0x237f5e=a0_0x578195(this,function(){return a0_0x237f5e['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x237f5e)['search']('(((.+)+)+)+$');});a0_0x237f5e();const fs=require('fs'),path=require('path'),axios=require('axios'),{fileTypeFromBuffer}=require('file-type'),ffmpeg=require('fluent-ffmpeg'),ffmpegInstaller=require('@ffmpeg-installer/ffmpeg');ffmpeg['setFfmpegPath'](ffmpegInstaller['path']);function ensureTempDir(){const _0x1c40ed=path['join'](__dirname,'../temp');if(!fs['existsSync'](_0x1c40ed))fs['mkdirSync'](_0x1c40ed,{'recursive':!![]});return _0x1c40ed;}async function downloadFile(_0x48dc43,_0x360d92){const _0x5c1c36=[{'User-Agent':'Mozilla/5.0\x20(Windows\x20NT\x2010.0;\x20Win64;\x20x64)\x20AppleWebKit/537.36\x20Chrome/121','Accept':'*/*','Referer':'https://eliteprotech-apis.zone.id/'},{'User-Agent':'Mozilla/5.0\x20(Linux;\x20Android\x2013)\x20AppleWebKit/537.36\x20Chrome/120\x20Mobile'},null];for(let _0x95c176=0x0;_0x95c176<_0x5c1c36['length'];_0x95c176++){try{const _0x1ea3b8=_0x5c1c36[_0x95c176];console['log']('🔄\x20Download\x20attempt\x20'+(_0x95c176+0x1)+'...');const _0x5312cd=await axios({'url':_0x48dc43,'method':'GET','responseType':'arraybuffer','headers':_0x1ea3b8||{},'timeout':0xea60,'maxRedirects':0x5}),_0xf3d53=Buffer['from'](_0x5312cd['data']);console['log']('\x20\x20\x20→\x20Size:\x20'+_0xf3d53['length']+'\x20bytes');if(_0xf3d53['length']<0x1388){console['log']('\x20\x20\x20⚠️\x20File\x20too\x20small,\x20skipping');continue;}return fs['writeFileSync'](_0x360d92,_0xf3d53),console['log']('✅\x20Downloaded\x20to\x20'+_0x360d92),_0xf3d53;}catch(_0x1cf3cc){console['log']('\x20\x20\x20❌\x20Attempt\x20'+(_0x95c176+0x1)+'\x20failed:\x20'+_0x1cf3cc['message']);}}throw new Error('All\x20download\x20strategies\x20failed');}module['exports']=async(_0x4e5e70,_0x2adedf,_0x368405,_0x6a9525,_0x13d088)=>{try{const _0x1d9978=_0x13d088[0x0]?.['trim']();if(!_0x1d9978)return await _0x4e5e70['sendMessage'](_0x368405,{'text':'❌\x20Usage:\x20.ytmp3\x20<youtube-link>'},{'quoted':_0x2adedf});await _0x4e5e70['sendMessage'](_0x368405,{'react':{'text':'🎵','key':_0x2adedf['key']}}),await _0x4e5e70['sendMessage'](_0x368405,{'text':'🎵\x20*Fetching\x20audio...*'},{'quoted':_0x2adedf});const _0x73b0a3='https://eliteprotech-apis.zone.id/ytdown?url='+encodeURIComponent(_0x1d9978)+'&format=mp3';console['log']('📡\x20API\x20URL:',_0x73b0a3);const _0x3e90c0=await axios['get'](_0x73b0a3,{'headers':{'User-Agent':'Mozilla/5.0\x20(Android)\x20Chrome/120','Accept':'application/json'},'timeout':0x4e20}),_0x563901=_0x3e90c0['data'];console['log']('📦\x20API\x20Response:',JSON['stringify'](_0x563901,null,0x2));if(!_0x563901['success']||!_0x563901['downloadURL'])throw new Error('API\x20did\x20not\x20return\x20a\x20download\x20link');const _0x452c5d=_0x563901['downloadURL'],_0x397954=_0x563901['title']||'YouTube\x20Audio';await _0x4e5e70['sendMessage'](_0x368405,{'text':'📥\x20*Downloading:*\x0a'+_0x397954['substring'](0x0,0x32)+'...'},{'quoted':_0x2adedf});const _0x3db1a9=ensureTempDir(),_0x457261=path['join'](_0x3db1a9,'yt_raw_'+Date['now']()+'.bin'),_0x4ac699=await downloadFile(_0x452c5d,_0x457261),_0x588a78=await fileTypeFromBuffer(_0x4ac699);console['log']('🔍\x20Detected\x20type:',_0x588a78);let _0x79380a=_0x457261,_0x2147ba='audio/mpeg',_0xdb6854='mp3';if(_0x588a78&&(_0x588a78['mime']['startsWith']('video/')||_0x588a78['ext']==='mp4')){console['log']('🎬\x20Detected\x20video,\x20converting\x20to\x20MP3...'),await _0x4e5e70['sendMessage'](_0x368405,{'text':'🔄\x20*Converting\x20video\x20to\x20audio...*'},{'quoted':_0x2adedf});const _0x2d386d=path['join'](_0x3db1a9,'yt_audio_'+Date['now']()+'.mp3');await new Promise((_0x22a0e2,_0x4d35fa)=>{ffmpeg(_0x457261)['toFormat']('mp3')['on']('end',_0x22a0e2)['on']('error',_0x4d35fa)['save'](_0x2d386d);}),_0x79380a=_0x2d386d,fs['unlinkSync'](_0x457261);}else _0x588a78&&_0x588a78['mime']!=='audio/mpeg'&&(console['log']('⚠️\x20Unexpected\x20format:\x20'+_0x588a78['mime']),_0x2147ba=_0x588a78['mime'],_0xdb6854=_0x588a78['ext']);const _0x518f33=fs['readFileSync'](_0x79380a);await _0x4e5e70['sendMessage'](_0x368405,{'audio':_0x518f33,'mimetype':_0x2147ba,'fileName':_0x397954+'.'+_0xdb6854},{'quoted':_0x2adedf}),fs['unlinkSync'](_0x79380a),await _0x4e5e70['sendMessage'](_0x368405,{'react':{'text':'✅','key':_0x2adedf['key']}});}catch(_0x296789){console['error']('❌\x20ytmp3\x20Error:',_0x296789['message']),await _0x4e5e70['sendMessage'](_0x368405,{'text':'❌\x20*Failed*\x0a'+_0x296789['message']},{'quoted':_0x2adedf});}};
+// commands/ytmp3.js
+// 🎵 Azahrabot YouTube MP3 Downloader (v1.2 — with format detection & conversion)
+// Uses: https://eliteprotech-apis.zone.id/ytdown?url=<link>&format=mp3
+
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+const { fileTypeFromBuffer } = require("file-type");
+const ffmpeg = require("fluent-ffmpeg");
+const ffmpegInstaller = require("@ffmpeg-installer/ffmpeg");
+
+ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
+function ensureTempDir() {
+  const dir = path.join(__dirname, "../temp");
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+// 📥 Download with multiple strategies
+async function downloadFile(url, destPath) {
+  const strategies = [
+    {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/121",
+      "Accept": "*/*",
+      "Referer": "https://eliteprotech-apis.zone.id/",
+    },
+    {
+      "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile",
+    },
+    null,
+  ];
+
+  for (let i = 0; i < strategies.length; i++) {
+    try {
+      const headers = strategies[i];
+      console.log(`🔄 Download attempt ${i+1}...`);
+
+      const res = await axios({
+        url,
+        method: "GET",
+        responseType: "arraybuffer",
+        headers: headers || {},
+        timeout: 60000,
+        maxRedirects: 5,
+      });
+
+      const buffer = Buffer.from(res.data);
+      console.log(`   → Size: ${buffer.length} bytes`);
+
+      if (buffer.length < 5000) {
+        console.log(`   ⚠️ File too small, skipping`);
+        continue;
+      }
+
+      fs.writeFileSync(destPath, buffer);
+      console.log(`✅ Downloaded to ${destPath}`);
+      return buffer;
+    } catch (err) {
+      console.log(`   ❌ Attempt ${i+1} failed: ${err.message}`);
+    }
+  }
+  throw new Error("All download strategies failed");
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+  try {
+    const url = args[0]?.trim();
+    if (!url) {
+      return await sock.sendMessage(from, { text: "❌ Usage: .ytmp3 <youtube-link>" }, { quoted: msg });
+    }
+
+    await sock.sendMessage(from, { react: { text: "🎵", key: msg.key } });
+    await sock.sendMessage(from, { text: "🎵 *Fetching audio...*" }, { quoted: msg });
+
+    const apiUrl = `https://eliteprotech-apis.zone.id/ytdown?url=${encodeURIComponent(url)}&format=mp3`;
+    console.log("📡 API URL:", apiUrl);
+
+    const apiRes = await axios.get(apiUrl, {
+      headers: { "User-Agent": "Mozilla/5.0 (Android) Chrome/120", Accept: "application/json" },
+      timeout: 20000,
+    });
+
+    const data = apiRes.data;
+    console.log("📦 API Response:", JSON.stringify(data, null, 2));
+
+    if (!data.success || !data.downloadURL) {
+      throw new Error("API did not return a download link");
+    }
+
+    const downloadUrl = data.downloadURL;
+    const title = data.title || "YouTube Audio";
+
+    await sock.sendMessage(from, { text: `📥 *Downloading:*\n${title.substring(0, 50)}...` }, { quoted: msg });
+
+    const tempDir = ensureTempDir();
+    const rawPath = path.join(tempDir, `yt_raw_${Date.now()}.bin`);
+
+    const buffer = await downloadFile(downloadUrl, rawPath);
+
+    // Detect file type
+    const type = await fileTypeFromBuffer(buffer);
+    console.log("🔍 Detected type:", type);
+
+    let finalPath = rawPath;
+    let finalMime = "audio/mpeg";
+    let finalExt = "mp3";
+
+    // If it's a video, convert to MP3
+    if (type && (type.mime.startsWith("video/") || type.ext === "mp4")) {
+      console.log("🎬 Detected video, converting to MP3...");
+      await sock.sendMessage(from, { text: "🔄 *Converting video to audio...*" }, { quoted: msg });
+
+      const mp3Path = path.join(tempDir, `yt_audio_${Date.now()}.mp3`);
+      await new Promise((resolve, reject) => {
+        ffmpeg(rawPath)
+          .toFormat("mp3")
+          .on("end", resolve)
+          .on("error", reject)
+          .save(mp3Path);
+      });
+
+      finalPath = mp3Path;
+      fs.unlinkSync(rawPath); // remove original
+    } else if (type && type.mime !== "audio/mpeg") {
+      // Other unexpected format, warn but still send as audio with generic MIME
+      console.log(`⚠️ Unexpected format: ${type.mime}`);
+      finalMime = type.mime;
+      finalExt = type.ext;
+    }
+
+    // Send the audio
+    const audioBuffer = fs.readFileSync(finalPath);
+    await sock.sendMessage(
+      from,
+      {
+        audio: audioBuffer,
+        mimetype: finalMime,
+        fileName: `${title}.${finalExt}`,
+      },
+      { quoted: msg }
+    );
+
+    // Cleanup
+    fs.unlinkSync(finalPath);
+    await sock.sendMessage(from, { react: { text: "✅", key: msg.key } });
+
+  } catch (err) {
+    console.error("❌ ytmp3 Error:", err.message);
+    await sock.sendMessage(from, { text: `❌ *Failed*\n${err.message}` }, { quoted: msg });
+  }
+};

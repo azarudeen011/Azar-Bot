@@ -11,7 +11,8 @@ const chalk = require("chalk");
 module.exports = async (sock, msg, from) => {
   try {
     const sender = msg.key.participant || msg.key.remoteJid;
-    const isOwner = msg.key.fromMe;
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
     if (!isOwner) {
       return await sock.sendMessage(from, { text: "❌ Only the paired bot owner can use `.clear`." }, { quoted: msg });
     }

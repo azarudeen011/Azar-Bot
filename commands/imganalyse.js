@@ -1,1 +1,83 @@
-const a0_0x971c41=(function(){let _0x5724e4=!![];return function(_0x226697,_0x4142af){const _0x28ffbc=_0x5724e4?function(){if(_0x4142af){const _0x5c6b62=_0x4142af['apply'](_0x226697,arguments);return _0x4142af=null,_0x5c6b62;}}:function(){};return _0x5724e4=![],_0x28ffbc;};}()),a0_0x304d89=a0_0x971c41(this,function(){return a0_0x304d89['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x304d89)['search']('(((.+)+)+)+$');});a0_0x304d89();const axios=require('axios'),{downloadContentFromMessage}=require('@whiskeysockets/baileys'),small=require('../lib/small_lib');async function streamToBuffer(_0x1ba519){const _0x39d7a1=[];for await(const _0x25b47c of _0x1ba519){_0x39d7a1['push'](_0x25b47c);}return Buffer['concat'](_0x39d7a1);}module['exports']=async(_0x3e4109,_0x5cc94a,_0x5b5210,_0x34d937,_0x5a998a)=>{const _0x2e10c9='Analyze\x20this\x20image\x20and\x20provide\x20useful\x20information,\x20context,\x20or\x20an\x20explanation\x20about\x20its\x20main\x20subject.\x20Focus\x20on\x20what\x20it\x20is\x20and\x20relevant\x20details\x20rather\x20than\x20just\x20listing\x20its\x20visual\x20parts.',_0x187f01=_0x5a998a['length']>0x0?_0x5a998a['join']('\x20')['trim']():_0x2e10c9,_0x2304ec=small['api']['gemini'];if(!_0x2304ec)return await _0x3e4109['sendMessage'](_0x5b5210,{'text':'❌\x20Gemini\x20API\x20key\x20is\x20missing\x20in\x20small_lib.js'},{'quoted':_0x5cc94a});const _0x3cf046=_0x5cc94a['message']?.['extendedTextMessage']?.['contextInfo']?.['quotedMessage'],_0x5811b2=_0x3cf046?.['imageMessage'],_0xc4c800=_0x5cc94a['message']?.['imageMessage'];if(!_0x5811b2&&!_0xc4c800)return await _0x3e4109['sendMessage'](_0x5b5210,{'text':'❌\x20Please\x20reply\x20to\x20an\x20image\x20with\x20`.imganalyse`\x20or\x20send\x20an\x20image\x20with\x20`.imganalyse`\x20in\x20caption.'},{'quoted':_0x5cc94a});try{await _0x3e4109['sendMessage'](_0x5b5210,{'react':{'text':'🔍','key':_0x5cc94a['key']}})['catch'](()=>{});const _0x3d8cb1=_0x5811b2?_0x3cf046['imageMessage']:_0x5cc94a['message']['imageMessage'],_0x1a4037=await downloadContentFromMessage(_0x3d8cb1,'image'),_0x256398=await streamToBuffer(_0x1a4037),_0x2a5f4b=_0x256398['toString']('base64'),_0x465cd2=_0x3d8cb1['mimetype']||'image/jpeg',_0xfed5a4='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+_0x2304ec,_0x5a6327={'contents':[{'parts':[{'text':_0x187f01},{'inlineData':{'mimeType':_0x465cd2,'data':_0x2a5f4b}}]}]},_0x38fc67=await axios['post'](_0xfed5a4,_0x5a6327,{'headers':{'Content-Type':'application/json'},'timeout':0xea60}),_0x2b9936=_0x38fc67['data']?.['candidates']?.[0x0]?.['content']?.['parts']?.[0x0]?.['text']?.['trim']();if(_0x2b9936)await _0x3e4109['sendMessage'](_0x5b5210,{'text':_0x2b9936},{'quoted':_0x5cc94a}),await _0x3e4109['sendMessage'](_0x5b5210,{'react':{'text':'✅','key':_0x5cc94a['key']}})['catch'](()=>{});else throw new Error('Empty\x20response\x20from\x20Gemini\x20Vision\x20API.');}catch(_0x19aed2){const _0x209f81=_0x19aed2['response']?.['data']?.['error']?.['message']||_0x19aed2['message'];console['error']('❌\x20Image\x20Analyse\x20error:',_0x19aed2['response']?.['data']||_0x19aed2['message']),await _0x3e4109['sendMessage'](_0x5b5210,{'text':'❌\x20Failed\x20to\x20analyze\x20image:\x20'+_0x209f81},{'quoted':_0x5cc94a});}};
+const axios = require("axios");
+const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
+const small = require("../lib/small_lib");
+
+async function streamToBuffer(stream) {
+    const chunks = [];
+    for await (const chunk of stream) {
+        chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+    const defaultPrompt = "Analyze this image and provide useful information, context, or an explanation about its main subject. Focus on what it is and relevant details rather than just listing its visual parts.";
+    const query = args.length > 0 ? args.join(" ").trim() : defaultPrompt;
+    const apiKey = small.api.gemini;
+
+    if (!apiKey) {
+        return await sock.sendMessage(from, { text: "❌ Gemini API key is missing in small_lib.js" }, { quoted: msg });
+    }
+
+    // Determine if the user replied to an image or sent an image with caption
+    const quotedMsg = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    const isQuotedImage = quotedMsg?.imageMessage;
+    const isImage = msg.message?.imageMessage;
+
+    if (!isQuotedImage && !isImage) {
+        return await sock.sendMessage(from, { 
+            text: "❌ Please reply to an image with `.imganalyse` or send an image with `.imganalyse` in caption." 
+        }, { quoted: msg });
+    }
+
+    try {
+        await sock.sendMessage(from, { react: { text: "🔍", key: msg.key } }).catch(() => {});
+
+        // Extract the correct image message
+        const imageMessage = isQuotedImage ? quotedMsg.imageMessage : msg.message.imageMessage;
+        
+        // Download image stream
+        const stream = await downloadContentFromMessage(imageMessage, "image");
+        const buffer = await streamToBuffer(stream);
+        
+        // Convert buffer to base64
+        const base64Image = buffer.toString("base64");
+        const mimeType = imageMessage.mimetype || "image/jpeg";
+
+        // Call Gemini 2.5 Flash API with Vision Support
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+        
+        const payload = {
+            contents: [{
+                parts: [
+                    { text: query },
+                    {
+                        inlineData: {
+                            mimeType: mimeType,
+                            data: base64Image
+                        }
+                    }
+                ]
+            }]
+        };
+
+        const response = await axios.post(endpoint, payload, {
+            headers: { "Content-Type": "application/json" },
+            timeout: 60000 // give it a minute to process the image
+        });
+
+        const result = response.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+        if (result) {
+            await sock.sendMessage(from, { text: result }, { quoted: msg });
+            await sock.sendMessage(from, { react: { text: "✅", key: msg.key } }).catch(() => {});
+        } else {
+            throw new Error("Empty response from Gemini Vision API.");
+        }
+
+    } catch (err) {
+        const errorMsg = err.response?.data?.error?.message || err.message;
+        console.error("❌ Image Analyse error:", err.response?.data || err.message);
+        await sock.sendMessage(from, { text: `❌ Failed to analyze image: ${errorMsg}` }, { quoted: msg });
+    }
+};

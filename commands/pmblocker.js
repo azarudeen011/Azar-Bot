@@ -12,8 +12,8 @@ module.exports = async (sock, msg, from, text, args) => {
         const sender = msg.key.participant || msg.key.remoteJid;
         
         // 👑 Verify owner
-        let ownerNum = global.getOwner?.() || "";
-        const isOwner = msg.key.fromMe || sender.replace(/[^0-9]/g, "") === ownerNum;
+        const { isPairedOwner } = require("../lib/guards");
+        const isOwner = await isPairedOwner(sock, msg);
 
         if (!isOwner) {
             return await sock.sendMessage(from, { text: "❌ *Access Denied:* This command is reserved for the Bot Owner only." }, { quoted: msg });

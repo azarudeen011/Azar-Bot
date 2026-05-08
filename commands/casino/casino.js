@@ -1,1 +1,58 @@
-const a0_0x41b32f=(function(){let _0x1f06ea=!![];return function(_0x2289c2,_0x481674){const _0x4af02b=_0x1f06ea?function(){if(_0x481674){const _0x28d2ae=_0x481674['apply'](_0x2289c2,arguments);return _0x481674=null,_0x28d2ae;}}:function(){};return _0x1f06ea=![],_0x4af02b;};}()),a0_0xfef7a5=a0_0x41b32f(this,function(){return a0_0xfef7a5['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0xfef7a5)['search']('(((.+)+)+)+$');});a0_0xfef7a5();const {requireRegistration}=require('../../lib/guards');module['exports']=async(_0x14796d,_0x17f49f,_0x5e6663)=>{const _0x28ba18=_0x17f49f['key']['participant']||_0x17f49f['key']['remoteJid'],_0x325226='\x0a🎰\x20*WELCOME\x20TO\x20THE\x20AZAR\x20CASINO!*\x20🎰\x0a━━━━━━━━━━━━━━━━━━━━━━\x0aAre\x20you\x20ready\x20to\x20risk\x20it\x20all\x20and\x20become\x20a\x20billionaire?\x20Or\x20will\x20you\x20go\x20totally\x20bankrupt?\x20🤑\x20\x0aHere\x20is\x20your\x20ultimate\x20guide\x20to\x20playing\x20the\x20most\x20highly-addictive\x20games\x20in\x20this\x20bot!\x0a\x0a💰\x20*1.\x20THE\x20BANK\x20(Economy)*\x0aBefore\x20you\x20can\x20play,\x20you\x20need\x20cash!\x0a*👉\x20`.daily`*\x20—\x20Claim\x20your\x20free\x20$1,000\x20to\x20$3,000\x20every\x20**24\x20hours**.\x20Don\x27t\x20forget\x20this!\x0a*👉\x20`.balance`*\x20—\x20Flex\x20your\x20wallet!\x20Check\x20your\x20current\x20balance,\x20total\x20wins,\x20and\x20total\x20losses.\x0a\x0a⚠️\x20*NOTICE:*\x20All\x20casino\x20games\x20have\x20a\x20**5-minute\x20cooldown**\x20to\x20keep\x20things\x20fair!\x0a\x0a*(For\x20all\x20games\x20below,\x20you\x20can\x20bet\x20a\x20specific\x20amount\x20like\x20`500`,\x20or\x20type\x20`all`\x20to\x20go\x20ALL-IN!)*\x0a\x0a🍒\x20*2.\x20SLOT\x20MACHINE\x20(The\x20Classic!)*\x0a*👉\x20`.slot\x20<bet>`*\x20(Example:\x20`.slot\x201000`)\x0aWatch\x20the\x20reels\x20spin\x20live!\x20If\x20they\x20match,\x20you\x20win\x20BIG!\x0a🔥\x20*Jackpot:*\x207️⃣7️⃣7️⃣\x20pays\x20*10x*\x20your\x20bet!\x0a💎\x20*Diamonds:*\x20💎💎💎\x20pays\x20*8x*\x0a🍒\x20*Cherries:*\x20🍒🍒🍒\x20pays\x20*5x*\x0a*(Even\x202\x20matching\x20symbols\x20gives\x20you\x201.5x\x20your\x20money\x20back!)*\x0a\x0a🎡\x20*3.\x20ROULETTE\x20(The\x20Big\x20Wheel!)*\x0a*👉\x20`.roulette\x20<color>\x20<bet>`*\x20(Example:\x20`.roulette\x20red\x20500`)\x0aPredict\x20where\x20the\x20spinning\x20ball\x20will\x20land!\x0a🔴\x20*Red*\x20or\x20⚫\x20*Black*\x20—\x20Safe\x20bet.\x20Doubles\x20your\x20money\x20(2x).\x0a🟢\x20*Green*\x20—\x20The\x20ultimate\x20risk!\x20Only\x201\x20number\x20is\x20green.\x20If\x20it\x20hits,\x20you\x20win\x20*14x*\x20your\x20bet!!\x20\x0a\x0a🪙\x20*4.\x20COINFLIP\x20(50/50\x20Chance!)*\x0a*👉\x20`.coinflip\x20<heads/tails>\x20<bet>`*\x20(Example:\x20`.coinflip\x20tails\x20all`)\x0aNo\x20complex\x20math.\x20No\x20strategies.\x20Just\x20pure\x2050/50\x20luck.\x0aGuess\x20right?\x20You\x20instantly\x20double\x20your\x20cash\x20(2x).\x20Guess\x20wrong?\x20You\x20lose\x20it\x20all.\x0a\x0a🚀\x20*5.\x20CRASH\x20(The\x20Crypto\x20Game!)*\x0a*👉\x20`.crash\x20<target_multiplier>\x20<bet>`*\x20(Example:\x20`.crash\x202.5\x20500`)\x0aA\x20rocket\x20🚀\x20takes\x20off\x20and\x20the\x20multiplier\x20climbs\x20(*1.5x,\x201.8x,\x202.3x...*).\x0aYou\x20must\x20guess\x20a\x20safe\x20target\x20to\x20cash\x20out\x20at\x20before\x20it\x20explodes\x20💥!\x0a*If\x20you\x20guess\x202.5x:*\x0a✅\x20The\x20rocket\x20reaches\x202.6x...\x20YOU\x20WIN!\x20You\x20get\x20exactly\x202.5x\x20your\x20bet!\x0a❌\x20The\x20rocket\x20blows\x20up\x20at\x201.4x...\x20YOU\x20LOSE!\x0a\x0a*💡\x20PRO\x20TIP:*\x20The\x20bot\x20actually\x20animates\x20the\x20games\x20in\x20real-time\x20by\x20editing\x20its\x20messages!\x20Play\x20in\x20a\x20group\x20for\x20maximum\x20hype!\x0a\x0a💸\x20*6.\x20TRANSFER\x20MONEY*\x0a*👉\x20`.donate\x20@user\x20<amount>`*\x20(Example:\x20`.donate\x20@user\x20500`)\x0aSend\x20your\x20hard-earned\x20(or\x20gambled!)\x20cash\x20to\x20a\x20friend.\x20Use\x20`all`\x20to\x20send\x20everything!\x0a*(Only\x20works\x20in\x20groups\x20—\x20mention\x20the\x20person\x20you\x20want\x20to\x20pay!)*\x0a'['trim']();await _0x14796d['sendMessage'](_0x5e6663,{'text':_0x325226},{'quoted':_0x17f49f});};
+const { requireRegistration } = require('../../lib/guards');
+
+module.exports = async (sock, msg, from) => {
+    const sender = msg.key.participant || msg.key.remoteJid;
+    // Global guard in index.js handles requireRegistration
+    
+    const text = `
+🎰 *WELCOME TO THE AZAR CASINO!* 🎰
+━━━━━━━━━━━━━━━━━━━━━━
+Are you ready to risk it all and become a billionaire? Or will you go totally bankrupt? 🤑 
+Here is your ultimate guide to playing the most highly-addictive games in this bot!
+
+💰 *1. THE BANK (Economy)*
+Before you can play, you need cash!
+*👉 \`.daily\`* — Claim your free $1,000 to $3,000 every **24 hours**. Don't forget this!
+*👉 \`.balance\`* — Flex your wallet! Check your current balance, total wins, and total losses.
+
+⚠️ *NOTICE:* All casino games have a **5-minute cooldown** to keep things fair!
+
+*(For all games below, you can bet a specific amount like \`500\`, or type \`all\` to go ALL-IN!)*
+
+🍒 *2. SLOT MACHINE (The Classic!)*
+*👉 \`.slot <bet>\`* (Example: \`.slot 1000\`)
+Watch the reels spin live! If they match, you win BIG!
+🔥 *Jackpot:* 7️⃣7️⃣7️⃣ pays *10x* your bet!
+💎 *Diamonds:* 💎💎💎 pays *8x*
+🍒 *Cherries:* 🍒🍒🍒 pays *5x*
+*(Even 2 matching symbols gives you 1.5x your money back!)*
+
+🎡 *3. ROULETTE (The Big Wheel!)*
+*👉 \`.roulette <color> <bet>\`* (Example: \`.roulette red 500\`)
+Predict where the spinning ball will land!
+🔴 *Red* or ⚫ *Black* — Safe bet. Doubles your money (2x).
+🟢 *Green* — The ultimate risk! Only 1 number is green. If it hits, you win *14x* your bet!! 
+
+🪙 *4. COINFLIP (50/50 Chance!)*
+*👉 \`.coinflip <heads/tails> <bet>\`* (Example: \`.coinflip tails all\`)
+No complex math. No strategies. Just pure 50/50 luck.
+Guess right? You instantly double your cash (2x). Guess wrong? You lose it all.
+
+🚀 *5. CRASH (The Crypto Game!)*
+*👉 \`.crash <target_multiplier> <bet>\`* (Example: \`.crash 2.5 500\`)
+A rocket 🚀 takes off and the multiplier climbs (*1.5x, 1.8x, 2.3x...*).
+You must guess a safe target to cash out at before it explodes 💥!
+*If you guess 2.5x:*
+✅ The rocket reaches 2.6x... YOU WIN! You get exactly 2.5x your bet!
+❌ The rocket blows up at 1.4x... YOU LOSE!
+
+*💡 PRO TIP:* The bot actually animates the games in real-time by editing its messages! Play in a group for maximum hype!
+
+💸 *6. TRANSFER MONEY*
+*👉 \`.donate @user <amount>\`* (Example: \`.donate @user 500\`)
+Send your hard-earned (or gambled!) cash to a friend. Use \`all\` to send everything!
+*(Only works in groups — mention the person you want to pay!)*
+`.trim();
+
+    await sock.sendMessage(from, { text }, { quoted: msg });
+};

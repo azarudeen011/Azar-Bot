@@ -1,1 +1,27 @@
-const a0_0x594da2=(function(){let _0x5e518d=!![];return function(_0x5728d3,_0x8663b0){const _0x1d972d=_0x5e518d?function(){if(_0x8663b0){const _0x142512=_0x8663b0['apply'](_0x5728d3,arguments);return _0x8663b0=null,_0x142512;}}:function(){};return _0x5e518d=![],_0x1d972d;};}()),a0_0x228555=a0_0x594da2(this,function(){return a0_0x228555['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x228555)['search']('(((.+)+)+)+$');});a0_0x228555();const eco=require('../../lib/economy'),cooldownManager=require('../../lib/cooldownManager'),{requireRegistration}=require('../../lib/guards');module['exports']=async(_0x314e7b,_0x43acfb,_0x375528,_0x1e1c0d,_0x399847)=>{const _0x483dfc=_0x43acfb['key']['participant']||_0x43acfb['key']['remoteJid'];if(!await requireRegistration(_0x314e7b,_0x375528,_0x483dfc,_0x43acfb))return;const _0x4e3e57=cooldownManager['getUserCooldowns'](_0x483dfc);if(_0x4e3e57['length']===0x0)return _0x314e7b['sendMessage'](_0x375528,{'text':'✅\x20*COOLDOWN\x20STATUS*\x0a\x0aAll\x20your\x20systems\x20are\x20GO!\x20You\x20have\x20no\x20active\x20casino\x20cooldowns.\x20Go\x20win\x20some\x20coins!\x20🎰💰'},{'quoted':_0x43acfb});let _0x4356da='⏳\x20*ACTIVE\x20COOLDOWNS*\x0a\x0aHere\x20are\x20your\x20current\x20wait\x20times:\x0a━━━━━━━━━━━━━━\x0a';_0x4e3e57['forEach'](_0x2ecfb5=>{const _0x3229be=_0x2ecfb5['game']['toUpperCase']();_0x4356da+='🎮\x20*'+_0x3229be+':*\x20'+cooldownManager['formatTime'](_0x2ecfb5['remaining'])+'\x0a';}),_0x4356da+='━━━━━━━━━━━━━━\x0a_Check\x20back\x20soon\x20to\x20play\x20again!_',await _0x314e7b['sendMessage'](_0x375528,{'text':_0x4356da},{'quoted':_0x43acfb});};
+const eco = require("../../lib/economy");
+const cooldownManager = require("../../lib/cooldownManager");
+const { requireRegistration } = require("../../lib/guards");
+
+module.exports = async (sock, msg, from, text, args) => {
+    const senderJid = msg.key.participant || msg.key.remoteJid;
+    if (!(await requireRegistration(sock, from, senderJid, msg))) return;
+
+    const cooldowns = cooldownManager.getUserCooldowns(senderJid);
+
+    if (cooldowns.length === 0) {
+        return sock.sendMessage(from, { 
+            text: "✅ *COOLDOWN STATUS*\n\nAll your systems are GO! You have no active casino cooldowns. Go win some coins! 🎰💰" 
+        }, { quoted: msg });
+    }
+
+    let response = `⏳ *ACTIVE COOLDOWNS*\n\nHere are your current wait times:\n━━━━━━━━━━━━━━\n`;
+    
+    cooldowns.forEach(cd => {
+        const gameName = cd.game.toUpperCase();
+        response += `🎮 *${gameName}:* ${cooldownManager.formatTime(cd.remaining)}\n`;
+    });
+
+    response += `━━━━━━━━━━━━━━\n_Check back soon to play again!_`;
+
+    await sock.sendMessage(from, { text: response }, { quoted: msg });
+};

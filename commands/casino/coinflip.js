@@ -1,1 +1,121 @@
-const a0_0x12fca3=(function(){let _0x3315ca=!![];return function(_0x3c2094,_0x300880){const _0x5d29c6=_0x3315ca?function(){if(_0x300880){const _0x17c50e=_0x300880['apply'](_0x3c2094,arguments);return _0x300880=null,_0x17c50e;}}:function(){};return _0x3315ca=![],_0x5d29c6;};}()),a0_0x3d24cf=a0_0x12fca3(this,function(){return a0_0x3d24cf['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x3d24cf)['search']('(((.+)+)+)+$');});a0_0x3d24cf();const eco=require('../../lib/economy'),firebaseManager=require('../../lib/firebaseManager'),cooldownManager=require('../../lib/cooldownManager'),{requireRegistration}=require('../../lib/guards');function sleep(_0x4b89b4){return new Promise(_0x2c5c42=>setTimeout(_0x2c5c42,_0x4b89b4));}module['exports']=async(_0x566819,_0x4d0927,_0x2eb88b,_0x4045c6,_0x6d629a)=>{try{const _0x4185fa=_0x4d0927['key']['participant']||_0x4d0927['key']['remoteJid'];if(!_0x6d629a[0x0]||!_0x6d629a[0x1])return await _0x566819['sendMessage'](_0x2eb88b,{'text':'🪙\x20*COINFLIP*\x20🪙\x0a━━━━━━━━━━━━━━\x0a⚠️\x20*Usage:*\x20`.coinflip\x20<side>\x20<bet>`\x0a\x0a'+'🪙\x20*Sides:*\x20heads,\x20tails\x0a'+'Example:\x20`.coinflip\x20heads\x20100`'},{'quoted':_0x4d0927});const _0x189ea1=_0x6d629a[0x0]['toLowerCase']();if(!['heads','tails','head','tail','h','t']['includes'](_0x189ea1))return await _0x566819['sendMessage'](_0x2eb88b,{'text':'❌\x20Invalid\x20side!\x20Choose\x20heads\x20or\x20tails.'},{'quoted':_0x4d0927});const _0x124777=_0x189ea1['startsWith']('h')?'heads':'tails',_0x459f6e=await eco['getUser'](_0x4185fa),_0x1136f3=cooldownManager['check'](_0x4185fa,'coinflip');if(_0x1136f3['onCooldown'])return await _0x566819['sendMessage'](_0x2eb88b,{'text':'⏳\x20*COINFLIP\x20COOLDOWN*\x20⏳\x0a\x0aYou\x27re\x20playing\x20too\x20fast!\x20Please\x20wait\x20**'+cooldownManager['formatTime'](_0x1136f3['remaining'])+'**\x20before\x20your\x20next\x20flip.\x0a\x0a_Tip:\x20You\x20can\x20still\x20play\x20other\x20games\x20like\x20.slot!_'},{'quoted':_0x4d0927});let _0x44af7e=parseInt(_0x6d629a[0x1]);if(_0x6d629a[0x1]['toLowerCase']()==='all')_0x44af7e=_0x459f6e['balance'];if(isNaN(_0x44af7e)||_0x44af7e<=0x0)return await _0x566819['sendMessage'](_0x2eb88b,{'text':'❌\x20Invalid\x20bet\x20amount!'},{'quoted':_0x4d0927});const _0x4f70b4=await eco['spend'](_0x4185fa,_0x44af7e);if(!_0x4f70b4['success']){if(_0x4f70b4['error']==='not_registered')return await _0x566819['sendMessage'](_0x2eb88b,{'text':'❌\x20You\x20are\x20not\x20registered\x20on\x20the\x20website!'},{'quoted':_0x4d0927});if(_0x4f70b4['needsBlackCard'])return await _0x566819['sendMessage'](_0x2eb88b,{'text':'❌\x20Insufficient\x20wallet\x20balance!\x20You\x20have\x20enough\x20in\x20your\x20bank\x20($'+(_0x4f70b4['currentBank']||0x0)['toLocaleString']()+'),\x20but\x20you\x20need\x20a\x20*Black\x20Card*\x20to\x20spend\x20from\x20bank\x20directly.'},{'quoted':_0x4d0927});const _0x1ca812=_0x4f70b4['currentWallet']||0x0;return await _0x566819['sendMessage'](_0x2eb88b,{'text':'❌\x20You\x20don\x27t\x20have\x20enough\x20money!\x0aYour\x20wallet:\x20*$'+_0x1ca812['toLocaleString']()+'*'},{'quoted':_0x4d0927});}await firebaseManager['logTx'](_0x4185fa,{'type':'casino','amount':-_0x44af7e,'note':'Coinflip\x20Bet'});let _0x53c0eb='🪙\x20*COINFLIP*\x20🪙\x0a━━━━━━━━━━━━━━\x0a';_0x53c0eb+='Bet:\x20*$'+_0x44af7e['toLocaleString']()+'*\x20on\x20*'+_0x124777['toUpperCase']()+'*\x0a\x0a',_0x53c0eb+='🔄\x20Flipping\x20the\x20coin...';const _0x1083fb=await _0x566819['sendMessage'](_0x2eb88b,{'text':_0x53c0eb},{'quoted':_0x4d0927});await sleep(0x7d0);const _0x468174=Math['random']()<0.5?'heads':'tails',_0x3f3201=_0x468174==='heads'?'🗣️':'🦅';let _0x413c90=0x0;_0x468174===_0x124777&&(_0x413c90=_0x44af7e*0x2,await eco['addMoney'](_0x4185fa,_0x413c90),await firebaseManager['logTx'](_0x4185fa,{'type':'casino','amount':_0x413c90,'note':'Coinflip\x20Win'}));let _0xee6169='';if(_0x413c90>0x0)_0xee6169='🎉\x20*YOU\x20WON!*\x20🎉\x0aPayout:\x20*$'+_0x413c90['toLocaleString']()+'*';else{const _0x41c15a=_0x4185fa['split'](':')[0x0]['split']('@')[0x0]+(_0x4185fa['includes']('@lid')?'@lid':'@s.whatsapp.net'),_0x2af3f3=require('../../lib/identityManager')['resolveNumber'](_0x41c15a),_0x12d0ab=await firebaseManager['fetchUser'](_0x2af3f3);_0x12d0ab?.['cloverActive']?(await eco['addMoney'](_0x4185fa,_0x44af7e),await firebaseManager['updateUser'](_0x2af3f3,{'cloverActive':![]}),_0xee6169='🍀\x20*LUCKY\x20CLOVER\x20ACTIVATED!*\x20🍀\x0a\x0aYou\x20were\x20about\x20to\x20lose\x20*$'+_0x44af7e['toLocaleString']()+'*...\x0aBut\x20your\x20**Lucky\x20Clover**\x20glowed\x20and\x20returned\x20your\x20bet\x20to\x20your\x20wallet!\x20✨'):_0xee6169='💥\x20*YOU\x20LOST!*\x20💥\x0aBetter\x20luck\x20next\x20time.';}const _0x10c552=await eco['getUser'](_0x4185fa);let _0x3960b9='💵\x20Wallet:\x20*$'+_0x10c552['balance']['toLocaleString']()+'*';if(_0x4f70b4['from']==='bank')_0x3960b9='🏦\x20Bank:\x20*$'+_0x10c552['bank']['toLocaleString']()+'*\x20(via\x20Black\x20Card)';let _0x1f816e='🪙\x20*COINFLIP*\x20🪙\x0a━━━━━━━━━━━━━━\x0a';_0x1f816e+='The\x20coin\x20landed\x20on:\x20*'+_0x468174['toUpperCase']()+'*\x20'+_0x3f3201+'\x0a',_0x1f816e+='━━━━━━━━━━━━━━\x0a',_0x1f816e+=_0xee6169+'\x0a\x0a',_0x1f816e+=_0x3960b9;try{await _0x566819['sendMessage'](_0x2eb88b,{'text':_0x1f816e,'edit':_0x1083fb['key']});}catch(_0x4e5c63){await _0x566819['sendMessage'](_0x2eb88b,{'text':_0x1f816e},{'quoted':_0x4d0927});}cooldownManager['set'](_0x4185fa,'coinflip',0x12c);}catch(_0x1096f7){console['error']('Coinflip\x20Error:',_0x1096f7);}};
+const eco = require('../../lib/economy');
+const firebaseManager = require('../../lib/firebaseManager');
+const cooldownManager = require('../../lib/cooldownManager');
+const { requireRegistration } = require('../../lib/guards');
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+module.exports = async (sock, msg, from, text, args) => {
+    try {
+        const sender = msg.key.participant || msg.key.remoteJid;
+        // Global guard in index.js handles requireRegistration
+
+        if (!args[0] || !args[1]) {
+            return await sock.sendMessage(from, {
+                text: `🪙 *COINFLIP* 🪙\n━━━━━━━━━━━━━━\n⚠️ *Usage:* \`.coinflip <side> <bet>\`\n\n` +
+                    `🪙 *Sides:* heads, tails\n` +
+                    `Example: \`.coinflip heads 100\``
+            }, { quoted: msg });
+        }
+
+        const choice = args[0].toLowerCase();
+        if (!['heads', 'tails', 'head', 'tail', 'h', 't'].includes(choice)) {
+            return await sock.sendMessage(from, { text: "❌ Invalid side! Choose heads or tails." }, { quoted: msg });
+        }
+
+        const normalizedChoice = choice.startsWith('h') ? 'heads' : 'tails';
+
+        const user = await eco.getUser(sender);
+
+        // ⏳ Per-Game Cooldown Check
+        const cd = cooldownManager.check(sender, 'coinflip');
+        if (cd.onCooldown) {
+            return await sock.sendMessage(from, {
+                text: `⏳ *COINFLIP COOLDOWN* ⏳\n\nYou're playing too fast! Please wait **${cooldownManager.formatTime(cd.remaining)}** before your next flip.\n\n_Tip: You can still play other games like .slot!_`
+            }, { quoted: msg });
+        }
+
+        let bet = parseInt(args[1]);
+        if (args[1].toLowerCase() === "all") bet = user.balance;
+
+        if (isNaN(bet) || bet <= 0) {
+            return await sock.sendMessage(from, { text: "❌ Invalid bet amount!" }, { quoted: msg });
+        }
+
+        const payResult = await eco.spend(sender, bet);
+        if (!payResult.success) {
+            if (payResult.error === "not_registered") {
+                return await sock.sendMessage(from, { text: "❌ You are not registered on the website!" }, { quoted: msg });
+            }
+            if (payResult.needsBlackCard) {
+                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${(payResult.currentBank || 0).toLocaleString()}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
+            }
+            const currentWallet = payResult.currentWallet || 0;
+            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currentWallet.toLocaleString()}*` }, { quoted: msg });
+        }
+
+        await firebaseManager.logTx(sender, { type: "casino", amount: -bet, note: "Coinflip Bet" });
+
+        let spinText = `🪙 *COINFLIP* 🪙\n━━━━━━━━━━━━━━\n`;
+        spinText += `Bet: *$${bet.toLocaleString()}* on *${normalizedChoice.toUpperCase()}*\n\n`;
+        spinText += `🔄 Flipping the coin...`;
+
+        const sentMsg = await sock.sendMessage(from, { text: spinText }, { quoted: msg });
+
+        await sleep(2000);
+
+        const resultSide = Math.random() < 0.5 ? 'heads' : 'tails';
+        const emoji = resultSide === 'heads' ? '🗣️' : '🦅';
+
+        let winAmount = 0;
+        if (resultSide === normalizedChoice) {
+            winAmount = bet * 2;
+            await eco.addMoney(sender, winAmount);
+            await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Coinflip Win" });
+        }
+
+        let resultMsg = "";
+        if (winAmount > 0) {
+            resultMsg = `🎉 *YOU WON!* 🎉\nPayout: *$${winAmount.toLocaleString()}*`;
+        } else {
+            // 🍀 CHECK FOR ACTIVE LUCKY CLOVER (Must be .used first)
+            const cleanSender = sender.split(':')[0].split('@')[0] + (sender.includes('@lid') ? '@lid' : '@s.whatsapp.net');
+            const phoneDigits = require('../../lib/identityManager').resolveNumber(cleanSender);
+            const freshUser = await firebaseManager.fetchUser(phoneDigits);
+
+            if (freshUser?.cloverActive) {
+                // Return money instantly
+                await eco.addMoney(sender, bet);
+                
+                // Consume Activation
+                await firebaseManager.updateUser(phoneDigits, { cloverActive: false });
+
+                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${bet.toLocaleString()}*...\nBut your **Lucky Clover** glowed and returned your bet to your wallet! ✨`;
+            } else {
+                resultMsg = `💥 *YOU LOST!* 💥\nBetter luck next time.`;
+            }
+        }
+
+        const finalUser = await eco.getUser(sender);
+        let balanceMsg = `💵 Wallet: *$${finalUser.balance.toLocaleString()}*`;
+        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${finalUser.bank.toLocaleString()}* (via Black Card)`;
+
+        let finalFrame = `🪙 *COINFLIP* 🪙\n━━━━━━━━━━━━━━\n`;
+        finalFrame += `The coin landed on: *${resultSide.toUpperCase()}* ${emoji}\n`;
+        finalFrame += `━━━━━━━━━━━━━━\n`;
+        finalFrame += `${resultMsg}\n\n`;
+        finalFrame += balanceMsg;
+
+        try {
+            await sock.sendMessage(from, { text: finalFrame, edit: sentMsg.key });
+        } catch (e) {
+            await sock.sendMessage(from, { text: finalFrame }, { quoted: msg });
+        }
+
+        // 🛡️ Set Cooldown (5 minutes)
+        cooldownManager.set(sender, 'coinflip', 300);
+
+    } catch (e) {
+        console.error("Coinflip Error:", e);
+    }
+};

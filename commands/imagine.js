@@ -1,1 +1,71 @@
-const a0_0x1e246a=(function(){let _0xf053e6=!![];return function(_0x47d408,_0x1a3075){const _0x5d7893=_0xf053e6?function(){if(_0x1a3075){const _0x98e59e=_0x1a3075['apply'](_0x47d408,arguments);return _0x1a3075=null,_0x98e59e;}}:function(){};return _0xf053e6=![],_0x5d7893;};}()),a0_0x35aff5=a0_0x1e246a(this,function(){return a0_0x35aff5['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x35aff5)['search']('(((.+)+)+)+$');});a0_0x35aff5();const axios=require('axios'),settings=require('../settings');module['exports']=async(_0x5d1c4d,_0x5267d6,_0x2fd86a,_0x26322c,_0x29b8bd=[])=>{try{const _0x57095b=_0x29b8bd['join']('\x20')['trim']();if(!_0x57095b)return _0x5d1c4d['sendMessage'](_0x2fd86a,{'text':'🎨\x20Usage:\x0a'+settings['prefix']+'imagine\x20<prompt>\x0a\x0aExample:\x0a'+settings['prefix']+'imagine\x20two\x20couples\x20under\x20moon\x20shadow'},{'quoted':_0x5267d6});global['imgCD']??=new Map();if(global['imgCD']['get'](_0x2fd86a)&&Date['now']()-global['imgCD']['get'](_0x2fd86a)<0x3a98)return _0x5d1c4d['sendMessage'](_0x2fd86a,{'text':'⏳\x20Wait\x2015\x20seconds\x20before\x20next\x20image.'},{'quoted':_0x5267d6});global['imgCD']['set'](_0x2fd86a,Date['now']()),await _0x5d1c4d['sendMessage'](_0x2fd86a,{'react':{'text':'🎨','key':_0x5267d6['key']}})['catch'](()=>{}),await _0x5d1c4d['sendPresenceUpdate']('composing',_0x2fd86a);const _0x460975='https://eliteprotech-apis.zone.id/imagine?prompt='+encodeURIComponent(_0x57095b),_0x410b7d=await axios({'url':_0x460975,'responseType':'arraybuffer','timeout':0xea60}),_0x2e2216=Buffer['from'](_0x410b7d['data']);await _0x5d1c4d['sendMessage'](_0x2fd86a,{'image':_0x2e2216,'caption':'✨\x20*AI\x20Image\x20Generated*\x0a'+('🎨\x20Prompt:\x20'+_0x57095b+'\x0a')+'━━━━━━━━━━━━\x0a'+('>\x20Powered\x20by\x20'+(settings['author']||'AzarTech')+'\x20⚡')},{'quoted':_0x5267d6}),await _0x5d1c4d['sendMessage'](_0x2fd86a,{'react':{'text':'✅','key':_0x5267d6['key']}})['catch'](()=>{});}catch(_0x4a6819){console['log']('Imagine\x20API\x20Error:',_0x4a6819['message']),await _0x5d1c4d['sendMessage'](_0x2fd86a,{'text':'⚠️\x20Image\x20generation\x20failed.\x20Try\x20again\x20later.'},{'quoted':_0x5267d6}),await _0x5d1c4d['sendMessage'](_0x2fd86a,{'react':{'text':'⚠️','key':_0x5267d6['key']}})['catch'](()=>{});}};
+// ==============================================
+// 🖼️ Azahrabot — .imagine Command (Elite API)
+// Direct Image Fetch — Fast & Stable
+// ==============================================
+
+const axios = require("axios");
+const settings = require("../settings");
+
+module.exports = async (sock, msg, from, text, args = []) => {
+
+try{
+
+const prompt = args.join(" ").trim();
+
+if(!prompt){
+return sock.sendMessage(from,{
+text:
+`🎨 Usage:\n${settings.prefix}imagine <prompt>\n\nExample:\n${settings.prefix}imagine two couples under moon shadow`
+},{quoted:msg});
+}
+
+// ⭐ cooldown protection (important public bot)
+global.imgCD ??= new Map();
+
+if(global.imgCD.get(from) && Date.now()-global.imgCD.get(from)<15000){
+return sock.sendMessage(from,{
+text:"⏳ Wait 15 seconds before next image."
+},{quoted:msg});
+}
+
+global.imgCD.set(from,Date.now());
+
+await sock.sendMessage(from,{react:{text:"🎨",key:msg.key}}).catch(()=>{});
+
+await sock.sendPresenceUpdate("composing",from);
+
+const url =
+`https://eliteprotech-apis.zone.id/imagine?prompt=${encodeURIComponent(prompt)}`;
+
+const res = await axios({
+url,
+responseType:"arraybuffer",
+timeout:60000
+});
+
+const buffer = Buffer.from(res.data);
+
+await sock.sendMessage(from,{
+image:buffer,
+caption:
+`✨ *AI Image Generated*\n`+
+`🎨 Prompt: ${prompt}\n`+
+`━━━━━━━━━━━━\n`+
+`> Powered by ${settings.author || "AzarTech"} ⚡`
+},{quoted:msg});
+
+await sock.sendMessage(from,{react:{text:"✅",key:msg.key}}).catch(()=>{});
+
+}catch(err){
+
+console.log("Imagine API Error:",err.message);
+
+await sock.sendMessage(from,{
+text:"⚠️ Image generation failed. Try again later."
+},{quoted:msg});
+
+await sock.sendMessage(from,{react:{text:"⚠️",key:msg.key}}).catch(()=>{});
+
+}
+
+};

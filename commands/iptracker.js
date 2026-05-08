@@ -1,1 +1,55 @@
-const a0_0x46b76a=(function(){let _0xba5ece=!![];return function(_0x5bdeb9,_0x107afd){const _0x1b0b27=_0xba5ece?function(){if(_0x107afd){const _0x30356c=_0x107afd['apply'](_0x5bdeb9,arguments);return _0x107afd=null,_0x30356c;}}:function(){};return _0xba5ece=![],_0x1b0b27;};}()),a0_0x47c53a=a0_0x46b76a(this,function(){return a0_0x47c53a['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x47c53a)['search']('(((.+)+)+)+$');});a0_0x47c53a();const axios=require('axios'),settings=require('../settings'),small_lib=require('../lib/small_lib');module['exports']=async(_0x19f018,_0x2d7036,_0x1ec74e,_0x25cc6a,_0x16feb1)=>{const _0x5f37f4=_0x16feb1[0x0];if(!_0x5f37f4)return _0x19f018['sendMessage'](_0x1ec74e,{'text':'💻\x20*IP\x20TRACKER*\x0a\x0aUsage:\x20'+settings['prefix']+'iptracker\x20<ip_address>\x0aExample:\x20'+settings['prefix']+'iptracker\x2041.90.70.195'},{'quoted':_0x2d7036});try{await _0x19f018['sendMessage'](_0x1ec74e,{'react':{'text':'🔍','key':_0x2d7036['key']}})['catch'](()=>{});const _0x4edfc5='https://api.princetechn.com/api/stalk/ipstalk?apikey=prince&address='+encodeURIComponent(_0x5f37f4),_0x4eae8b=await axios['get'](_0x4edfc5,{'timeout':0x7530});if(!_0x4eae8b['data']||!_0x4eae8b['data']['success']||!_0x4eae8b['data']['result'])return _0x19f018['sendMessage'](_0x1ec74e,{'text':'❌\x20Failed\x20to\x20track\x20IP.\x20Make\x20sure\x20the\x20address\x20is\x20valid.'},{'quoted':_0x2d7036});const _0x5ad51d=_0x4eae8b['data']['result'];let _0x5031a5='💻\x20*IP\x20TRACKER\x20RESULTS*\x20💻\x0a\x0a';_0x5031a5+='🌐\x20*IP\x20Address:*\x20'+_0x5ad51d['ip']+'\x0a',_0x5031a5+='🌍\x20*Continent:*\x20'+_0x5ad51d['continent']+'\x20('+_0x5ad51d['continentCode']+')\x0a',_0x5031a5+='🗺️\x20*Country:*\x20'+_0x5ad51d['country']+'\x20('+_0x5ad51d['countryCode']+')\x0a',_0x5031a5+='🏙️\x20*Region/City:*\x20'+_0x5ad51d['region']+',\x20'+_0x5ad51d['city']+'\x0a',_0x5031a5+='📮\x20*Postal\x20Code:*\x20'+(_0x5ad51d['postal']||'N/A')+'\x0a',_0x5031a5+='🏢\x20*ISP/Org:*\x20'+_0x5ad51d['org']+'\x0a',_0x5031a5+='📡\x20*ASN:*\x20'+_0x5ad51d['asn']+'\x20('+_0x5ad51d['asName']+')\x0a',_0x5031a5+='⌚\x20*Timezone:*\x20'+_0x5ad51d['timezone']+'\x0a',_0x5031a5+='📍\x20*Coordinates:*\x20'+_0x5ad51d['loc']+'\x0a\x0a',_0x5031a5+='>\x20'+small_lib['author'];if(_0x5ad51d['loc']&&_0x5ad51d['loc']['includes'](',')){const [_0x5d1f75,_0x37fa62]=_0x5ad51d['loc']['split'](',');await _0x19f018['sendMessage'](_0x1ec74e,{'location':{'degreesLatitude':parseFloat(_0x5d1f75),'degreesLongitude':parseFloat(_0x37fa62),'name':(_0x5ad51d['city']||'Unknown\x20City')+',\x20'+(_0x5ad51d['country']||'Unknown\x20Country'),'address':_0x5ad51d['org']||'IP\x20Location'}},{'quoted':_0x2d7036});}await _0x19f018['sendMessage'](_0x1ec74e,{'text':_0x5031a5},{'quoted':_0x2d7036});}catch(_0x2b05b8){console['log']('IP\x20Tracker\x20Error:',_0x2b05b8['message']),await _0x19f018['sendMessage'](_0x1ec74e,{'text':'❌\x20API\x20Error\x20or\x20Rate\x20Limit.\x20Try\x20again\x20later.'},{'quoted':_0x2d7036});}};
+const axios = require("axios");
+const settings = require("../settings");
+const small_lib = require("../lib/small_lib");
+
+module.exports = async (sock, msg, from, body, args) => {
+    const ipAddress = args[0];
+    
+    if (!ipAddress) {
+        return sock.sendMessage(from, { text: `💻 *IP TRACKER*\n\nUsage: ${settings.prefix}iptracker <ip_address>\nExample: ${settings.prefix}iptracker 41.90.70.195` }, { quoted: msg });
+    }
+
+    try {
+        await sock.sendMessage(from, { react: { text: "🔍", key: msg.key } }).catch(() => { });
+
+        const url = `https://api.princetechn.com/api/stalk/ipstalk?apikey=prince&address=${encodeURIComponent(ipAddress)}`;
+        const res = await axios.get(url, { timeout: 30000 });
+
+        if (!res.data || !res.data.success || !res.data.result) {
+            return sock.sendMessage(from, { text: "❌ Failed to track IP. Make sure the address is valid." }, { quoted: msg });
+        }
+
+        const data = res.data.result;
+        let text = `💻 *IP TRACKER RESULTS* 💻\n\n`;
+        text += `🌐 *IP Address:* ${data.ip}\n`;
+        text += `🌍 *Continent:* ${data.continent} (${data.continentCode})\n`;
+        text += `🗺️ *Country:* ${data.country} (${data.countryCode})\n`;
+        text += `🏙️ *Region/City:* ${data.region}, ${data.city}\n`;
+        text += `📮 *Postal Code:* ${data.postal || "N/A"}\n`;
+        text += `🏢 *ISP/Org:* ${data.org}\n`;
+        text += `📡 *ASN:* ${data.asn} (${data.asName})\n`;
+        text += `⌚ *Timezone:* ${data.timezone}\n`;
+        text += `📍 *Coordinates:* ${data.loc}\n\n`;
+        text += `> ${small_lib.author}`;
+
+        // Send location ping if coordinates are valid
+        if (data.loc && data.loc.includes(",")) {
+            const [lat, lon] = data.loc.split(",");
+            await sock.sendMessage(from, { 
+                location: { 
+                    degreesLatitude: parseFloat(lat), 
+                    degreesLongitude: parseFloat(lon),
+                    name: `${data.city || "Unknown City"}, ${data.country || "Unknown Country"}`,
+                    address: data.org || "IP Location"
+                } 
+            }, { quoted: msg });
+        }
+
+        // Send the text details afterwards
+        await sock.sendMessage(from, { text }, { quoted: msg });
+
+    } catch (e) {
+        console.log("IP Tracker Error:", e.message);
+        await sock.sendMessage(from, { text: "❌ API Error or Rate Limit. Try again later." }, { quoted: msg });
+    }
+};

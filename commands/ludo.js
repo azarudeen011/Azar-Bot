@@ -1,1 +1,787 @@
-const {Jimp}=require('jimp'),path=require('path'),fs=require('fs'),PROJECT_ROOT=process['cwd'](),SAVE_FILE=path['join'](PROJECT_ROOT,'data/ludo_games.json');function loadGames(){const _0x4044f5=(function(){let _0x299f4f=!![];return function(_0x55a33c,_0x2bb489){const _0x41743c=_0x299f4f?function(){if(_0x2bb489){const _0xa88821=_0x2bb489['apply'](_0x55a33c,arguments);return _0x2bb489=null,_0xa88821;}}:function(){};return _0x299f4f=![],_0x41743c;};}()),_0x3a3112=_0x4044f5(this,function(){return _0x3a3112['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](_0x3a3112)['search']('(((.+)+)+)+$');});_0x3a3112();try{if(fs['existsSync'](SAVE_FILE)){const _0x5dcdf4=fs['readFileSync'](SAVE_FILE,'utf8');return JSON['parse'](_0x5dcdf4);}}catch(_0x116695){console['log']('⚠️\x20Ludo:\x20Could\x20not\x20load\x20saved\x20games:',_0x116695['message']);}return{};}function saveGames(){try{const _0x5e9c98=path['dirname'](SAVE_FILE);if(!fs['existsSync'](_0x5e9c98))fs['mkdirSync'](_0x5e9c98,{'recursive':!![]});const _0x4897d4=Date['now']();for(const _0x5db8c7 in games){_0x4897d4-(games[_0x5db8c7]['lastUpdate']||_0x4897d4)>0x6ddd00&&delete games[_0x5db8c7];}fs['writeFileSync'](SAVE_FILE,JSON['stringify'](games,null,0x2));}catch(_0x4610f4){console['log']('⚠️\x20Ludo:\x20Could\x20not\x20save\x20games:',_0x4610f4['message']);}}!global['__LUDO_GAMES__']&&(global['__LUDO_GAMES__']=loadGames());const games=global['__LUDO_GAMES__'],BOARD_IMG_PATH=path['join'](PROJECT_ROOT,'assets/ludo.png'),ARROW_BOARD_IMG_PATH=path['join'](PROJECT_ROOT,'assets/ludoArrow.png'),BOARD_SIZE=0x258,CS=0x28,OUTER_END=0x32,HOME_START=0x33,HOME_END=0x37,FINISH_POS=0x38,MASTER_PATH=[[0x0,0x6],[0x1,0x6],[0x2,0x6],[0x3,0x6],[0x4,0x6],[0x5,0x6],[0x6,0x5],[0x6,0x4],[0x6,0x3],[0x6,0x2],[0x6,0x1],[0x6,0x0],[0x7,0x0],[0x8,0x0],[0x8,0x1],[0x8,0x2],[0x8,0x3],[0x8,0x4],[0x8,0x5],[0x9,0x6],[0xa,0x6],[0xb,0x6],[0xc,0x6],[0xd,0x6],[0xe,0x6],[0xe,0x7],[0xe,0x8],[0xd,0x8],[0xc,0x8],[0xb,0x8],[0xa,0x8],[0x9,0x8],[0x8,0x9],[0x8,0xa],[0x8,0xb],[0x8,0xc],[0x8,0xd],[0x8,0xe],[0x7,0xe],[0x6,0xe],[0x6,0xd],[0x6,0xc],[0x6,0xb],[0x6,0xa],[0x6,0x9],[0x5,0x8],[0x4,0x8],[0x3,0x8],[0x2,0x8],[0x1,0x8],[0x0,0x8],[0x0,0x7]],CLASSIC_COLORS={'green':{'r':0x2e,'g':0xcc,'b':0x47,'hex':0x2ecc47ff,'offset':0x1,'home':[[0x1,0x7],[0x2,0x7],[0x3,0x7],[0x4,0x7],[0x5,0x7]],'base':[[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],'emoji':'🟢'},'yellow':{'r':0xf1,'g':0xc4,'b':0xf,'hex':0xf1c40fff,'offset':0xe,'home':[[0x7,0x1],[0x7,0x2],[0x7,0x3],[0x7,0x4],[0x7,0x5]],'base':[[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]],'emoji':'🟡'},'blue':{'r':0x34,'g':0x98,'b':0xdb,'hex':0x3498dbff,'offset':0x1b,'home':[[0xd,0x7],[0xc,0x7],[0xb,0x7],[0xa,0x7],[0x9,0x7]],'base':[[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]],'emoji':'🔵'},'red':{'r':0xe7,'g':0x4c,'b':0x3c,'hex':0xe74c3cff,'offset':0x28,'home':[[0x7,0xd],[0x7,0xc],[0x7,0xb],[0x7,0xa],[0x7,0x9]],'base':[[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],'emoji':'🔴'}},ARROW_COLORS={'blue':{'r':0x34,'g':0x98,'b':0xdb,'hex':0x3498dbff,'offset':0x1,'home':[[0x1,0x7],[0x2,0x7],[0x3,0x7],[0x4,0x7],[0x5,0x7]],'base':[[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],'emoji':'🔵'},'red':{'r':0xe7,'g':0x4c,'b':0x3c,'hex':0xe74c3cff,'offset':0xe,'home':[[0x7,0x1],[0x7,0x2],[0x7,0x3],[0x7,0x4],[0x7,0x5]],'base':[[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]],'emoji':'🔴'},'yellow':{'r':0xf1,'g':0xc4,'b':0xf,'hex':0xf1c40fff,'offset':0x1b,'home':[[0xd,0x7],[0xc,0x7],[0xb,0x7],[0xa,0x7],[0x9,0x7]],'base':[[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]],'emoji':'🟡'},'green':{'r':0x2e,'g':0xcc,'b':0x47,'hex':0x2ecc47ff,'offset':0x28,'home':[[0x7,0xd],[0x7,0xc],[0x7,0xb],[0x7,0xa],[0x7,0x9]],'base':[[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],'emoji':'🟢'}};function getColors(_0x47213b){return _0x47213b==='arrow'?ARROW_COLORS:CLASSIC_COLORS;}const SAFE_ZONES=[0x1,0x9,0xe,0x16,0x1b,0x23,0x28,0x30],STRAIGHT_ARROWS=[[0x5,0xa],[0x12,0x17],[0x1f,0x24],[0x2c,0x31]],BEND_ARROW_TAIL=0x2f,BEND_ARROW_HEAD=0x35;let boardImageCache=null,arrowBoardImageCache=null;async function loadBoardImage(_0x178489){if(_0x178489==='arrow'){if(arrowBoardImageCache)return arrowBoardImageCache['clone']();try{return arrowBoardImageCache=await Jimp['read'](ARROW_BOARD_IMG_PATH),arrowBoardImageCache['resize']({'w':BOARD_SIZE,'h':BOARD_SIZE}),arrowBoardImageCache['clone']();}catch(_0x230ca3){console['log']('⚠️\x20Ludo:\x20Arrow\x20board\x20load\x20failed,\x20falling\x20back:',_0x230ca3['message']);}}if(boardImageCache)return boardImageCache['clone']();try{return boardImageCache=await Jimp['read'](BOARD_IMG_PATH),boardImageCache['resize']({'w':BOARD_SIZE,'h':BOARD_SIZE}),boardImageCache['clone']();}catch(_0x2617e4){return console['log']('⚠️\x20Ludo:\x20Board\x20image\x20load\x20failed:',_0x2617e4['message']),new Jimp({'width':BOARD_SIZE,'height':BOARD_SIZE,'color':0xffffffff});}}function drawFilledCircle(_0x3ac26d,_0x2b7542,_0xbe8e2a,_0x58899b,_0x453902,_0x635bac){_0x2b7542=Math['floor'](_0x2b7542),_0xbe8e2a=Math['floor'](_0xbe8e2a);const _0x229909=_0x58899b*_0x58899b,_0x26ea58=_0x58899b-0x1,_0x452340=_0x26ea58*_0x26ea58,_0x2ff5e6=_0x58899b-0x3,_0x50ea27=_0x2ff5e6*_0x2ff5e6;for(let _0x4666e1=-_0x58899b;_0x4666e1<=_0x58899b;_0x4666e1++){for(let _0x203e3b=-_0x58899b;_0x203e3b<=_0x58899b;_0x203e3b++){const _0x4dfa2d=_0x4666e1*_0x4666e1+_0x203e3b*_0x203e3b;if(_0x4dfa2d>_0x229909)continue;const _0x308343=_0x2b7542+_0x4666e1,_0x336196=_0xbe8e2a+_0x203e3b;if(_0x308343<0x0||_0x308343>=BOARD_SIZE||_0x336196<0x0||_0x336196>=BOARD_SIZE)continue;if(_0x4dfa2d>=_0x452340)_0x3ac26d['setPixelColor'](_0x635bac,_0x308343,_0x336196);else{if(_0x4dfa2d>=_0x50ea27&&_0x4dfa2d<_0x452340)_0x3ac26d['setPixelColor'](0xffffff99,_0x308343,_0x336196);else{const _0x29ec39=0x1-_0x4dfa2d/_0x229909*0.3,_0x57cdd6=_0x4666e1+_0x203e3b<0x0?0x1e:-0x14,_0x1f0992=Math['min'](0xff,Math['max'](0x0,Math['floor'](_0x453902['r']*_0x29ec39+_0x57cdd6))),_0x3b9296=Math['min'](0xff,Math['max'](0x0,Math['floor'](_0x453902['g']*_0x29ec39+_0x57cdd6))),_0x1599e5=Math['min'](0xff,Math['max'](0x0,Math['floor'](_0x453902['b']*_0x29ec39+_0x57cdd6))),_0x25669c=(_0x1f0992&0xff)<<0x18|(_0x3b9296&0xff)<<0x10|(_0x1599e5&0xff)<<0x8|0xff;_0x3ac26d['setPixelColor'](_0x25669c>>>0x0,_0x308343,_0x336196);}}}}}const DIGIT_PATTERNS={0x1:[[0x0,-0x3],[0x0,-0x2],[0x0,-0x1],[0x0,0x0],[0x0,0x1],[0x0,0x2],[0x0,0x3],[-0x1,-0x2]],0x2:[[-0x2,-0x3],[-0x1,-0x3],[0x0,-0x3],[0x1,-0x3],[0x2,-0x3],[0x2,-0x2],[0x2,-0x1],[0x1,0x0],[0x0,0x0],[-0x1,0x0],[-0x2,0x0],[-0x2,0x1],[-0x2,0x2],[-0x2,0x3],[-0x1,0x3],[0x0,0x3],[0x1,0x3],[0x2,0x3]],0x3:[[-0x2,-0x3],[-0x1,-0x3],[0x0,-0x3],[0x1,-0x3],[0x2,-0x3],[0x2,-0x2],[0x2,-0x1],[0x1,0x0],[0x0,0x0],[0x2,0x1],[0x2,0x2],[0x2,0x3],[0x1,0x3],[0x0,0x3],[-0x1,0x3],[-0x2,0x3]],0x4:[[-0x2,-0x3],[-0x2,-0x2],[-0x2,-0x1],[-0x2,0x0],[-0x1,0x0],[0x0,0x0],[0x1,0x0],[0x2,0x0],[0x2,-0x3],[0x2,-0x2],[0x2,-0x1],[0x2,0x1],[0x2,0x2],[0x2,0x3]]};function drawDigit(_0x3f57cb,_0x32c4f7,_0x2c3a97,_0x2092a4){const _0x29ee3a=DIGIT_PATTERNS[_0x2092a4];if(!_0x29ee3a)return;for(const [_0x5d009d,_0x357558]of _0x29ee3a){const _0x1c637b=_0x32c4f7+_0x5d009d,_0x3e1f7c=_0x2c3a97+_0x357558;_0x1c637b>=0x0&&_0x1c637b<BOARD_SIZE&&_0x3e1f7c>=0x0&&_0x3e1f7c<BOARD_SIZE&&_0x3f57cb['setPixelColor'](0xffffffff,_0x1c637b,_0x3e1f7c);const _0x35fe0c=_0x1c637b+0x1,_0x428124=_0x3e1f7c+0x1;if(_0x35fe0c>=0x0&&_0x35fe0c<BOARD_SIZE&&_0x428124>=0x0&&_0x428124<BOARD_SIZE){const _0x3e9ad3=_0x3f57cb['getPixelColor'](_0x35fe0c,_0x428124);_0x3e9ad3!==0xffffffff&&_0x3f57cb['setPixelColor'](0x88,_0x35fe0c,_0x428124);}}}async function renderBoard(_0x426f21){const _0x4872d3=await loadBoardImage(_0x426f21['mode']),_0x2e9a53=getColors(_0x426f21['mode']),_0x12859e={};for(const _0x528260 of _0x426f21['players']){_0x528260['coins']['forEach']((_0x13517a,_0xc0b761)=>{let _0x310aa7,_0x56ab0d;if(_0x13517a===-0x1)[_0x310aa7,_0x56ab0d]=_0x2e9a53[_0x528260['color']]['base'][_0xc0b761];else{if(_0x13517a>=0x0&&_0x13517a<=OUTER_END){const _0x1a0b6a=(_0x2e9a53[_0x528260['color']]['offset']+_0x13517a)%0x34,_0x5c3a0a=MASTER_PATH[_0x1a0b6a];_0x310aa7=_0x5c3a0a[0x0]+0.5,_0x56ab0d=_0x5c3a0a[0x1]+0.5;}else{if(_0x13517a>=HOME_START&&_0x13517a<=HOME_END){const _0x4ad15f=_0x2e9a53[_0x528260['color']]['home'][_0x13517a-HOME_START];_0x310aa7=_0x4ad15f[0x0]+0.5,_0x56ab0d=_0x4ad15f[0x1]+0.5;}else _0x310aa7=7.5,_0x56ab0d=7.5;}}const _0x4da0e3=_0x310aa7['toFixed'](0x1)+','+_0x56ab0d['toFixed'](0x1);if(!_0x12859e[_0x4da0e3])_0x12859e[_0x4da0e3]=[];_0x12859e[_0x4da0e3]['push']({'color':_0x528260['color'],'num':_0xc0b761+0x1});});}for(const _0x1b7c25 in _0x12859e){const _0xce0a5c=_0x12859e[_0x1b7c25],[_0x5e4aca,_0x19bcba]=_0x1b7c25['split'](',')['map'](Number);_0xce0a5c['forEach']((_0xb487fc,_0x10a981)=>{let _0x3f9f5f=0x0,_0x36e8e2=0x0;if(_0xce0a5c['length']===0x2)_0x3f9f5f=_0x10a981===0x0?-0x7:0x7,_0x36e8e2=_0x10a981===0x0?-0x7:0x7;else{if(_0xce0a5c['length']===0x3)_0x3f9f5f=_0x10a981===0x0?-0x8:_0x10a981===0x1?0x8:0x0,_0x36e8e2=_0x10a981===0x0?-0x5:_0x10a981===0x1?-0x5:0x8;else _0xce0a5c['length']>=0x4&&(_0x3f9f5f=_0x10a981%0x2===0x0?-0x8:0x8,_0x36e8e2=_0x10a981<0x2?-0x8:0x8);}const _0x465000=Math['floor'](_0x5e4aca*CS+_0x3f9f5f),_0x1a1d84=Math['floor'](_0x19bcba*CS+_0x36e8e2),_0x27e896=_0xce0a5c['length']>=0x3?0x9:0xc,_0x21b751=_0x2e9a53[_0xb487fc['color']];drawFilledCircle(_0x4872d3,_0x465000,_0x1a1d84,_0x27e896,_0x21b751,0xff),drawDigit(_0x4872d3,_0x465000,_0x1a1d84,_0xb487fc['num']);});}const _0x4e71b3=await _0x4872d3['getBuffer']('image/png');return _0x4e71b3;}const RANK_EMOJI=['🥇','🥈','🥉','4️⃣'],RANK_LABEL=['1st','2nd','3rd','4th'];function isPlayerFinished(_0x47d2b0){return _0x47d2b0['coins']['every'](_0x5847db=>_0x5847db===FINISH_POS);}function isPlayerLeft(_0x2f84de){return _0x2f84de['left']===!![];}function isPlayerOut(_0x4bfefe){return isPlayerFinished(_0x4bfefe)||isPlayerLeft(_0x4bfefe);}function advanceTurn(_0x2c734c){_0x2c734c['hasRolled']=![],_0x2c734c['diceValue']=0x0;let _0xb7cfcd=0x0;do{_0x2c734c['turnIndex']=(_0x2c734c['turnIndex']+0x1)%_0x2c734c['players']['length'],_0xb7cfcd++;}while(isPlayerOut(_0x2c734c['players'][_0x2c734c['turnIndex']])&&_0xb7cfcd<_0x2c734c['players']['length']);saveGames();}function isSafe(_0x38aec8){return SAFE_ZONES['includes'](_0x38aec8);}function buildLeaderboard(_0x991ab3){const _0x29f19f=getColors(_0x991ab3['mode']),_0x519248=_0x991ab3['finishedOrder']||[],_0x5ef7c3=_0x519248['filter'](_0x59dc36=>!_0x59dc36['leftGame']),_0x3f96bb=_0x519248['filter'](_0x33cecd=>_0x33cecd['leftGame']),_0x1112c4=[..._0x5ef7c3,..._0x3f96bb];let _0x4929c2='\x0a\x0a🏆\x20*FINAL\x20LEADERBOARD*\x20🏆\x0a━━━━━━━━━━━━━━\x0a';for(let _0x53574a=0x0;_0x53574a<_0x1112c4['length'];_0x53574a++){const _0x14e04d=_0x1112c4[_0x53574a],_0x21698c=_0x14e04d['leftGame']?'🚪\x20Left':RANK_EMOJI[_0x53574a]+'\x20'+RANK_LABEL[_0x53574a];_0x4929c2+=_0x21698c+'\x20—\x20'+_0x29f19f[_0x14e04d['color']]['emoji']+'\x20@'+_0x14e04d['jid']['split']('@')[0x0]+'\x20('+_0x14e04d['color']['toUpperCase']()+')\x0a';}return _0x4929c2+='━━━━━━━━━━━━━━\x0a🎉\x20Thanks\x20for\x20playing!\x0a\x0a>\x20Azar\x20Tech',_0x4929c2;}async function executeMove(_0x5142a8,_0x2f9a37,_0x1993f9,_0x520351,_0x314cbe){const _0x11ab94=getColors(_0x5142a8['mode']),_0x218693=_0x5142a8['players'][_0x5142a8['turnIndex']],_0x5d85f9=_0x5142a8['diceValue'],_0x3cb9e8=_0x218693['coins'][_0x2f9a37],_0x531332=_0x3cb9e8===-0x1?0x0:_0x3cb9e8+_0x5d85f9;_0x218693['coins'][_0x2f9a37]=_0x531332;let _0x1b57cf=![],_0x41f3a6=[],_0x472244=![],_0x5f0ad1=![];if(!_0x5142a8['finishedOrder'])_0x5142a8['finishedOrder']=[];_0x218693['coins']['every'](_0xa6a1a5=>_0xa6a1a5===FINISH_POS)&&(!_0x5142a8['finishedOrder']['find'](_0x1dc5a7=>_0x1dc5a7['jid']===_0x218693['jid'])&&(_0x5142a8['finishedOrder']['push']({'jid':_0x218693['jid'],'color':_0x218693['color']}),_0x472244=!![]));if(_0x531332>=0x0&&_0x531332<=OUTER_END){const _0x224aad=(_0x11ab94[_0x218693['color']]['offset']+_0x531332)%0x34;if(!isSafe(_0x224aad))for(const _0x5ce5da of _0x5142a8['players']){if(_0x5ce5da['color']===_0x218693['color'])continue;if(isPlayerOut(_0x5ce5da))continue;for(let _0x5e0d88=0x0;_0x5e0d88<0x4;_0x5e0d88++){const _0x1377df=_0x5ce5da['coins'][_0x5e0d88];if(_0x1377df>=0x0&&_0x1377df<=OUTER_END){const _0x4a105d=(_0x11ab94[_0x5ce5da['color']]['offset']+_0x1377df)%0x34;_0x4a105d===_0x224aad&&(_0x5ce5da['coins'][_0x5e0d88]=-0x1,_0x1b57cf=!![],_0x41f3a6['push']({'jid':_0x5ce5da['jid'],'color':_0x5ce5da['color'],'coinNum':_0x5e0d88+0x1}));}}}if(_0x5142a8['mode']==='arrow'&&_0x531332>=0x0&&_0x531332<=OUTER_END){const _0x25d6c2=(_0x11ab94[_0x218693['color']]['offset']+_0x531332)%0x34;for(const [_0x224f21,_0x3f4d09]of STRAIGHT_ARROWS){if(_0x25d6c2===_0x224f21){const _0x2e8d49=(_0x3f4d09-_0x11ab94[_0x218693['color']]['offset']+0x34)%0x34;_0x2e8d49<=OUTER_END&&(_0x218693['coins'][_0x2f9a37]=_0x2e8d49,_0x5f0ad1=!![]);break;}}!_0x5f0ad1&&_0x531332===BEND_ARROW_TAIL&&(_0x218693['coins'][_0x2f9a37]=BEND_ARROW_HEAD,_0x5f0ad1=!![]);}}let _0x5a21a1=_0x531332===FINISH_POS;const _0x36c776=_0x5142a8['players']['filter'](_0x3e96a5=>!isPlayerOut(_0x3e96a5));if(_0x36c776['length']<=0x1){for(const _0x424630 of _0x36c776){!_0x5142a8['finishedOrder']['find'](_0x2fa669=>_0x2fa669['jid']===_0x424630['jid'])&&_0x5142a8['finishedOrder']['push']({'jid':_0x424630['jid'],'color':_0x424630['color']});}const _0x4fbc60=await renderBoard(_0x5142a8),_0x2d3559=buildLeaderboard(_0x5142a8),_0x25569a=_0x5142a8['players']['map'](_0x3d7416=>_0x3d7416['jid']);await deletePreviousBoardMsg(_0x1993f9,_0x520351,_0x5142a8),delete games[_0x520351],saveGames();const _0x33eeae=await _0x1993f9['sendMessage'](_0x520351,{'image':_0x4fbc60,'caption':'🎉\x20*GAME\x20OVER\x20—\x20ALL\x20POSITIONS\x20DECIDED!*'+_0x2d3559,'mentions':_0x25569a},{'quoted':_0x314cbe});return _0x33eeae;}const _0x70145c=await renderBoard(_0x5142a8),_0x270ab8=['','⚀','⚁','⚂','⚃','⚄','⚅'];let _0x4ed42a=_0x270ab8[_0x5d85f9]+'\x20Rolled\x20*'+_0x5d85f9+'*\x20\x20·\x20\x20Moved\x20Coin\x20*'+(_0x2f9a37+0x1)+'*\x0a';_0x5f0ad1&&(_0x4ed42a+='\x0a➡️🏹\x20*ARROW\x20SHORTCUT!*\x20Coin\x20'+(_0x2f9a37+0x1)+'\x20teleported\x20forward!',_0x4ed42a+='\x0a🔄\x20Extra\x20turn\x20for\x20arrow!');if(_0x472244){const _0x5c4aac=_0x5142a8['finishedOrder']['filter'](_0x373c33=>!_0x373c33['leftGame'])['length'];_0x4ed42a+='\x0a🎉\x20'+RANK_EMOJI[_0x5c4aac-0x1]+'\x20@'+_0x218693['jid']['split']('@')[0x0]+'\x20finished\x20in\x20*'+RANK_LABEL[_0x5c4aac-0x1]+'\x20PLACE!*',_0x4ed42a+='\x0a🏆\x20All\x204\x20coins\x20reached\x20home!',_0x36c776['length']>0x1&&(_0x4ed42a+='\x0a\x0a🎮\x20Game\x20continues\x20for\x20remaining\x20players!');}if(_0x1b57cf){for(const _0x3b7970 of _0x41f3a6){_0x4ed42a+='\x0a⚔️\x20*CAPTURED!*\x20@'+_0x3b7970['jid']['split']('@')[0x0]+'\x27s\x20'+_0x11ab94[_0x3b7970['color']]['emoji']+'\x20Coin\x20'+_0x3b7970['coinNum']+'\x20→\x20sent\x20back\x20to\x20base!';}_0x4ed42a+='\x0a🔄\x20Extra\x20turn\x20for\x20capturing!';}_0x5a21a1&&!_0x472244&&(_0x4ed42a+='\x0a🏠\x20Coin\x20'+(_0x2f9a37+0x1)+'\x20reached\x20HOME!\x20Extra\x20turn!');if((_0x5d85f9===0x6||_0x1b57cf||_0x5a21a1||_0x5f0ad1)&&!_0x472244){_0x5142a8['hasRolled']=![],_0x5142a8['diceValue']=0x0;if(!_0x1b57cf&&!_0x5a21a1&&!_0x5f0ad1)_0x4ed42a+='\x0a🔄\x20Rolled\x20a\x206!\x20Extra\x20turn!';_0x4ed42a+='\x0aType\x20`.ludo\x20roll`\x20to\x20roll\x20again.';}else{advanceTurn(_0x5142a8);const _0x4e5c8c=_0x5142a8['players'][_0x5142a8['turnIndex']];_0x4ed42a+='\x0a\x0a➡️\x20@'+_0x4e5c8c['jid']['split']('@')[0x0]+'\x27s\x20turn\x20('+_0x11ab94[_0x4e5c8c['color']]['emoji']+'\x20'+_0x4e5c8c['color']['toUpperCase']()+')',_0x4ed42a+='\x0aType\x20`.ludo\x20roll`';}saveGames();const _0x1e161d=_0x5142a8['players']['map'](_0x2fa6e3=>_0x2fa6e3['jid']);await deletePreviousBoardMsg(_0x1993f9,_0x520351,_0x5142a8);const _0x1f5897=await _0x1993f9['sendMessage'](_0x520351,{'image':_0x70145c,'caption':_0x4ed42a,'mentions':_0x1e161d},{'quoted':_0x314cbe});return _0x5142a8['lastBoardMsgKey']=_0x1f5897?.['key']||null,saveGames(),_0x1f5897;}async function deletePreviousBoardMsg(_0x2875b1,_0x7c5e7,_0x51e62a){try{_0x51e62a['lastBoardMsgKey']&&await _0x2875b1['sendMessage'](_0x7c5e7,{'delete':_0x51e62a['lastBoardMsgKey']});}catch{}}function getStatusText(_0x5d11bf){const _0x19f2f7=getColors(_0x5d11bf['mode']);let _0x401f55='';for(const _0x6a0fc2 of _0x5d11bf['players']){const _0x52cf81=_0x6a0fc2['coins']['filter'](_0x3d0c68=>_0x3d0c68===FINISH_POS)['length'],_0x14d3ae=_0x6a0fc2['coins']['filter'](_0x50a2ca=>_0x50a2ca>=0x0&&_0x50a2ca<=HOME_END)['length'],_0x9e693f=_0x6a0fc2['coins']['filter'](_0x13ca5b=>_0x13ca5b===-0x1)['length'];_0x401f55+=_0x19f2f7[_0x6a0fc2['color']]['emoji']+'\x20@'+_0x6a0fc2['jid']['split']('@')[0x0]+'\x20—\x20🏠'+_0x52cf81+'\x20✈️'+_0x14d3ae+'\x20🏰'+_0x9e693f+'\x0a';}return _0x401f55;}module['exports']=async(_0x434f54,_0x133ac5,_0x6d08ed,_0xaf808e,_0x3837a1)=>{const _0x8b2443=_0x3837a1[0x0]?_0x3837a1[0x0]['toLowerCase']():'',_0x1e413f=_0x6d08ed;if(!_0x8b2443)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🎲\x20*AZAHRA\x20LUDO*\x20🎲\x0a━━━━━━━━━━━━━━\x0a\x0a'+'`.ludo\x20classic`\x20—\x20Create\x20classic\x20Ludo\x0a'+'`.ludo\x20arrow`\x20—\x20Create\x20Arrow\x20mode\x20(shortcuts!)\x0a'+'`.ludo\x20join\x20<color>`\x20—\x20Join\x20a\x20color\x0a'+'\x20\x20Colors:\x20🔴\x20red\x20\x20🟢\x20green\x20\x20🟡\x20yellow\x20\x20🔵\x20blue\x0a'+'`.ludo\x20start`\x20—\x20Begin\x20the\x20match\x20(2-4\x20players)\x0a'+'`.ludo\x20roll`\x20—\x20Roll\x20the\x20dice\x20🎲\x0a'+'`.ludo\x20move\x20<1-4>`\x20—\x20Move\x20a\x20specific\x20coin\x0a'+'`.ludo\x20status`\x20—\x20View\x20current\x20game\x20status\x0a'+'`.ludo\x20leave`\x20—\x20Leave\x20mid-game\x0a'+'`.ludo\x20stop`\x20—\x20End\x20the\x20game\x20(creator\x20only)\x0a\x0a'+'💡\x20*Rules:*\x0a'+'•\x20Roll\x20a\x206\x20to\x20bring\x20a\x20coin\x20out\x20of\x20base\x0a'+'•\x20Rolling\x206,\x20capturing,\x20or\x20reaching\x20home\x20=\x20extra\x20turn\x0a'+'•\x20⭐\x20Star\x20&\x20color\x20start\x20squares\x20are\x20safe!\x0a'+'•\x20Get\x20all\x204\x20coins\x20to\x20the\x20center\x20to\x20win!\x0a\x0a'+'🏹\x20*Arrow\x20Mode:*\x20Land\x20on\x20arrow\x20tail\x20→\x20teleport\x20to\x20head\x20+\x20extra\x20roll!'},{'quoted':_0x133ac5});games[_0x1e413f]&&(games[_0x1e413f]['lastUpdate']=Date['now']());if(_0x8b2443==='create'||_0x8b2443==='classic'||_0x8b2443==='arrow'){if(games[_0x1e413f])return _0x434f54['sendMessage'](_0x6d08ed,{'text':'⚠️\x20A\x20game\x20is\x20already\x20active\x20here!\x0aUse\x20`.ludo\x20stop`\x20to\x20end\x20it\x20first.'},{'quoted':_0x133ac5});const _0x3d4dc7=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'],_0x6cf191=_0x8b2443==='arrow'?'arrow':'classic';games[_0x1e413f]={'status':'waiting','creatorJid':_0x3d4dc7,'lastUpdate':Date['now'](),'players':[],'turnIndex':0x0,'hasRolled':![],'diceValue':0x0,'finishedOrder':[],'mode':_0x6cf191,'lastBoardMsgKey':null},saveGames();const _0x5e12a5=_0x6cf191==='arrow'?'🏹\x20ARROW\x20MODE':'🎲\x20CLASSIC\x20MODE';return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🎲\x20*Ludo\x20Game\x20Created!*\x20('+_0x5e12a5+')\x0a━━━━━━━━━━━━━━\x0a\x0a'+'Type\x20`.ludo\x20join\x20<color>`\x20to\x20join!\x0a\x0a'+'🔴\x20`.ludo\x20join\x20red`\x0a'+'🟢\x20`.ludo\x20join\x20green`\x0a'+'🟡\x20`.ludo\x20join\x20yellow`\x0a'+'🔵\x20`.ludo\x20join\x20blue`\x0a\x0a'+(_0x6cf191==='arrow'?'🏹\x20Arrow\x20shortcuts\x20are\x20active!\x20Land\x20on\x20arrows\x20for\x20teleport\x20+\x20extra\x20roll!\x0a\x0a':'')+'Need\x202-4\x20players.\x20Type\x20`.ludo\x20start`\x20when\x20ready!'},{'quoted':_0x133ac5});}const _0x9b71ea=games[_0x1e413f];if(!_0x9b71ea)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20No\x20active\x20Ludo\x20game!\x0aType\x20`.ludo\x20create`\x20to\x20start\x20one.'},{'quoted':_0x133ac5});if(_0x8b2443==='stop'){const _0x3fdb1d=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'];if(_0x9b71ea['creatorJid']&&_0x9b71ea['creatorJid']!==_0x3fdb1d)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Only\x20the\x20game\x20creator\x20can\x20stop\x20the\x20game!'},{'quoted':_0x133ac5});return delete games[_0x1e413f],saveGames(),_0x434f54['sendMessage'](_0x6d08ed,{'text':'🛑\x20Ludo\x20game\x20stopped\x20and\x20cleared.'},{'quoted':_0x133ac5});}if(_0x8b2443==='leave'){const _0xb6f7fb=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'],_0x47c403=_0x9b71ea['players']['findIndex'](_0x1dad91=>_0x1dad91['jid']===_0xb6f7fb);if(_0x47c403===-0x1)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20You\x27re\x20not\x20in\x20this\x20game!'},{'quoted':_0x133ac5});const _0x4374b4=_0x9b71ea['players'][_0x47c403];if(isPlayerOut(_0x4374b4))return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20You\x20already\x20finished\x20or\x20left!'},{'quoted':_0x133ac5});_0x4374b4['left']=!![],_0x4374b4['coins']=[-0x1,-0x1,-0x1,-0x1];if(!_0x9b71ea['finishedOrder'])_0x9b71ea['finishedOrder']=[];!_0x9b71ea['finishedOrder']['find'](_0x34c516=>_0x34c516['jid']===_0xb6f7fb)&&_0x9b71ea['finishedOrder']['push']({'jid':_0xb6f7fb,'color':_0x4374b4['color'],'leftGame':!![]});_0x9b71ea['status']==='playing'&&_0x9b71ea['players'][_0x9b71ea['turnIndex']]?.['jid']===_0xb6f7fb&&advanceTurn(_0x9b71ea);const _0x3a73b3=_0x9b71ea['players']['filter'](_0xe4412d=>!isPlayerOut(_0xe4412d));if(_0x9b71ea['status']==='playing'&&_0x3a73b3['length']<=0x1){for(const _0x3dcfa9 of _0x3a73b3){!_0x9b71ea['finishedOrder']['find'](_0x662b64=>_0x662b64['jid']===_0x3dcfa9['jid'])&&_0x9b71ea['finishedOrder']['push']({'jid':_0x3dcfa9['jid'],'color':_0x3dcfa9['color']});}const _0x2d363e=buildLeaderboard(_0x9b71ea),_0x25cac6=_0x9b71ea['players']['map'](_0xe8a7=>_0xe8a7['jid']);return delete games[_0x1e413f],saveGames(),_0x434f54['sendMessage'](_0x6d08ed,{'text':'🚪\x20@'+_0xb6f7fb['split']('@')[0x0]+'\x20('+COLORS[_0x4374b4['color']]['emoji']+')\x20left\x20the\x20game!\x0a\x0a🎉\x20*GAME\x20OVER\x20—\x20ALL\x20POSITIONS\x20DECIDED!*'+_0x2d363e,'mentions':_0x25cac6},{'quoted':_0x133ac5});}saveGames();if(_0x9b71ea['status']==='playing'){const _0x21e105=getColors(_0x9b71ea['mode']),_0x34870f=_0x9b71ea['players'][_0x9b71ea['turnIndex']];return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🚪\x20@'+_0xb6f7fb['split']('@')[0x0]+'\x20('+_0x21e105[_0x4374b4['color']]['emoji']+')\x20left\x20the\x20game!\x0aTheir\x20coins\x20have\x20been\x20removed\x20from\x20the\x20board.\x0a\x0a➡️\x20@'+_0x34870f['jid']['split']('@')[0x0]+'\x27s\x20turn\x20('+_0x21e105[_0x34870f['color']]['emoji']+')\x0aType\x20`.ludo\x20roll`','mentions':_0x9b71ea['players']['map'](_0x55617e=>_0x55617e['jid'])},{'quoted':_0x133ac5});}return _0x9b71ea['players']['splice'](_0x47c403,0x1),saveGames(),_0x434f54['sendMessage'](_0x6d08ed,{'text':'🚪\x20@'+_0xb6f7fb['split']('@')[0x0]+'\x20left\x20the\x20lobby.\x0a👥\x20Players:\x20'+_0x9b71ea['players']['length']+'/4','mentions':_0x9b71ea['players']['map'](_0x46f81a=>_0x46f81a['jid'])},{'quoted':_0x133ac5});}if(_0x8b2443==='status'){const _0x341768=getColors(_0x9b71ea['mode']);if(_0x9b71ea['status']==='waiting'){const _0x3447f5=_0x9b71ea['players']['length']>0x0?_0x9b71ea['players']['map'](_0x1eaaae=>_0x341768[_0x1eaaae['color']]['emoji']+'\x20@'+_0x1eaaae['jid']['split']('@')[0x0])['join']('\x0a'):'No\x20players\x20yet';return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🎲\x20*Lobby*\x20('+_0x9b71ea['players']['length']+'/4)\x0a━━━━━━━━━━━━━━\x0a'+_0x3447f5+'\x0a\x0aWaiting\x20for\x20players...','mentions':_0x9b71ea['players']['map'](_0x2b1ac2=>_0x2b1ac2['jid'])},{'quoted':_0x133ac5});}const _0xd57a02=_0x9b71ea['players'][_0x9b71ea['turnIndex']],_0x504be5=getStatusText(_0x9b71ea);return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🎲\x20*Game\x20Status*\x0a━━━━━━━━━━━━━━\x0a'+_0x504be5+'\x0a➡️\x20Current\x20turn:\x20@'+_0xd57a02['jid']['split']('@')[0x0]+'\x20('+_0x341768[_0xd57a02['color']]['emoji']+')','mentions':_0x9b71ea['players']['map'](_0x3f8659=>_0x3f8659['jid'])},{'quoted':_0x133ac5});}if(_0x8b2443==='join'){const _0x1d85ef=getColors(_0x9b71ea['mode']);if(_0x9b71ea['status']!=='waiting')return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Game\x20already\x20started!\x20Can\x27t\x20join\x20now.'},{'quoted':_0x133ac5});const _0x4ec75f=_0x3837a1[0x1]?.['toLowerCase']();if(!_0x1d85ef[_0x4ec75f])return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Invalid\x20color!\x0aUse:\x20`.ludo\x20join\x20red`,\x20`.ludo\x20join\x20green`,\x20`.ludo\x20join\x20yellow`,\x20or\x20`.ludo\x20join\x20blue`'},{'quoted':_0x133ac5});if(_0x9b71ea['players']['find'](_0x3034e1=>_0x3034e1['color']===_0x4ec75f))return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20'+_0x1d85ef[_0x4ec75f]['emoji']+'\x20'+_0x4ec75f['toUpperCase']()+'\x20is\x20already\x20taken!'},{'quoted':_0x133ac5});const _0x1aab1d=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'];if(_0x9b71ea['players']['find'](_0x28b08d=>_0x28b08d['jid']===_0x1aab1d))return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20You\x20already\x20joined!'},{'quoted':_0x133ac5});if(_0x9b71ea['players']['length']>=0x4)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Game\x20is\x20full\x20(4/4)!'},{'quoted':_0x133ac5});return _0x9b71ea['players']['push']({'jid':_0x1aab1d,'color':_0x4ec75f,'coins':[-0x1,-0x1,-0x1,-0x1]}),saveGames(),_0x434f54['sendMessage'](_0x6d08ed,{'text':_0x1d85ef[_0x4ec75f]['emoji']+'\x20@'+_0x1aab1d['split']('@')[0x0]+'\x20joined\x20as\x20*'+_0x4ec75f['toUpperCase']()+'*!\x0a\x0a👥\x20Players:\x20'+_0x9b71ea['players']['length']+'/4\x0a'+_0x9b71ea['players']['map'](_0x466bc5=>_0x1d85ef[_0x466bc5['color']]['emoji']+'\x20@'+_0x466bc5['jid']['split']('@')[0x0])['join']('\x0a')+'\x0a\x0a'+(_0x9b71ea['players']['length']>=0x2?'✅\x20Ready!\x20Type\x20`.ludo\x20start`\x20to\x20begin!':'⏳\x20Need\x20at\x20least\x201\x20more\x20player.'),'mentions':_0x9b71ea['players']['map'](_0x122bac=>_0x122bac['jid'])},{'quoted':_0x133ac5});}if(_0x8b2443==='start'){const _0x30655e=getColors(_0x9b71ea['mode']);if(_0x9b71ea['status']!=='waiting')return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Game\x20already\x20started!'},{'quoted':_0x133ac5});if(_0x9b71ea['players']['length']<0x2)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Need\x20at\x20least\x202\x20players!\x0aType\x20`.ludo\x20join\x20<color>`\x20to\x20join.'},{'quoted':_0x133ac5});_0x9b71ea['status']='playing',_0x9b71ea['turnIndex']=0x0,saveGames();const _0xc9b95=await renderBoard(_0x9b71ea),_0x3ceb27=_0x9b71ea['players'][_0x9b71ea['turnIndex']],_0x56835c=_0x9b71ea['players']['map'](_0x160a28=>_0x30655e[_0x160a28['color']]['emoji']+'\x20@'+_0x160a28['jid']['split']('@')[0x0])['join']('\x20\x20'),_0x48678a=_0x9b71ea['mode']==='arrow'?'\x20🏹\x20ARROW':'',_0x1a6721=await _0x434f54['sendMessage'](_0x6d08ed,{'image':_0xc9b95,'caption':'🚀\x20*LUDO'+_0x48678a+'\x20GAME\x20STARTED!*\x0a━━━━━━━━━━━━━━\x0a\x0a🎮\x20'+_0x56835c+'\x0a\x0a➡️\x20@'+_0x3ceb27['jid']['split']('@')[0x0]+'\x27s\x20turn\x20('+_0x30655e[_0x3ceb27['color']]['emoji']+'\x20'+_0x3ceb27['color']['toUpperCase']()+')\x0aType\x20`.ludo\x20roll`\x20to\x20roll\x20the\x20dice!\x0a\x0a💡\x20Roll\x20a\x20*6*\x20to\x20bring\x20a\x20coin\x20out\x20of\x20base!','mentions':_0x9b71ea['players']['map'](_0x13e661=>_0x13e661['jid'])},{'quoted':_0x133ac5});return _0x9b71ea['lastBoardMsgKey']=_0x1a6721?.['key']||null,saveGames(),_0x1a6721;}if(_0x8b2443==='roll'){const _0x316f7a=getColors(_0x9b71ea['mode']);if(_0x9b71ea['status']!=='playing')return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Game\x20hasn\x27t\x20started\x20yet!'},{'quoted':_0x133ac5});const _0x27d9a1=_0x9b71ea['players'][_0x9b71ea['turnIndex']],_0x404dc1=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'];if(_0x27d9a1['jid']!==_0x404dc1)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Not\x20your\x20turn!\x0aIt\x27s\x20@'+_0x27d9a1['jid']['split']('@')[0x0]+'\x27s\x20turn\x20('+_0x316f7a[_0x27d9a1['color']]['emoji']+').','mentions':[_0x27d9a1['jid']]},{'quoted':_0x133ac5});if(_0x9b71ea['hasRolled'])return _0x434f54['sendMessage'](_0x6d08ed,{'text':'🎲\x20You\x20already\x20rolled\x20*'+_0x9b71ea['diceValue']+'*!\x0aType\x20`.ludo\x20move\x20<1-4>`\x20to\x20move\x20a\x20coin.'},{'quoted':_0x133ac5});const _0x1f5841=Math['floor'](Math['random']()*0x6)+0x1;_0x9b71ea['diceValue']=_0x1f5841,_0x9b71ea['hasRolled']=!![],saveGames();const _0x42aa66=[];for(let _0x3bfd59=0x0;_0x3bfd59<0x4;_0x3bfd59++){const _0x36c48a=_0x27d9a1['coins'][_0x3bfd59];if(_0x36c48a===-0x1&&_0x1f5841===0x6)_0x42aa66['push'](_0x3bfd59);else{if(_0x36c48a>=0x0&&_0x36c48a+_0x1f5841<=FINISH_POS)_0x42aa66['push'](_0x3bfd59);}}const _0x3fe5a6=['','⚀','⚁','⚂','⚃','⚄','⚅'];if(_0x42aa66['length']===0x0){advanceTurn(_0x9b71ea);const _0x18e654=_0x9b71ea['players'][_0x9b71ea['turnIndex']];return _0x434f54['sendMessage'](_0x6d08ed,{'text':_0x3fe5a6[_0x1f5841]+'\x20You\x20rolled\x20*'+_0x1f5841+'*\x20—\x20No\x20valid\x20moves!\x0a\x0a➡️\x20@'+_0x18e654['jid']['split']('@')[0x0]+'\x27s\x20turn\x20('+_0x316f7a[_0x18e654['color']]['emoji']+'\x20'+_0x18e654['color']['toUpperCase']()+').','mentions':[_0x18e654['jid']]},{'quoted':_0x133ac5});}if(_0x42aa66['length']===0x1)return executeMove(_0x9b71ea,_0x42aa66[0x0],_0x434f54,_0x6d08ed,_0x133ac5);const _0x50b861=_0x42aa66['map'](_0x10dafc=>{const _0x1d451e=_0x27d9a1['coins'][_0x10dafc],_0x5f25d6=_0x1d451e===-0x1?'🏰\x20Base':_0x1d451e<=OUTER_END?'📍\x20Step\x20'+_0x1d451e:'🏠\x20Home\x20'+(_0x1d451e-OUTER_END);return'\x20\x20*'+(_0x10dafc+0x1)+'*\x20—\x20'+_0x5f25d6;})['join']('\x0a');return _0x434f54['sendMessage'](_0x6d08ed,{'text':_0x3fe5a6[_0x1f5841]+'\x20You\x20rolled\x20*'+_0x1f5841+'*!\x0a\x0a🪙\x20Which\x20coin\x20to\x20move?\x0a'+_0x50b861+'\x0a\x0aType\x20`.ludo\x20move\x20<number>`'},{'quoted':_0x133ac5});}if(_0x8b2443==='move'){if(_0x9b71ea['status']!=='playing')return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Game\x20hasn\x27t\x20started!'},{'quoted':_0x133ac5});const _0x5e17d3=_0x9b71ea['players'][_0x9b71ea['turnIndex']],_0x4cedd3=_0x133ac5['key']['participant']||_0x133ac5['key']['remoteJid'];if(_0x5e17d3['jid']!==_0x4cedd3)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Not\x20your\x20turn!'},{'quoted':_0x133ac5});if(!_0x9b71ea['hasRolled'])return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Roll\x20first!\x20Type\x20`.ludo\x20roll`'},{'quoted':_0x133ac5});const _0x585356=parseInt(_0x3837a1[0x1]);if(isNaN(_0x585356)||_0x585356<0x1||_0x585356>0x4)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Choose\x20coin\x201-4!\x0aExample:\x20`.ludo\x20move\x202`'},{'quoted':_0x133ac5});const _0x67e6c6=_0x585356-0x1,_0x3a48ca=_0x5e17d3['coins'][_0x67e6c6],_0x385729=_0x9b71ea['diceValue'];let _0x28f3bf=![];if(_0x3a48ca===-0x1&&_0x385729===0x6)_0x28f3bf=!![];else{if(_0x3a48ca>=0x0&&_0x3a48ca+_0x385729<=FINISH_POS)_0x28f3bf=!![];}if(!_0x28f3bf)return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❌\x20Coin\x20'+_0x585356+'\x20can\x27t\x20move\x20with\x20a\x20roll\x20of\x20'+_0x385729+'!'},{'quoted':_0x133ac5});return executeMove(_0x9b71ea,_0x67e6c6,_0x434f54,_0x6d08ed,_0x133ac5);}return _0x434f54['sendMessage'](_0x6d08ed,{'text':'❓\x20Unknown\x20sub-command.\x0aType\x20`.ludo`\x20for\x20the\x20full\x20help\x20menu.'},{'quoted':_0x133ac5});};
+const { Jimp } = require("jimp");
+const path = require("path");
+const fs = require("fs");
+
+// ─── PERSISTENT GAME DATA ───
+// Use process.cwd() for cross-platform compatibility on all hosting servers
+const PROJECT_ROOT = process.cwd();
+const SAVE_FILE = path.join(PROJECT_ROOT, "data/ludo_games.json");
+
+function loadGames() {
+    try {
+        if (fs.existsSync(SAVE_FILE)) {
+            const raw = fs.readFileSync(SAVE_FILE, "utf8");
+            return JSON.parse(raw);
+        }
+    } catch (e) {
+        console.log("⚠️ Ludo: Could not load saved games:", e.message);
+    }
+    return {};
+}
+
+function saveGames() {
+    try {
+        const dir = path.dirname(SAVE_FILE);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+        // 🧹 GARBAGE COLLECTOR: Remove abandoned games older than 2 hours
+        const now = Date.now();
+        for (const gId in games) {
+            if (now - (games[gId].lastUpdate || now) > 7200000) {
+                delete games[gId];
+            }
+        }
+
+        fs.writeFileSync(SAVE_FILE, JSON.stringify(games, null, 2));
+    } catch (e) {
+        console.log("⚠️ Ludo: Could not save games:", e.message);
+    }
+}
+
+// Load from disk on startup, persist in global
+if (!global.__LUDO_GAMES__) {
+    global.__LUDO_GAMES__ = loadGames();
+}
+const games = global.__LUDO_GAMES__;
+
+// ─── BOARD CONSTANTS ───
+const BOARD_IMG_PATH = path.join(PROJECT_ROOT, "assets/ludo.png");
+const ARROW_BOARD_IMG_PATH = path.join(PROJECT_ROOT, "assets/ludoArrow.png");
+const BOARD_SIZE = 600;
+const CS = 40;
+
+// Path boundaries
+const OUTER_END = 50;   // last step on outer ring (steps 0-50 = 51 cells)
+const HOME_START = 51;  // first home lane cell
+const HOME_END = 55;    // last home lane cell
+const FINISH_POS = 56;  // center / finished
+
+// Master clockwise path: 52 cells around the outer ring (grid col, row)
+const MASTER_PATH = [
+    [0, 6], [1, 6], [2, 6], [3, 6], [4, 6], [5, 6],
+    [6, 5], [6, 4], [6, 3], [6, 2], [6, 1], [6, 0],
+    [7, 0], [8, 0],
+    [8, 1], [8, 2], [8, 3], [8, 4], [8, 5],
+    [9, 6], [10, 6], [11, 6], [12, 6], [13, 6], [14, 6],
+    [14, 7], [14, 8],
+    [13, 8], [12, 8], [11, 8], [10, 8], [9, 8],
+    [8, 9], [8, 10], [8, 11], [8, 12], [8, 13], [8, 14],
+    [7, 14], [6, 14],
+    [6, 13], [6, 12], [6, 11], [6, 10], [6, 9],
+    [5, 8], [4, 8], [3, 8], [2, 8], [1, 8], [0, 8],
+    [0, 7]
+];
+
+const CLASSIC_COLORS = {
+    green:  { r: 46, g: 204, b: 71,  hex: 0x2ECC47FF, offset: 1,  home: [[1,7],[2,7],[3,7],[4,7],[5,7]],     base: [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],       emoji: "🟢" },
+    yellow: { r: 241, g: 196, b: 15, hex: 0xF1C40FFF, offset: 14, home: [[7,1],[7,2],[7,3],[7,4],[7,5]],     base: [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]],   emoji: "🟡" },
+    blue:   { r: 52, g: 152, b: 219, hex: 0x3498DBFF, offset: 27, home: [[13,7],[12,7],[11,7],[10,7],[9,7]], base: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]], emoji: "🔵" },
+    red:    { r: 231, g: 76, b: 60,  hex: 0xE74C3CFF, offset: 40, home: [[7,13],[7,12],[7,11],[7,10],[7,9]], base: [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],   emoji: "🔴" }
+};
+
+const ARROW_COLORS = {
+    // Up: Blue, Red (Offsets 1, 14)
+    blue:   { r: 52, g: 152, b: 219, hex: 0x3498DBFF, offset: 1,  home: [[1,7],[2,7],[3,7],[4,7],[5,7]],     base: [[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],       emoji: "🔵" },
+    red:    { r: 231, g: 76, b: 60,  hex: 0xE74C3CFF, offset: 14, home: [[7,1],[7,2],[7,3],[7,4],[7,5]],     base: [[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]],   emoji: "🔴" },
+    // Down: Yellow, Green (Offsets 27, 40)
+    yellow: { r: 241, g: 196, b: 15, hex: 0xF1C40FFF, offset: 27, home: [[13,7],[12,7],[11,7],[10,7],[9,7]], base: [[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]], emoji: "🟡" },
+    green:  { r: 46, g: 204, b: 71,  hex: 0x2ECC47FF, offset: 40, home: [[7,13],[7,12],[7,11],[7,10],[7,9]], base: [[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]],   emoji: "🟢" }
+};
+
+function getColors(mode) {
+    return mode === 'arrow' ? ARROW_COLORS : CLASSIC_COLORS;
+}
+
+// Safe zones: color start cells + star squares ONLY
+const SAFE_ZONES = [1, 9, 14, 22, 27, 35, 40, 48];
+
+// ─── ARROW MODE CONFIGURATION ───
+// 1. STRAIGHT ARROWS: works for EVERYONE. Defined as absolute master path indices.
+// (Adjust these numbers if the coins do not land exactly on your custom visual arrows!)
+const STRAIGHT_ARROWS = [
+    [5, 10],   // Green side straight jump
+    [18, 23],  // Yellow side straight jump
+    [31, 36],  // Blue side straight jump
+    [44, 49],  // Red side straight jump
+];
+
+// 2. BEND ARROWS: works ONLY for the specific color, pointing directly into their home lane.
+// Tail is the relative step before entering home, Head is the relative step inside the home lane.
+const BEND_ARROW_TAIL = 47;
+const BEND_ARROW_HEAD = 53;
+
+// ─── IMAGE HELPERS ───
+let boardImageCache = null;
+let arrowBoardImageCache = null;
+
+async function loadBoardImage(mode) {
+    if (mode === 'arrow') {
+        if (arrowBoardImageCache) return arrowBoardImageCache.clone();
+        try {
+            arrowBoardImageCache = await Jimp.read(ARROW_BOARD_IMG_PATH);
+            arrowBoardImageCache.resize({ w: BOARD_SIZE, h: BOARD_SIZE });
+            return arrowBoardImageCache.clone();
+        } catch (e) {
+            console.log("⚠️ Ludo: Arrow board load failed, falling back:", e.message);
+        }
+    }
+    if (boardImageCache) return boardImageCache.clone();
+    try {
+        boardImageCache = await Jimp.read(BOARD_IMG_PATH);
+        boardImageCache.resize({ w: BOARD_SIZE, h: BOARD_SIZE });
+        return boardImageCache.clone();
+    } catch (e) {
+        console.log("⚠️ Ludo: Board image load failed:", e.message);
+        return new Jimp({ width: BOARD_SIZE, height: BOARD_SIZE, color: 0xFFFFFFFF });
+    }
+}
+
+function drawFilledCircle(img, cx, cy, r, colorObj, borderColor) {
+    cx = Math.floor(cx); cy = Math.floor(cy);
+    const rSq = r * r;
+    const borderR = r - 1;
+    const borderSq = borderR * borderR;
+    const highlightR = r - 3;
+    const highlightSq = highlightR * highlightR;
+
+    for (let dx = -r; dx <= r; dx++) {
+        for (let dy = -r; dy <= r; dy++) {
+            const dist = dx * dx + dy * dy;
+            if (dist > rSq) continue;
+            const px = cx + dx, py = cy + dy;
+            if (px < 0 || px >= BOARD_SIZE || py < 0 || py >= BOARD_SIZE) continue;
+
+            if (dist >= borderSq) {
+                // Outer border
+                img.setPixelColor(borderColor, px, py);
+            } else if (dist >= highlightSq && dist < borderSq) {
+                // White highlight ring for 3D effect
+                img.setPixelColor(0xFFFFFF99, px, py);
+            } else {
+                // Gradient: lighter toward top-left, darker toward bottom-right
+                const factor = 1.0 - (dist / rSq) * 0.3;
+                const lightShift = (dx + dy < 0) ? 30 : -20;
+                const cr = Math.min(255, Math.max(0, Math.floor(colorObj.r * factor + lightShift)));
+                const cg = Math.min(255, Math.max(0, Math.floor(colorObj.g * factor + lightShift)));
+                const cb = Math.min(255, Math.max(0, Math.floor(colorObj.b * factor + lightShift)));
+                const hex = ((cr & 0xFF) << 24) | ((cg & 0xFF) << 16) | ((cb & 0xFF) << 8) | 0xFF;
+                img.setPixelColor(hex >>> 0, px, py);
+            }
+        }
+    }
+}
+
+// Draw a number (1-4) inside a coin using simple pixel art digits
+const DIGIT_PATTERNS = {
+    1: [[0, -3], [0, -2], [0, -1], [0, 0], [0, 1], [0, 2], [0, 3], [-1, -2]],
+    2: [[-2, -3], [-1, -3], [0, -3], [1, -3], [2, -3], [2, -2], [2, -1], [1, 0], [0, 0], [-1, 0], [-2, 0], [-2, 1], [-2, 2], [-2, 3], [-1, 3], [0, 3], [1, 3], [2, 3]],
+    3: [[-2, -3], [-1, -3], [0, -3], [1, -3], [2, -3], [2, -2], [2, -1], [1, 0], [0, 0], [2, 1], [2, 2], [2, 3], [1, 3], [0, 3], [-1, 3], [-2, 3]],
+    4: [[-2, -3], [-2, -2], [-2, -1], [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0], [2, -3], [2, -2], [2, -1], [2, 1], [2, 2], [2, 3]]
+};
+
+function drawDigit(img, cx, cy, num) {
+    const pattern = DIGIT_PATTERNS[num];
+    if (!pattern) return;
+    for (const [dx, dy] of pattern) {
+        const px = cx + dx, py = cy + dy;
+        if (px >= 0 && px < BOARD_SIZE && py >= 0 && py < BOARD_SIZE) {
+            img.setPixelColor(0xFFFFFFFF, px, py);
+        }
+        // Shadow for visibility
+        const sx = px + 1, sy = py + 1;
+        if (sx >= 0 && sx < BOARD_SIZE && sy >= 0 && sy < BOARD_SIZE) {
+            // Only draw shadow if we haven't drawn a white pixel there
+            const existing = img.getPixelColor(sx, sy);
+            if (existing !== 0xFFFFFFFF) {
+                img.setPixelColor(0x00000088, sx, sy);
+            }
+        }
+    }
+}
+
+// ─── RENDER BOARD ───
+async function renderBoard(game) {
+    const img = await loadBoardImage(game.mode);
+    const colors = getColors(game.mode);
+
+    const cellPositions = {};
+    for (const player of game.players) {
+        player.coins.forEach((step, idx) => {
+            let cx, cy;
+            if (step === -1) {
+                [cx, cy] = colors[player.color].base[idx];
+            } else if (step >= 0 && step <= OUTER_END) {
+                const pathIdx = (colors[player.color].offset + step) % 52;
+                const p = MASTER_PATH[pathIdx];
+                cx = p[0] + 0.5;
+                cy = p[1] + 0.5;
+            } else if (step >= HOME_START && step <= HOME_END) {
+                const p = colors[player.color].home[step - HOME_START];
+                cx = p[0] + 0.5;
+                cy = p[1] + 0.5;
+            } else {
+                // Finished (FINISH_POS) — center of board
+                cx = 7.5;
+                cy = 7.5;
+            }
+
+            const key = `${cx.toFixed(1)},${cy.toFixed(1)}`;
+            if (!cellPositions[key]) cellPositions[key] = [];
+            cellPositions[key].push({ color: player.color, num: idx + 1 });
+        });
+    }
+
+    // Render coins on the board
+    for (const key in cellPositions) {
+        const coins = cellPositions[key];
+        const [cx, cy] = key.split(",").map(Number);
+
+        coins.forEach((c, i) => {
+            let ox = 0, oy = 0;
+            // Offset coins sharing a cell so they don't overlap
+            if (coins.length === 2) {
+                ox = (i === 0) ? -7 : 7;
+                oy = (i === 0) ? -7 : 7;
+            } else if (coins.length === 3) {
+                ox = i === 0 ? -8 : i === 1 ? 8 : 0;
+                oy = i === 0 ? -5 : i === 1 ? -5 : 8;
+            } else if (coins.length >= 4) {
+                ox = i % 2 === 0 ? -8 : 8;
+                oy = i < 2 ? -8 : 8;
+            }
+
+            const px = Math.floor(cx * CS + ox);
+            const py = Math.floor(cy * CS + oy);
+            const r = coins.length >= 3 ? 9 : 12;
+
+            const col = colors[c.color];
+            drawFilledCircle(img, px, py, r, col, 0x000000FF);
+            drawDigit(img, px, py, c.num);
+        });
+    }
+
+    const buffer = await img.getBuffer("image/png");
+    return buffer;
+}
+
+// ─── GAME LOGIC ───
+const RANK_EMOJI = ["🥇", "🥈", "🥉", "4️⃣"];
+const RANK_LABEL = ["1st", "2nd", "3rd", "4th"];
+
+function isPlayerFinished(player) {
+    return player.coins.every(c => c === FINISH_POS);
+}
+
+function isPlayerLeft(player) {
+    return player.left === true;
+}
+
+function isPlayerOut(player) {
+    return isPlayerFinished(player) || isPlayerLeft(player);
+}
+
+function advanceTurn(game) {
+    game.hasRolled = false;
+    game.diceValue = 0;
+    // Skip finished AND left players
+    let attempts = 0;
+    do {
+        game.turnIndex = (game.turnIndex + 1) % game.players.length;
+        attempts++;
+    } while (isPlayerOut(game.players[game.turnIndex]) && attempts < game.players.length);
+    saveGames();
+}
+
+function isSafe(absPos) {
+    return SAFE_ZONES.includes(absPos);
+}
+
+function buildLeaderboard(game) {
+    const colors = getColors(game.mode);
+    const raw = game.finishedOrder || [];
+    // Winners first (not left), then players who left — fixes reversed leaderboard
+    const winners = raw.filter(p => !p.leftGame);
+    const quitters = raw.filter(p => p.leftGame);
+    const order = [...winners, ...quitters];
+    let text = `\n\n🏆 *FINAL LEADERBOARD* 🏆\n━━━━━━━━━━━━━━\n`;
+    for (let i = 0; i < order.length; i++) {
+        const p = order[i];
+        const label = p.leftGame ? "🚪 Left" : `${RANK_EMOJI[i]} ${RANK_LABEL[i]}`;
+        text += `${label} — ${colors[p.color].emoji} @${p.jid.split("@")[0]} (${p.color.toUpperCase()})\n`;
+    }
+    text += `━━━━━━━━━━━━━━\n🎉 Thanks for playing!\n\n> Azar Tech`;
+    return text;
+}
+
+async function executeMove(game, coinIndex, sock, from, msg) {
+    const colors = getColors(game.mode);
+    const currPlayer = game.players[game.turnIndex];
+    const dice = game.diceValue;
+
+    const oldPos = currPlayer.coins[coinIndex];
+    const newPos = oldPos === -1 ? 0 : oldPos + dice;
+
+    currPlayer.coins[coinIndex] = newPos;
+
+    let captured = false;
+    let capturedInfo = [];
+    let justFinished = false;
+    let arrowTeleport = false;
+
+    if (!game.finishedOrder) game.finishedOrder = [];
+
+    // Check if this player just got all 4 coins home
+    if (currPlayer.coins.every(c => c === FINISH_POS)) {
+        if (!game.finishedOrder.find(p => p.jid === currPlayer.jid)) {
+            game.finishedOrder.push({ jid: currPlayer.jid, color: currPlayer.color });
+            justFinished = true;
+        }
+    }
+
+    // Capture check: only on the main outer path (0 to OUTER_END), NOT on safe zones
+    if (newPos >= 0 && newPos <= OUTER_END) {
+        const absPos = (colors[currPlayer.color].offset + newPos) % 52;
+        if (!isSafe(absPos)) {
+            for (const op of game.players) {
+                if (op.color === currPlayer.color) continue;
+                if (isPlayerOut(op)) continue;
+                for (let i = 0; i < 4; i++) {
+                    const opPos = op.coins[i];
+                    if (opPos >= 0 && opPos <= OUTER_END) {
+                        const opAbs = (colors[op.color].offset + opPos) % 52;
+                        if (opAbs === absPos) {
+                            op.coins[i] = -1;
+                            captured = true;
+                            capturedInfo.push({ jid: op.jid, color: op.color, coinNum: i + 1 });
+                        }
+                    }
+                }
+            }
+        }
+
+        // Arrow mode: check if coin landed on an arrow tail
+        if (game.mode === 'arrow' && newPos >= 0 && newPos <= OUTER_END) {
+            const absPos2 = (colors[currPlayer.color].offset + newPos) % 52;
+            
+            // 1. Straight Arrows (Works for everyone based on absolute position on the board)
+            for (const [tail, head] of STRAIGHT_ARROWS) {
+                if (absPos2 === tail) {
+                    // Find what relative step this absolute head is for the current player
+                    const headStep = (head - colors[currPlayer.color].offset + 52) % 52;
+                    if (headStep <= OUTER_END) {
+                        currPlayer.coins[coinIndex] = headStep;
+                        arrowTeleport = true;
+                    }
+                    break;
+                }
+            }
+
+            // 2. Bend Arrows (Only works for the player who owns that home lane)
+            if (!arrowTeleport && newPos === BEND_ARROW_TAIL) {
+                currPlayer.coins[coinIndex] = BEND_ARROW_HEAD;
+                arrowTeleport = true;
+            }
+        }
+    }
+
+    let coinReachedHome = (newPos === FINISH_POS);
+
+    const activePlayers = game.players.filter(p => !isPlayerOut(p));
+
+    // If only 1 (or 0) players left unfinished, end game
+    if (activePlayers.length <= 1) {
+        for (const ap of activePlayers) {
+            if (!game.finishedOrder.find(p => p.jid === ap.jid)) {
+                game.finishedOrder.push({ jid: ap.jid, color: ap.color });
+            }
+        }
+
+        const boardImage = await renderBoard(game);
+        const leaderboard = buildLeaderboard(game);
+        const mentions = game.players.map(p => p.jid);
+
+        // Auto-delete previous board image
+        await deletePreviousBoardMsg(sock, from, game);
+
+        delete games[from];
+        saveGames();
+
+        const sent = await sock.sendMessage(from, {
+            image: boardImage,
+            caption: `🎉 *GAME OVER — ALL POSITIONS DECIDED!*${leaderboard}`,
+            mentions
+        }, { quoted: msg });
+        return sent;
+    }
+
+    const boardImage = await renderBoard(game);
+    const diceEmoji = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+    let msgText = `${diceEmoji[dice]} Rolled *${dice}*  ·  Moved Coin *${coinIndex + 1}*\n`;
+
+    if (arrowTeleport) {
+        msgText += `\n➡️🏹 *ARROW SHORTCUT!* Coin ${coinIndex + 1} teleported forward!`;
+        msgText += `\n🔄 Extra turn for arrow!`;
+    }
+
+    if (justFinished) {
+        const rank = game.finishedOrder.filter(p => !p.leftGame).length;
+        msgText += `\n🎉 ${RANK_EMOJI[rank - 1]} @${currPlayer.jid.split("@")[0]} finished in *${RANK_LABEL[rank - 1]} PLACE!*`;
+        msgText += `\n🏆 All 4 coins reached home!`;
+        if (activePlayers.length > 1) {
+            msgText += `\n\n🎮 Game continues for remaining players!`;
+        }
+    }
+
+    if (captured) {
+        for (const ci of capturedInfo) {
+            msgText += `\n⚔️ *CAPTURED!* @${ci.jid.split("@")[0]}'s ${colors[ci.color].emoji} Coin ${ci.coinNum} → sent back to base!`;
+        }
+        msgText += `\n🔄 Extra turn for capturing!`;
+    }
+
+    if (coinReachedHome && !justFinished) {
+        msgText += `\n🏠 Coin ${coinIndex + 1} reached HOME! Extra turn!`;
+    }
+
+    // Extra turn on: 6, capture, coin reached home, or arrow teleport (but NOT if player just finished)
+    if ((dice === 6 || captured || coinReachedHome || arrowTeleport) && !justFinished) {
+        game.hasRolled = false;
+        game.diceValue = 0;
+        if (!captured && !coinReachedHome && !arrowTeleport) msgText += `\n🔄 Rolled a 6! Extra turn!`;
+        msgText += `\nType \`.ludo roll\` to roll again.`;
+    } else {
+        advanceTurn(game);
+        const nextP = game.players[game.turnIndex];
+        msgText += `\n\n➡️ @${nextP.jid.split("@")[0]}'s turn (${colors[nextP.color].emoji} ${nextP.color.toUpperCase()})`;
+        msgText += `\nType \`.ludo roll\``;
+    }
+
+    saveGames();
+    const mentions = game.players.map(p => p.jid);
+
+    // Auto-delete previous board image
+    await deletePreviousBoardMsg(sock, from, game);
+
+    const sent = await sock.sendMessage(from, { image: boardImage, caption: msgText, mentions }, { quoted: msg });
+    // Track this message for auto-delete next turn
+    game.lastBoardMsgKey = sent?.key || null;
+    saveGames();
+    return sent;
+}
+
+// ─── AUTO-DELETE PREVIOUS BOARD IMAGE ───
+async function deletePreviousBoardMsg(sock, from, game) {
+    try {
+        if (game.lastBoardMsgKey) {
+            await sock.sendMessage(from, { delete: game.lastBoardMsgKey });
+        }
+    } catch { }
+}
+
+// ─── STATUS TEXT ───
+function getStatusText(game) {
+    const colors = getColors(game.mode);
+    let txt = "";
+    for (const p of game.players) {
+        const finished = p.coins.filter(c => c === FINISH_POS).length;
+        const onBoard = p.coins.filter(c => c >= 0 && c <= HOME_END).length;
+        const inBase = p.coins.filter(c => c === -1).length;
+        txt += `${colors[p.color].emoji} @${p.jid.split("@")[0]} — 🏠${finished} ✈️${onBoard} 🏰${inBase}\n`;
+    }
+    return txt;
+}
+
+// ─── MAIN COMMAND HANDLER ───
+module.exports = async (sock, msg, from, text, args) => {
+    const cmd = args[0] ? args[0].toLowerCase() : "";
+    const fromId = from;
+
+    // Help menu
+    if (!cmd) {
+        return sock.sendMessage(from, {
+            text:
+                `🎲 *AZAHRA LUDO* 🎲\n━━━━━━━━━━━━━━\n\n` +
+                `\`.ludo classic\` — Create classic Ludo\n` +
+                `\`.ludo arrow\` — Create Arrow mode (shortcuts!)\n` +
+                `\`.ludo join <color>\` — Join a color\n` +
+                `  Colors: 🔴 red  🟢 green  🟡 yellow  🔵 blue\n` +
+                `\`.ludo start\` — Begin the match (2-4 players)\n` +
+                `\`.ludo roll\` — Roll the dice 🎲\n` +
+                `\`.ludo move <1-4>\` — Move a specific coin\n` +
+                `\`.ludo status\` — View current game status\n` +
+                `\`.ludo leave\` — Leave mid-game\n` +
+                `\`.ludo stop\` — End the game (creator only)\n\n` +
+                `💡 *Rules:*\n` +
+                `• Roll a 6 to bring a coin out of base\n` +
+                `• Rolling 6, capturing, or reaching home = extra turn\n` +
+                `• ⭐ Star & color start squares are safe!\n` +
+                `• Get all 4 coins to the center to win!\n\n` +
+                `🏹 *Arrow Mode:* Land on arrow tail → teleport to head + extra roll!`
+        }, { quoted: msg });
+    }
+
+    // Bump activity timer for the active game in this chat
+    if (games[fromId]) {
+        games[fromId].lastUpdate = Date.now();
+    }
+
+    // ── CREATE (classic or arrow) ──
+    if (cmd === "create" || cmd === "classic" || cmd === "arrow") {
+        if (games[fromId]) return sock.sendMessage(from, { text: "⚠️ A game is already active here!\nUse \`.ludo stop\` to end it first." }, { quoted: msg });
+        const sender = msg.key.participant || msg.key.remoteJid;
+        const mode = cmd === "arrow" ? "arrow" : "classic";
+        games[fromId] = {
+            status: "waiting",
+            creatorJid: sender,
+            lastUpdate: Date.now(),
+            players: [],
+            turnIndex: 0,
+            hasRolled: false,
+            diceValue: 0,
+            finishedOrder: [],
+            mode: mode,
+            lastBoardMsgKey: null
+        };
+        saveGames();
+        const modeLabel = mode === "arrow" ? "🏹 ARROW MODE" : "🎲 CLASSIC MODE";
+        return sock.sendMessage(from, {
+            text:
+                `🎲 *Ludo Game Created!* (${modeLabel})\n━━━━━━━━━━━━━━\n\n` +
+                `Type \`.ludo join <color>\` to join!\n\n` +
+                `🔴 \`.ludo join red\`\n` +
+                `🟢 \`.ludo join green\`\n` +
+                `🟡 \`.ludo join yellow\`\n` +
+                `🔵 \`.ludo join blue\`\n\n` +
+                (mode === "arrow" ? `🏹 Arrow shortcuts are active! Land on arrows for teleport + extra roll!\n\n` : "") +
+                `Need 2-4 players. Type \`.ludo start\` when ready!`
+        }, { quoted: msg });
+    }
+
+    const game = games[fromId];
+
+    if (!game) {
+        return sock.sendMessage(from, { text: "❌ No active Ludo game!\nType \`.ludo create\` to start one." }, { quoted: msg });
+    }
+
+    // ── STOP ── (creator only)
+    if (cmd === "stop") {
+        const sender = msg.key.participant || msg.key.remoteJid;
+        if (game.creatorJid && game.creatorJid !== sender) {
+            return sock.sendMessage(from, { text: "❌ Only the game creator can stop the game!" }, { quoted: msg });
+        }
+        delete games[fromId];
+        saveGames();
+        return sock.sendMessage(from, { text: "🛑 Ludo game stopped and cleared." }, { quoted: msg });
+    }
+
+    // ── LEAVE ──
+    if (cmd === "leave") {
+        const sender = msg.key.participant || msg.key.remoteJid;
+        const playerIdx = game.players.findIndex(p => p.jid === sender);
+        if (playerIdx === -1) return sock.sendMessage(from, { text: "❌ You're not in this game!" }, { quoted: msg });
+        const leavingPlayer = game.players[playerIdx];
+
+        if (isPlayerOut(leavingPlayer)) return sock.sendMessage(from, { text: "❌ You already finished or left!" }, { quoted: msg });
+
+        // Mark as left — remove coins from board
+        leavingPlayer.left = true;
+        leavingPlayer.coins = [-1, -1, -1, -1];
+
+        // Add to finished order as "left"
+        if (!game.finishedOrder) game.finishedOrder = [];
+        if (!game.finishedOrder.find(p => p.jid === sender)) {
+            game.finishedOrder.push({ jid: sender, color: leavingPlayer.color, leftGame: true });
+        }
+
+        // If it was their turn, advance
+        if (game.status === "playing" && game.players[game.turnIndex]?.jid === sender) {
+            advanceTurn(game);
+        }
+
+        // Check if only 1 active player remains → end game
+        const activePlayers = game.players.filter(p => !isPlayerOut(p));
+        if (game.status === "playing" && activePlayers.length <= 1) {
+            for (const ap of activePlayers) {
+                if (!game.finishedOrder.find(p => p.jid === ap.jid)) {
+                    game.finishedOrder.push({ jid: ap.jid, color: ap.color });
+                }
+            }
+            const leaderboard = buildLeaderboard(game);
+            const mentions = game.players.map(p => p.jid);
+            delete games[fromId];
+            saveGames();
+            return sock.sendMessage(from, {
+                text: `🚪 @${sender.split("@")[0]} (${COLORS[leavingPlayer.color].emoji}) left the game!\n\n🎉 *GAME OVER — ALL POSITIONS DECIDED!*${leaderboard}`,
+                mentions
+            }, { quoted: msg });
+        }
+
+        saveGames();
+
+        if (game.status === "playing") {
+            const colors = getColors(game.mode);
+            const nextP = game.players[game.turnIndex];
+            return sock.sendMessage(from, {
+                text: `🚪 @${sender.split("@")[0]} (${colors[leavingPlayer.color].emoji}) left the game!\nTheir coins have been removed from the board.\n\n➡️ @${nextP.jid.split("@")[0]}'s turn (${colors[nextP.color].emoji})\nType \`.ludo roll\``,
+                mentions: game.players.map(p => p.jid)
+            }, { quoted: msg });
+        }
+
+        // If still in lobby
+        game.players.splice(playerIdx, 1);
+        saveGames();
+        return sock.sendMessage(from, {
+            text: `🚪 @${sender.split("@")[0]} left the lobby.\n👥 Players: ${game.players.length}/4`,
+            mentions: game.players.map(p => p.jid)
+        }, { quoted: msg });
+    }
+
+    // ── STATUS ──
+    if (cmd === "status") {
+        const colors = getColors(game.mode);
+        if (game.status === "waiting") {
+            const playerList = game.players.length > 0
+                ? game.players.map(p => `${colors[p.color].emoji} @${p.jid.split("@")[0]}`).join("\n")
+                : "No players yet";
+            return sock.sendMessage(from, {
+                text: `🎲 *Lobby* (${game.players.length}/4)\n━━━━━━━━━━━━━━\n${playerList}\n\nWaiting for players...`,
+                mentions: game.players.map(p => p.jid)
+            }, { quoted: msg });
+        }
+        const currP = game.players[game.turnIndex];
+        const statusTxt = getStatusText(game);
+        return sock.sendMessage(from, {
+            text: `🎲 *Game Status*\n━━━━━━━━━━━━━━\n${statusTxt}\n➡️ Current turn: @${currP.jid.split("@")[0]} (${colors[currP.color].emoji})`,
+            mentions: game.players.map(p => p.jid)
+        }, { quoted: msg });
+    }
+
+    // ── JOIN ──
+    if (cmd === "join") {
+        const colors = getColors(game.mode);
+        if (game.status !== "waiting") return sock.sendMessage(from, { text: "❌ Game already started! Can't join now." }, { quoted: msg });
+        const color = args[1]?.toLowerCase();
+        if (!colors[color]) return sock.sendMessage(from, { text: "❌ Invalid color!\nUse: \`.ludo join red\`, \`.ludo join green\`, \`.ludo join yellow\`, or \`.ludo join blue\`" }, { quoted: msg });
+        if (game.players.find(p => p.color === color)) return sock.sendMessage(from, { text: `❌ ${colors[color].emoji} ${color.toUpperCase()} is already taken!` }, { quoted: msg });
+
+        const sender = msg.key.participant || msg.key.remoteJid;
+        if (game.players.find(p => p.jid === sender)) return sock.sendMessage(from, { text: "❌ You already joined!" }, { quoted: msg });
+        if (game.players.length >= 4) return sock.sendMessage(from, { text: "❌ Game is full (4/4)!" }, { quoted: msg });
+
+        game.players.push({
+            jid: sender,
+            color: color,
+            coins: [-1, -1, -1, -1]
+        });
+        saveGames();
+
+        return sock.sendMessage(from, {
+            text: `${colors[color].emoji} @${sender.split("@")[0]} joined as *${color.toUpperCase()}*!\n\n👥 Players: ${game.players.length}/4\n${game.players.map(p => `${colors[p.color].emoji} @${p.jid.split("@")[0]}`).join("\n")}\n\n${game.players.length >= 2 ? "✅ Ready! Type \`.ludo start\` to begin!" : "⏳ Need at least 1 more player."}`,
+            mentions: game.players.map(p => p.jid)
+        }, { quoted: msg });
+    }
+
+    // ── START ──
+    if (cmd === "start") {
+        const colors = getColors(game.mode);
+        if (game.status !== "waiting") return sock.sendMessage(from, { text: "❌ Game already started!" }, { quoted: msg });
+        if (game.players.length < 2) return sock.sendMessage(from, { text: "❌ Need at least 2 players!\nType \`.ludo join <color>\` to join." }, { quoted: msg });
+
+        game.status = "playing";
+        game.turnIndex = 0;
+        saveGames();
+
+        const boardImage = await renderBoard(game);
+        const currPlayer = game.players[game.turnIndex];
+        const playerList = game.players.map(p => `${colors[p.color].emoji} @${p.jid.split("@")[0]}`).join("  ");
+
+        const modeTag = game.mode === 'arrow' ? ' 🏹 ARROW' : '';
+        const sent = await sock.sendMessage(from, {
+            image: boardImage,
+            caption: `🚀 *LUDO${modeTag} GAME STARTED!*\n━━━━━━━━━━━━━━\n\n🎮 ${playerList}\n\n➡️ @${currPlayer.jid.split("@")[0]}'s turn (${colors[currPlayer.color].emoji} ${currPlayer.color.toUpperCase()})\nType \`.ludo roll\` to roll the dice!\n\n💡 Roll a *6* to bring a coin out of base!`,
+            mentions: game.players.map(p => p.jid)
+        }, { quoted: msg });
+        game.lastBoardMsgKey = sent?.key || null;
+        saveGames();
+        return sent;
+    }
+
+    // ── ROLL ──
+    if (cmd === "roll") {
+        const colors = getColors(game.mode);
+        if (game.status !== "playing") return sock.sendMessage(from, { text: "❌ Game hasn't started yet!" }, { quoted: msg });
+        const currPlayer = game.players[game.turnIndex];
+        const sender = msg.key.participant || msg.key.remoteJid;
+        if (currPlayer.jid !== sender) return sock.sendMessage(from, {
+            text: `❌ Not your turn!\nIt's @${currPlayer.jid.split("@")[0]}'s turn (${colors[currPlayer.color].emoji}).`,
+            mentions: [currPlayer.jid]
+        }, { quoted: msg });
+        if (game.hasRolled) return sock.sendMessage(from, { text: `🎲 You already rolled *${game.diceValue}*!\nType \`.ludo move <1-4>\` to move a coin.` }, { quoted: msg });
+
+        const dice = Math.floor(Math.random() * 6) + 1;
+        game.diceValue = dice;
+        game.hasRolled = true;
+        saveGames();
+
+        // Find valid moves
+        const validMoves = [];
+        for (let i = 0; i < 4; i++) {
+            const s = currPlayer.coins[i];
+            if (s === -1 && dice === 6) validMoves.push(i);
+            else if (s >= 0 && s + dice <= FINISH_POS) validMoves.push(i);
+        }
+
+        const diceEmoji = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+        if (validMoves.length === 0) {
+            advanceTurn(game);
+            const nextP = game.players[game.turnIndex];
+            return sock.sendMessage(from, {
+                text: `${diceEmoji[dice]} You rolled *${dice}* — No valid moves!\n\n➡️ @${nextP.jid.split("@")[0]}'s turn (${colors[nextP.color].emoji} ${nextP.color.toUpperCase()}).`,
+                mentions: [nextP.jid]
+            }, { quoted: msg });
+        }
+
+        // Auto-move if only 1 valid coin
+        if (validMoves.length === 1) {
+            return executeMove(game, validMoves[0], sock, from, msg);
+        }
+
+        // Multiple choices — let player pick
+        const moveText = validMoves.map(i => {
+            const pos = currPlayer.coins[i];
+            const posLabel = pos === -1 ? "🏰 Base" : pos <= OUTER_END ? `📍 Step ${pos}` : `🏠 Home ${pos - OUTER_END}`;
+            return `  *${i + 1}* — ${posLabel}`;
+        }).join("\n");
+
+        return sock.sendMessage(from, {
+            text: `${diceEmoji[dice]} You rolled *${dice}*!\n\n🪙 Which coin to move?\n${moveText}\n\nType \`.ludo move <number>\``
+        }, { quoted: msg });
+    }
+
+    // ── MOVE ──
+    if (cmd === "move") {
+        if (game.status !== "playing") return sock.sendMessage(from, { text: "❌ Game hasn't started!" }, { quoted: msg });
+        const currPlayer = game.players[game.turnIndex];
+        const sender = msg.key.participant || msg.key.remoteJid;
+        if (currPlayer.jid !== sender) return sock.sendMessage(from, { text: "❌ Not your turn!" }, { quoted: msg });
+        if (!game.hasRolled) return sock.sendMessage(from, { text: "❌ Roll first! Type \`.ludo roll\`" }, { quoted: msg });
+
+        const cNum = parseInt(args[1]);
+        if (isNaN(cNum) || cNum < 1 || cNum > 4) return sock.sendMessage(from, { text: "❌ Choose coin 1-4!\nExample: \`.ludo move 2\`" }, { quoted: msg });
+
+        const cIdx = cNum - 1;
+        const s = currPlayer.coins[cIdx];
+        const dice = game.diceValue;
+
+        let isValid = false;
+        if (s === -1 && dice === 6) isValid = true;
+        else if (s >= 0 && s + dice <= FINISH_POS) isValid = true;
+
+        if (!isValid) return sock.sendMessage(from, { text: `❌ Coin ${cNum} can't move with a roll of ${dice}!` }, { quoted: msg });
+
+        return executeMove(game, cIdx, sock, from, msg);
+    }
+
+    return sock.sendMessage(from, { text: "❓ Unknown sub-command.\nType \`.ludo\` for the full help menu." }, { quoted: msg });
+};

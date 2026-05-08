@@ -14,11 +14,9 @@ module.exports = async (sock, msg, from, text, args) => {
 
     const meta = await sock.groupMetadata(from);
     const sender = msg.key.participant || msg.key.remoteJid;
-    const owner = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-    const isOwner = msg.key.fromMe || sender.includes(owner);
-
-    const caller = meta.participants.find((p) => p.id === sender);
-    const isAdmin = caller?.admin === "admin" || caller?.admin === "superadmin";
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+    const isAdmin = meta.participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
 
     if (!isAdmin && !isOwner) {
       return await sock.sendMessage(from, { text: "❌ Only admins can use this command." }, { quoted: msg });

@@ -21,10 +21,9 @@ module.exports = async (sock, msg, from) => {
 
     // 🔍 Identify sender
     const sender = msg.key.participant || msg.key.remoteJid;
-    const owner = settings.ownerNumber.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
-    const senderData = participants.find((p) => p.id === sender);
-    const isAdmin = senderData?.admin || false;
-    const isOwner = sender.includes(owner) || msg.key.fromMe;
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
 
     // 🔐 Restrict access
     if (!isAdmin && !isOwner) {

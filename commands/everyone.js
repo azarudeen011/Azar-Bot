@@ -19,10 +19,9 @@ module.exports = async (sock, msg, from) => {
 
     // 👑 check admin
     const sender = msg.key.participant || msg.key.remoteJid || "";
-    const ownerNumber = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-    const isOwner = msg.key.fromMe || sender.includes(ownerNumber);
-    const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender);
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
 
     if (!isAdmin && !isOwner) {
       return await sock.sendMessage(from, {

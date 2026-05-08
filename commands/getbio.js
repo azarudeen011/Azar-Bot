@@ -1,1 +1,22 @@
-const a0_0x4980e9=(function(){let _0x448a5d=!![];return function(_0x2e10b4,_0x368fb9){const _0x32e67e=_0x448a5d?function(){if(_0x368fb9){const _0x400f78=_0x368fb9['apply'](_0x2e10b4,arguments);return _0x368fb9=null,_0x400f78;}}:function(){};return _0x448a5d=![],_0x32e67e;};}()),a0_0x1d319e=a0_0x4980e9(this,function(){return a0_0x1d319e['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x1d319e)['search']('(((.+)+)+)+$');});a0_0x1d319e();const {isPairedOwner}=require('../lib/guards');module['exports']=async(_0x17c27c,_0x489884,_0x54814e)=>{if(!await isPairedOwner(_0x17c27c,_0x489884))return _0x17c27c['sendMessage'](_0x54814e,{'text':'❌\x20This\x20command\x20is\x20only\x20for\x20the\x20bot\x20owner.'},{'quoted':_0x489884});try{const _0x2d98a6=_0x17c27c['user']['id']['split'](':')[0x0]+'@s.whatsapp.net',_0x5142fa=await _0x17c27c['fetchStatus'](_0x2d98a6);_0x5142fa&&_0x5142fa['status']?await _0x17c27c['sendMessage'](_0x54814e,{'text':'📝\x20*Current\x20Bio:*\x20\x0a\x0a'+_0x5142fa['status']},{'quoted':_0x489884}):await _0x17c27c['sendMessage'](_0x54814e,{'text':'❌\x20Could\x20not\x20fetch\x20bio\x20or\x20bio\x20is\x20empty.'},{'quoted':_0x489884});}catch(_0x20ec0c){console['error']('Error\x20in\x20getbio\x20command:',_0x20ec0c),await _0x17c27c['sendMessage'](_0x54814e,{'text':'❌\x20Failed\x20to\x20fetch\x20bio.\x20'+(_0x20ec0c['message']||'')},{'quoted':_0x489884});}};
+const { isPairedOwner } = require("../lib/guards");
+
+module.exports = async (sock, msg, from) => {
+  if (!(await isPairedOwner(sock, msg))) {
+    return sock.sendMessage(from, { text: "❌ This command is only for the bot owner." }, { quoted: msg });
+  }
+
+  try {
+    // We fetch the status of the bot itself
+    const botJid = sock.user.id.split(":")[0] + "@s.whatsapp.net";
+    const status = await sock.fetchStatus(botJid);
+    
+    if (status && status.status) {
+      await sock.sendMessage(from, { text: `📝 *Current Bio:* \n\n${status.status}` }, { quoted: msg });
+    } else {
+      await sock.sendMessage(from, { text: "❌ Could not fetch bio or bio is empty." }, { quoted: msg });
+    }
+  } catch (err) {
+    console.error("Error in getbio command:", err);
+    await sock.sendMessage(from, { text: "❌ Failed to fetch bio. " + (err.message || "") }, { quoted: msg });
+  }
+};

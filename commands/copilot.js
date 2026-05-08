@@ -1,1 +1,97 @@
-const a0_0x5adb8d=(function(){let _0x3b103e=!![];return function(_0x47defe,_0xde32e7){const _0x32271d=_0x3b103e?function(){if(_0xde32e7){const _0x712717=_0xde32e7['apply'](_0x47defe,arguments);return _0xde32e7=null,_0x712717;}}:function(){};return _0x3b103e=![],_0x32271d;};}()),a0_0x52829c=a0_0x5adb8d(this,function(){return a0_0x52829c['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x52829c)['search']('(((.+)+)+)+$');});a0_0x52829c();const fs=require('fs'),path=require('path'),axios=require('axios'),MEMORY_PATH=path['join'](__dirname,'../data/copilot_memory.json');let memory={};if(fs['existsSync'](MEMORY_PATH))try{memory=JSON['parse'](fs['readFileSync'](MEMORY_PATH,'utf8'));}catch{memory={};}else fs['mkdirSync'](path['dirname'](MEMORY_PATH),{'recursive':!![]}),fs['writeFileSync'](MEMORY_PATH,JSON['stringify']({},null,0x2));function saveMemory(){fs['writeFileSync'](MEMORY_PATH,JSON['stringify'](memory,null,0x2));}module['exports']=async(_0x647f44,_0x16aee7,_0x80e7c9,_0x45d411,_0x59e9e8)=>{const _0x7238c=_0x59e9e8['join']('\x20')['trim']();if(!_0x7238c)return _0x647f44['sendMessage'](_0x80e7c9,{'text':'🤖\x20*Copilot\x20AI*\x0a\x0aUsage:\x0a.copilot\x20<your\x20question>'},{'quoted':_0x16aee7});try{await _0x647f44['sendMessage'](_0x80e7c9,{'react':{'text':'🤖','key':_0x16aee7['key']}}),await _0x647f44['sendPresenceUpdate']('composing',_0x80e7c9);if(!memory[_0x80e7c9])memory[_0x80e7c9]=[];memory[_0x80e7c9]['push'](_0x7238c);memory[_0x80e7c9]['length']>0xa&&memory[_0x80e7c9]['shift']();const _0x126c6e=memory[_0x80e7c9]['join']('\x0a'),_0x485a4a=await axios['get']('https://eliteprotech-apis.zone.id/copilot?q='+encodeURIComponent(_0x126c6e),{'timeout':0x7530});if(!_0x485a4a['data']?.['success'])throw new Error('API\x20failed');const _0x1a41f3=_0x485a4a['data']['text']||'😅\x20No\x20response';memory[_0x80e7c9]['push'](_0x1a41f3),saveMemory(),await _0x647f44['sendMessage'](_0x80e7c9,{'text':_0x1a41f3},{'quoted':_0x16aee7});}catch(_0x248dc0){console['error']('❌\x20copilot\x20error:',_0x248dc0['message']),await _0x647f44['sendMessage'](_0x80e7c9,{'text':'⚠️\x20AI\x20is\x20busy.\x20Try\x20again.'},{'quoted':_0x16aee7});}finally{await _0x647f44['sendPresenceUpdate']('paused',_0x80e7c9);}};
+// ==============================================
+// 🤖 Azahrabot Copilot AI (v1.0)
+// Uses ElitePro Copilot API + Memory
+// ==============================================
+
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+
+const MEMORY_PATH = path.join(__dirname, "../data/copilot_memory.json");
+
+// 🧠 Load memory
+let memory = {};
+if (fs.existsSync(MEMORY_PATH)) {
+  try {
+    memory = JSON.parse(fs.readFileSync(MEMORY_PATH, "utf8"));
+  } catch {
+    memory = {};
+  }
+} else {
+  fs.mkdirSync(path.dirname(MEMORY_PATH), { recursive: true });
+  fs.writeFileSync(MEMORY_PATH, JSON.stringify({}, null, 2));
+}
+
+// 💾 Save memory
+function saveMemory() {
+  fs.writeFileSync(MEMORY_PATH, JSON.stringify(memory, null, 2));
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+  const prompt = args.join(" ").trim();
+
+  if (!prompt) {
+    return sock.sendMessage(
+      from,
+      {
+        text: "🤖 *Copilot AI*\n\nUsage:\n.copilot <your question>",
+      },
+      { quoted: msg }
+    );
+  }
+
+  try {
+    await sock.sendMessage(from, {
+      react: { text: "🤖", key: msg.key },
+    });
+
+    await sock.sendPresenceUpdate("composing", from);
+
+    // 🧠 Init memory
+    if (!memory[from]) memory[from] = [];
+
+    // Add user input
+    memory[from].push(prompt);
+
+    // Keep last 10 messages
+    if (memory[from].length > 10) {
+      memory[from].shift();
+    }
+
+    // Combine context
+    const fullPrompt = memory[from].join("\n");
+
+    // 📡 API call
+    const res = await axios.get(
+      `https://eliteprotech-apis.zone.id/copilot?q=${encodeURIComponent(fullPrompt)}`,
+      { timeout: 30000 }
+    );
+
+    if (!res.data?.success) {
+      throw new Error("API failed");
+    }
+
+    const reply = res.data.text || "😅 No response";
+
+    // Save AI reply too
+    memory[from].push(reply);
+    saveMemory();
+
+    await sock.sendMessage(
+      from,
+      { text: reply },
+      { quoted: msg }
+    );
+
+  } catch (err) {
+    console.error("❌ copilot error:", err.message);
+
+    await sock.sendMessage(
+      from,
+      { text: "⚠️ AI is busy. Try again." },
+      { quoted: msg }
+    );
+  } finally {
+    await sock.sendPresenceUpdate("paused", from);
+  }
+};

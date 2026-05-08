@@ -1,1 +1,59 @@
-const a0_0x2fb58d=(function(){let _0x181268=!![];return function(_0x882b45,_0x567f7a){const _0x31b8f2=_0x181268?function(){if(_0x567f7a){const _0xb2a0bb=_0x567f7a['apply'](_0x882b45,arguments);return _0x567f7a=null,_0xb2a0bb;}}:function(){};return _0x181268=![],_0x31b8f2;};}()),a0_0x55ae79=a0_0x2fb58d(this,function(){return a0_0x55ae79['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x55ae79)['search']('(((.+)+)+)+$');});a0_0x55ae79(),module['exports']=async(_0x53cd43,_0xe1e082,_0x242e5a,_0x515f75,_0x359b4)=>{try{const _0x2d8489=_0xe1e082['message']?.['extendedTextMessage']?.['contextInfo']||{},_0x22121b=_0x2d8489['participant'],_0x1299d9=_0x2d8489['mentionedJid']?.[0x0],_0x5eb565=_0xe1e082['key']['participant']||_0xe1e082['key']['remoteJid']||'';let _0x4e7b2e=_0x22121b||_0x1299d9||_0x5eb565,_0x3c36bc=null;if(_0x4e7b2e&&_0x4e7b2e['endsWith']('@lid'))_0x3c36bc=_0x4e7b2e;else{const _0x24a03d=_0x4b6d01=>{if(!_0x4b6d01||typeof _0x4b6d01!=='object')return null;for(const _0xc777b6 in _0x4b6d01){const _0x175015=_0x4b6d01[_0xc777b6];if(typeof _0x175015==='string'&&_0x175015['endsWith']('@lid'))return _0x175015;if(typeof _0x175015==='object'){const _0x19b705=_0x24a03d(_0x175015);if(_0x19b705)return _0x19b705;}}return null;};_0x3c36bc=_0x24a03d(_0xe1e082);}if(_0x3c36bc){const _0x2c2deb='🆔\x20*User\x20LID:*\x20\x0a\x0a'+_0x3c36bc+'\x0a\x0a_This\x20is\x20a\x20permanent\x20identifier\x20separate\x20from\x20the\x20phone\x20number._';await _0x53cd43['sendMessage'](_0x242e5a,{'text':_0x2c2deb},{'quoted':_0xe1e082});}else await _0x53cd43['sendMessage'](_0x242e5a,{'text':'❌\x20*LID\x20Not\x20Found*\x0a\x0aCould\x20not\x20retrieve\x20a\x20Long-term\x20Identifier\x20for\x20this\x20user.\x20They\x20may\x20be\x20using\x20a\x20standard\x20phone\x20number\x20identity\x20only.'},{'quoted':_0xe1e082});}catch(_0x3e5631){console['error']('LID\x20Command\x20Error:',_0x3e5631),await _0x53cd43['sendMessage'](_0x242e5a,{'text':'❌\x20Error\x20retrieving\x20LID.'},{'quoted':_0xe1e082});}};
+// ==============================================
+// 🆔 Azahrabot LID Command
+// Returns the unique Long-term Identifier (LID) of a user
+// ==============================================
+
+module.exports = async (sock, msg, from, text, args) => {
+  try {
+    // 1. Get potential targets from message context
+    const context = msg.message?.extendedTextMessage?.contextInfo || {};
+    const quotedSender = context.participant;
+    const mentionedJid = context.mentionedJid?.[0];
+    const currentSender = msg.key.participant || msg.key.remoteJid || "";
+
+    // 2. Resolve target (Priority: Quoted > Mentioned > Sender)
+    let targetJid = quotedSender || mentionedJid || currentSender;
+
+    // 3. Search for LID
+    // In recent Baileys, the LID might be in msg.key.participant while remoteJid is @s.whatsapp.net
+    // Or it might be in msg.sender (if processed by smsg)
+    
+    let lid = null;
+
+    // Check if target is already an LID
+    if (targetJid && targetJid.endsWith("@lid")) {
+      lid = targetJid;
+    } else {
+      // Look for any LID in the message object (sometimes Baileys includes it in different fields)
+      // We check the raw message keys and values
+      const searchForLid = (obj) => {
+        if (!obj || typeof obj !== "object") return null;
+        for (const key in obj) {
+          const val = obj[key];
+          if (typeof val === "string" && val.endsWith("@lid")) return val;
+          if (typeof val === "object") {
+            const found = searchForLid(val);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      lid = searchForLid(msg);
+    }
+
+    if (lid) {
+      const response = `🆔 *User LID:* \n\n${lid}\n\n_This is a permanent identifier separate from the phone number._`;
+      await sock.sendMessage(from, { text: response }, { quoted: msg });
+    } else {
+      // If still no LID found, it might be because the user hasn't generated one or the session doesn't see it
+      await sock.sendMessage(from, { 
+        text: `❌ *LID Not Found*\n\nCould not retrieve a Long-term Identifier for this user. They may be using a standard phone number identity only.` 
+      }, { quoted: msg });
+    }
+
+  } catch (err) {
+    console.error("LID Command Error:", err);
+    await sock.sendMessage(from, { text: "❌ Error retrieving LID." }, { quoted: msg });
+  }
+};

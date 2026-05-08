@@ -1,1 +1,60 @@
-const a0_0x116f92=(function(){let _0x324d26=!![];return function(_0x1818be,_0x3523d0){const _0x1198ff=_0x324d26?function(){if(_0x3523d0){const _0x3ffea4=_0x3523d0['apply'](_0x1818be,arguments);return _0x3523d0=null,_0x3ffea4;}}:function(){};return _0x324d26=![],_0x1198ff;};}()),a0_0x49a51c=a0_0x116f92(this,function(){return a0_0x49a51c['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x49a51c)['search']('(((.+)+)+)+$');});a0_0x49a51c();const axios=require('axios'),settings=require('../settings'),small_lib=require('../lib/small_lib'),models_list=['cyberpunk\x20style','watercolor\x20style','claymation\x20style','storybook\x20style','aesthetic\x20style','doll\x20house','ghibli\x20style','anime\x20style','lego\x20style','origami\x20style','puppet\x20style'];module['exports']=async(_0x5609e1,_0xb8bbe1,_0x26143e,_0xf3b4f4,_0x207bb9)=>{const _0x5e8d2a=_0x207bb9['join']('\x20')['trim']();if(!_0x5e8d2a){let _0x2c1914='✨\x20*DREAMIFY\x20IMAGE\x20STYLER*\x20✨\x0a\x0a';return _0x2c1914+='Usage:\x20'+settings['prefix']+'dreamify\x20<prompt>\x20|\x20<style>\x0a\x0a',_0x2c1914+='*Available\x20Styles:*\x0a',_0x2c1914+=models_list['map'](_0x5a28db=>'•\x20'+_0x5a28db)['join']('\x0a'),_0x2c1914+='\x0a\x0a_Example:\x20'+settings['prefix']+'dreamify\x20samurai\x20cat\x20|\x20ghibli\x20style_',_0x5609e1['sendMessage'](_0x26143e,{'text':_0x2c1914},{'quoted':_0xb8bbe1});}let _0x18ac4c=_0x5e8d2a,_0x28d9a1='anime\x20style';if(_0x5e8d2a['includes']('|')){const _0x22dda5=_0x5e8d2a['split']('|');_0x18ac4c=_0x22dda5[0x0]['trim']();const _0xcf10=_0x22dda5[0x1]['trim'](),_0x484cb8=models_list['find'](_0x46587b=>_0x46587b['toLowerCase']()===_0xcf10['toLowerCase']()||_0x46587b['toLowerCase']()['includes'](_0xcf10['toLowerCase']()));_0x484cb8&&(_0x28d9a1=_0x484cb8);}try{await _0x5609e1['sendMessage'](_0x26143e,{'react':{'text':'🎨','key':_0xb8bbe1['key']}})['catch'](()=>{});const _0x374e46='https://anabot.my.id/api/ai/dreamify?prompt='+encodeURIComponent(_0x18ac4c)+'&models='+encodeURIComponent(_0x28d9a1)+'&apikey=freeApikey',_0x1f90f1=await axios['get'](_0x374e46,{'timeout':0xea60});if(!_0x1f90f1['data']||!_0x1f90f1['data']['success']||!_0x1f90f1['data']['data']||!_0x1f90f1['data']['data']['result'])return _0x5609e1['sendMessage'](_0x26143e,{'text':'❌\x20Failed\x20to\x20style\x20image.\x20The\x20API\x20might\x20be\x20busy\x20or\x20offline.'},{'quoted':_0xb8bbe1});const _0x548ba2=_0x1f90f1['data']['data']['result'],_0x3fca5d='✨\x20*DREAMIFY:\x20'+_0x28d9a1['toUpperCase']()+'*\x20✨\x0a\x0a'+('📝\x20*Prompt:*\x20'+_0x18ac4c+'\x0a\x0a')+('>\x20'+small_lib['author']);await _0x5609e1['sendMessage'](_0x26143e,{'image':{'url':_0x548ba2},'caption':_0x3fca5d},{'quoted':_0xb8bbe1});}catch(_0x4d1ba8){console['error']('Dreamify\x20Error:',_0x4d1ba8['message']),await _0x5609e1['sendMessage'](_0x26143e,{'text':'❌\x20API\x20Error\x20or\x20Timeout.\x20Try\x20again\x20later.'},{'quoted':_0xb8bbe1});}};
+const axios = require("axios");
+const settings = require("../settings");
+const small_lib = require("../lib/small_lib");
+
+const models_list = [
+    "cyberpunk style", "watercolor style", "claymation style", "storybook style",
+    "aesthetic style", "doll house", "ghibli style", "anime style",
+    "lego style", "origami style", "puppet style"
+];
+
+module.exports = async (sock, msg, from, body, args) => {
+    const fullText = args.join(" ").trim();
+
+    if (!fullText) {
+        let helpText = `✨ *DREAMIFY IMAGE STYLER* ✨\n\n`;
+        helpText += `Usage: ${settings.prefix}dreamify <prompt> | <style>\n\n`;
+        helpText += `*Available Styles:*\n`;
+        helpText += models_list.map(m => `• ${m}`).join("\n");
+        helpText += `\n\n_Example: ${settings.prefix}dreamify samurai cat | ghibli style_`;
+        return sock.sendMessage(from, { text: helpText }, { quoted: msg });
+    }
+
+    // Split prompt and model
+    let prompt = fullText;
+    let model = "anime style"; // Default model
+
+    if (fullText.includes("|")) {
+        const parts = fullText.split("|");
+        prompt = parts[0].trim();
+        const requestedModel = parts[1].trim();
+
+        // Find closest match in model list (case-insensitive)
+        const matched = models_list.find(m => m.toLowerCase() === requestedModel.toLowerCase() || m.toLowerCase().includes(requestedModel.toLowerCase()));
+        if (matched) {
+            model = matched;
+        }
+    }
+
+    try {
+        await sock.sendMessage(from, { react: { text: "🎨", key: msg.key } }).catch(() => { });
+
+        const url = `https://anabot.my.id/api/ai/dreamify?prompt=${encodeURIComponent(prompt)}&models=${encodeURIComponent(model)}&apikey=freeApikey`;
+        const res = await axios.get(url, { timeout: 60000 });
+
+        if (!res.data || !res.data.success || !res.data.data || !res.data.data.result) {
+            return sock.sendMessage(from, { text: "❌ Failed to style image. The API might be busy or offline." }, { quoted: msg });
+        }
+
+        const imageUrl = res.data.data.result;
+        const caption = `✨ *DREAMIFY: ${model.toUpperCase()}* ✨\n\n` +
+            `📝 *Prompt:* ${prompt}\n\n` +
+            `> ${small_lib.author}`;
+
+        await sock.sendMessage(from, { image: { url: imageUrl }, caption }, { quoted: msg });
+
+    } catch (e) {
+        console.error("Dreamify Error:", e.message);
+        await sock.sendMessage(from, { text: "❌ API Error or Timeout. Try again later." }, { quoted: msg });
+    }
+};

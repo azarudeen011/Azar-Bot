@@ -4,6 +4,7 @@
 // ==============================================
 
 const { canRunAdminCommand } = require("../lib/guards");
+const { jidNormalizedUser } = require("@whiskeysockets/baileys");
 const store = require("../lib/lightweight_store");
 
 module.exports = async (sock, msg, from, text, args) => {
@@ -11,21 +12,47 @@ module.exports = async (sock, msg, from, text, args) => {
     // 🧠 Only for groups
     if (!from.endsWith("@g.us")) return;
 
-    // 🧾 Check if sender is admin
-    const canRun = await canRunAdminCommand(sock, msg, from);
-    if (!canRun) {
-      await sock.sendMessage(from, { text: "❌ Only *group admins* can use this command." }, { quoted: msg });
-      return;
+    // 🔐 Admin check (Manual 'AntiLink trick' for maximum stability)
+    const metadata = await sock.groupMetadata(from);
+    const participants = metadata.participants || [];
+    const sender = msg.key.participant || msg.key.remoteJid;
+    const botId = jidNormalizedUser(sock.user.id);
+
+    // 🕵️ Find the bot in participants list
+    const me = participants.find(p => 
+      jidNormalizedUser(p.id) === botId || 
+      p.id.includes(botId.split('@')[0]) ||
+      (p.lid && p.lid === botId)
+    );
+
+    // 🛡️ Permissive check: If we can't find the bot in metadata, assume it MIGHT be admin
+    const isBotAdmin = me ? (me.admin === "admin" || me.admin === "superadmin" || !!me.admin) : true;
+
+    if (!isBotAdmin) {
+      return await sock.sendMessage(from, { text: "❌ *ERROR:* I need to be a *Group Admin* to delete messages!" }, { quoted: msg });
+    }
+
+    const senderNum = sender.split('@')[0].split(':')[0];
+    const isSenderAdmin = participants.some(p => 
+      (p.id.includes(senderNum) || (p.lid && p.lid === sender)) && 
+      (p.admin === "admin" || p.admin === "superadmin" || !!p.admin)
+    );
+
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+
+    if (!isSenderAdmin && !isOwner) {
+      return await sock.sendMessage(from, { text: "❌ Only *group admins* can use this command." }, { quoted: msg });
     }
 
     // 📦 Parse message text and reply info
-    const body = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
+    const body = text || "";
     const parts = body.trim().split(/\s+/);
     let countArg = null;
 
     // 🧮 Extract number
-    if (parts.length > 1) {
-      const num = parseInt(parts[1], 10);
+    if (args[0]) {
+      const num = parseInt(args[0], 10);
       if (!isNaN(num) && num > 0) countArg = Math.min(num, 50);
     }
 
@@ -33,9 +60,18 @@ module.exports = async (sock, msg, from, text, args) => {
     const repliedParticipant = ctx.participant || null;
     const mentioned = Array.isArray(ctx.mentionedJid) && ctx.mentionedJid.length > 0 ? ctx.mentionedJid[0] : null;
 
-    // Default deletion logic
-    if (!countArg && repliedParticipant) countArg = 1;
-    if (!countArg && mentioned) countArg = 1;
+    // ℹ️ Help / Usage info
+    if (!ctx.stanzaId && !args[0] && !mentioned) {
+        let help = `🧹 *DELETE COMMAND USAGE* 🧹\n`;
+        help += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+        help += `*1. Reply Delete:*\nReply to a message with \`.delete\`\n\n`;
+        help += `*2. Bulk Delete:*\n\`.delete <number>\` (e.g. \`.delete 10\`)\n\n`;
+        help += `*3. Targeted Delete:*\n\`.delete @user <number>\`\n\n`;
+        help += `_Note: Max delete limit is 50 messages at once._`;
+        
+        return sock.sendMessage(from, { text: help }, { quoted: msg });
+    }
+
     if (!countArg) countArg = 1; // fallback to 1 if nothing else
 
     // 🎯 Target selection
@@ -103,9 +139,9 @@ module.exports = async (sock, msg, from, text, args) => {
     // 🧨 Execute silent deletion (no reply message)
     for (const m of toDelete) {
       try {
-        const msgParticipant = deleteAll
+        const msgParticipant = jidNormalizedUser(deleteAll
           ? m.key.participant || m.key.remoteJid
-          : targetUser;
+          : targetUser);
         await sock.sendMessage(from, {
           delete: {
             remoteJid: from,

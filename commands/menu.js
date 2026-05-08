@@ -1,1 +1,100 @@
-const a0_0x2f0866=(function(){let _0x13181c=!![];return function(_0x411058,_0x20f026){const _0x4c1573=_0x13181c?function(){if(_0x20f026){const _0xd28b22=_0x20f026['apply'](_0x411058,arguments);return _0x20f026=null,_0xd28b22;}}:function(){};return _0x13181c=![],_0x4c1573;};}()),a0_0x51ca8f=a0_0x2f0866(this,function(){return a0_0x51ca8f['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x51ca8f)['search']('(((.+)+)+)+$');});a0_0x51ca8f();const fs=require('fs'),path=require('path'),{banner,menuText}=require('../utils/menuData'),secure=require('../lib/small_lib');module['exports']=async(_0x471cec,_0x49a5a3,_0xe691d2)=>{try{await _0x471cec['sendMessage'](_0xe691d2,{'react':{'text':'📜','key':_0x49a5a3['key']}})['catch'](()=>{});}catch(_0x5d9f5e){console['log']('Reaction\x20failed:',_0x5d9f5e?.['message']||_0x5d9f5e);}const _0x268c18=_0x1818d9=>new Promise(_0x34c3d9=>setTimeout(_0x34c3d9,_0x1818d9));try{const _0x5dd397=['💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▱▱▱▱▱▱▱▱▱▱]\x200%','💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▰▰▱▱▱▱▱▱▱▱]\x2020%','💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▰▰▰▰▱▱▱▱▱▱]\x2040%','💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▰▰▰▰▰▰▱▱▱▱]\x2060%','💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▰▰▰▰▰▰▰▰▱▱]\x2080%','💠\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧*\x20[▰▰▰▰▰▰▰▰▰▰]\x20100%','✅\x20*𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧\x20𝗜𝗦\x20𝗛𝗘𝗥𝗘!*'];let _0x2c7fdb=await _0x471cec['sendMessage'](_0xe691d2,{'text':_0x5dd397[0x0]},{'quoted':_0x49a5a3});for(let _0x79d09=0x1;_0x79d09<_0x5dd397['length'];_0x79d09++){await _0x268c18(0x1f4),await _0x471cec['sendMessage'](_0xe691d2,{'text':_0x5dd397[_0x79d09],'edit':_0x2c7fdb['key']});}await _0x268c18(0xc8);}catch(_0x35adc3){console['log']('Loading\x20animation\x20error:',_0x35adc3?.['message']||_0x35adc3);}const _0x154c0b=path['join'](__dirname,'../data');if(!fs['existsSync'](_0x154c0b))fs['mkdirSync'](_0x154c0b,{'recursive':!![]});const _0x3b1de9=path['join'](_0x154c0b,'botMode.json');let _0x1341bb='public';try{if(fs['existsSync'](_0x3b1de9)){const _0x1c544b=JSON['parse'](fs['readFileSync'](_0x3b1de9,'utf8'));_0x1c544b?.['mode']&&typeof _0x1c544b['mode']==='string'&&(_0x1341bb=_0x1c544b['mode']['toLowerCase']());}else fs['writeFileSync'](_0x3b1de9,JSON['stringify']({'mode':'public'},null,0x2));}catch(_0x2eeffc){console['warn']('⚠️\x20Mode\x20file\x20error:',_0x2eeffc['message']);}const _0x395107=new Date(),_0x4a1b3b=_0x395107['toLocaleDateString'](),_0x5f39ac=_0x395107['toLocaleTimeString'](),_0x1553b9=menuText(_0x4a1b3b,_0x5f39ac,_0x1341bb)['trim'](),_0x3a7759=secure['channel']?.['jid'];try{await _0x471cec['sendMessage'](_0xe691d2,{'image':{'url':banner},'caption':_0x1553b9,'headerType':0x4,'contextInfo':{'forwardedNewsletterMessageInfo':{'newsletterJid':_0x3a7759,'serverMessageId':0x1},'isForwarded':!![],'forwardingScore':0x1}},{'quoted':_0x49a5a3});}catch(_0x5a07b9){console['error']('❌\x20Menu\x20send\x20failed:',_0x5a07b9?.['message']||_0x5a07b9),await _0x471cec['sendMessage'](_0xe691d2,{'text':'⚠️\x20Could\x20not\x20send\x20menu.'},{'quoted':_0x49a5a3});}};
+// ==============================================
+// ⚙️ Azahrabot Menu Command (v5.4 — Attached Native View Button)
+// One Message • Clean Banner • Native WhatsApp “View Channel” Button
+// ==============================================
+
+const fs = require("fs");
+const path = require("path");
+const { banner, menuText } = require("../utils/menuData");
+const secure = require("../lib/small_lib");
+
+module.exports = async (sock, msg, from) => {
+  try {
+    // 📜 React to show bot received the command
+    await sock.sendMessage(from, { react: { text: "📜", key: msg.key } }).catch(() => { });
+  } catch (e) {
+    console.log("Reaction failed:", e?.message || e);
+  }
+
+  // 🚀 Loading Animation
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  try {
+    const frames = [
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▱▱▱▱▱▱▱▱▱▱] 0%",
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▰▰▱▱▱▱▱▱▱▱] 20%",
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▰▰▰▰▱▱▱▱▱▱] 40%",
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▰▰▰▰▰▰▱▱▱▱] 60%",
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▰▰▰▰▰▰▰▰▱▱] 80%",
+      "💠 *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧* [▰▰▰▰▰▰▰▰▰▰] 100%",
+      "✅ *𝗔𝗭𝗔𝗛𝗥𝗔𝗕𝗢𝗧 𝗜𝗦 𝗛𝗘𝗥𝗘!*"
+    ];
+
+    let loadMsg = await sock.sendMessage(from, { text: frames[0] }, { quoted: msg });
+
+    for (let i = 1; i < frames.length; i++) {
+      await delay(500);
+      await sock.sendMessage(from, { text: frames[i], edit: loadMsg.key });
+    }
+
+    await delay(200); // Tiny pause before blasting the menu
+  } catch (err) {
+    console.log("Loading animation error:", err?.message || err);
+  }
+
+  // 🧠 Ensure /data folder exists
+  const dataDir = path.join(__dirname, "../data");
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
+  // ⚙️ Get bot mode safely
+  const modeFile = path.join(dataDir, "botMode.json");
+  let currentMode = "public";
+
+  try {
+    if (fs.existsSync(modeFile)) {
+      const modeData = JSON.parse(fs.readFileSync(modeFile, "utf8"));
+      if (modeData?.mode && typeof modeData.mode === "string") {
+        currentMode = modeData.mode.toLowerCase();
+      }
+    } else {
+      fs.writeFileSync(modeFile, JSON.stringify({ mode: "public" }, null, 2));
+    }
+  } catch (err) {
+    console.warn("⚠️ Mode file error:", err.message);
+  }
+
+  // 🕒 Date & time
+  const now = new Date();
+  const dateStr = now.toLocaleDateString();
+  const timeStr = now.toLocaleTimeString();
+
+  // 📜 Build dynamic menu
+  const text = menuText(dateStr, timeStr, currentMode).trim();
+
+  // 📰 Channel JID (for native view button)
+  const newsletterJid = secure.channel?.jid;
+
+  try {
+    await sock.sendMessage(
+      from,
+      {
+        image: { url: banner },
+        caption: text,
+        headerType: 4,
+        contextInfo: {
+          // ✅ The magic combo that attaches native “View Channel” button
+          forwardedNewsletterMessageInfo: {
+            newsletterJid, // Your channel ID e.g. 120363404914980672@newsletter
+            serverMessageId: 1,
+            // newsletterName: secure.channel?.name, // optional, can hide if you want only button
+          },
+          isForwarded: true,
+          forwardingScore: 1,
+        },
+      },
+      { quoted: msg }
+    );
+  } catch (err) {
+    console.error("❌ Menu send failed:", err?.message || err);
+    await sock.sendMessage(from, { text: "⚠️ Could not send menu." }, { quoted: msg });
+  }
+};

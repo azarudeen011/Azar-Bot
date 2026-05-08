@@ -1,1 +1,43 @@
-const a0_0x47f536=(function(){let _0x4e88d4=!![];return function(_0x240d5c,_0x3c998a){const _0x474236=_0x4e88d4?function(){if(_0x3c998a){const _0x104de2=_0x3c998a['apply'](_0x240d5c,arguments);return _0x3c998a=null,_0x104de2;}}:function(){};return _0x4e88d4=![],_0x474236;};}()),a0_0x510f59=a0_0x47f536(this,function(){return a0_0x510f59['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x510f59)['search']('(((.+)+)+)+$');});a0_0x510f59();const kontolreply=require('../kontal');module['exports']=async(_0x53ebb5,_0x1d73f3,_0x557644)=>{try{await _0x53ebb5['sendMessage'](_0x557644,{'react':{'text':'⚡','key':_0x1d73f3['key']}})['catch'](()=>{});}catch{}try{const _0x3b13e1=Date['now']();await _0x53ebb5['sendMessage'](_0x557644,{'text':'⏳\x20*Calculating\x20speed...*'},{'quoted':_0x1d73f3});const _0x4f7c27=Date['now']()-_0x3b13e1,_0x29cb1f='\x0a╭━━━〔\x20🐉\x20AZAHRA\x20BOT\x20STATUS\x20〕━━━⬣\x0a┃\x20🚀\x20Speed\x20:\x20'+_0x4f7c27+'\x20ms\x0a╰━━━━━━━━━━━━━━━━━━━━⬣\x0a';await kontolreply(_0x53ebb5,_0x1d73f3,_0x29cb1f);}catch(_0x48795d){console['error']('❌\x20Ping\x20error:',_0x48795d['message']),await _0x53ebb5['sendMessage'](_0x557644,{'text':'⚠️\x20Ping\x20test\x20failed.'},{'quoted':_0x1d73f3});}};
+// ==============================================
+// ⚡ Azahrabot Ping (Pure Kontal Style)
+// ==============================================
+
+const kontolreply = require("../kontal"); // kontal handles branding
+
+module.exports = async (sock, msg, from) => {
+  try {
+    // ⚡ React first
+    await sock.sendMessage(from, {
+      react: { text: "⚡", key: msg.key }
+    }).catch(() => {});
+  } catch {}
+
+  try {
+    const start = Date.now();
+
+    await sock.sendMessage(
+      from,
+      { text: "⏳ *Calculating speed...*" },
+      { quoted: msg }
+    );
+
+    const ping = Date.now() - start;
+
+    const finalText = `
+╭━━━〔 🐉 AZAHRA BOT STATUS 〕━━━⬣
+┃ 🚀 Speed : ${ping} ms
+╰━━━━━━━━━━━━━━━━━━━━⬣
+`;
+
+    // 🔥 Uses kontal.js EXACT branding style
+    await kontolreply(sock, msg, finalText);
+
+  } catch (err) {
+    console.error("❌ Ping error:", err.message);
+    await sock.sendMessage(
+      from,
+      { text: "⚠️ Ping test failed." },
+      { quoted: msg }
+    );
+  }
+};

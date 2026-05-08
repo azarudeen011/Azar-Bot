@@ -1,1 +1,271 @@
-const a0_0x5d9685=(function(){let _0x5532fb=!![];return function(_0xb3d820,_0x131532){const _0x253015=_0x5532fb?function(){if(_0x131532){const _0x1288b8=_0x131532['apply'](_0xb3d820,arguments);return _0x131532=null,_0x1288b8;}}:function(){};return _0x5532fb=![],_0x253015;};}()),a0_0x4f9dc8=a0_0x5d9685(this,function(){return a0_0x4f9dc8['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x4f9dc8)['search']('(((.+)+)+)+$');});a0_0x4f9dc8();const m=require('../lib/mafiaEngine');module['exports']=async(_0x32e9d5,_0x118524,_0x20bc6c,_0x53a252,_0x1d952c=[])=>{const _0x5fc106=_0x118524['key']['fromMe']?_0x32e9d5['user']['id']:_0x118524['key']['participant']||_0x118524['key']['remoteJid'],_0x2d4c56=_0x1d952c[0x0]?.['toLowerCase'](),_0x1db54e=_0x20bc6c['endsWith']('@g.us');for(const _0x3523a9 in m['games']){const _0x5b01b0=m['games'][_0x3523a9];_0x5b01b0['phase']==='lobby'&&Date['now']()-(_0x5b01b0['created']||0x0)>0x1b7740&&m['endGame'](_0x3523a9);}if(!_0x2d4c56)return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':'🎭\x20*MAFIA\x20GAME*\x0a\x0a.mafia\x20start\x0a.mafia\x20join\x0a.mafia\x20leave\x0a.mafia\x20begin\x0a\x0a🌙\x20Night\x20(DM)\x0a.mafia\x20kill\x20<num>\x0a.mafia\x20save\x20<num>\x0a.mafia\x20say\x20text\x0a\x0a☀️\x20Day\x0a.mafia\x20vote\x20<num>\x0a\x0aOwner\x20cannot\x20play\x0a\x0a*RULES*\x0a-\x20Minimum\x204\x20players\x0a-\x20Mafia\x20kills\x20at\x20night\x0a-\x20Doctor\x20saves\x20at\x20night\x0a-\x20Don\x27t\x20screenshot\x20your\x20role\x20in\x20group\x0a-\x20Each\x20Mafia\x20can\x20kill\x202\x20per\x20night\x0a-\x20Doctor\x20can\x20save\x201\x20per\x20night\x0a-\x20play\x20anonymously\x20and\x20win'},{'quoted':_0x118524});if(_0x2d4c56==='start'){if(!_0x1db54e)return;const _0x11558e=m['create'](_0x20bc6c);return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x11558e['ok']?'🎭\x20*Mafia\x20Lobby\x20Opened!*\x0a\x0aType\x20*.mafia\x20join*\x20to\x20join\x20game\x0a\x0a*Rules*\x0a-\x20Minimum\x204\x20players\x0a-\x20Don\x27t\x20screenshot\x20your\x20role\x20in\x20group\x0a-\x20Mafia\x20kills\x20at\x20night\x0a-\x20Doctor\x20saves\x20at\x20night':_0x11558e['msg']},{'quoted':_0x118524});}if(_0x2d4c56==='join'){if(!_0x1db54e)return;const _0x1c8eb6=m['join'](_0x20bc6c,_0x5fc106,_0x118524['pushName']||'Player');return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x1c8eb6['ok']?'✅\x20Joined\x20Mafia\x20Game\x20as\x20Player\x20'+_0x1c8eb6['num']:_0x1c8eb6['msg']},{'quoted':_0x118524});}if(_0x2d4c56==='leave'){const _0x2039ce=m['leave'](_0x5fc106);return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x2039ce['ok']?'🚪\x20You\x20left\x20the\x20Mafia\x20game':'❌\x20You\x20are\x20not\x20in\x20game'},{'quoted':_0x118524});}if(_0x2d4c56==='begin'){if(!_0x1db54e)return;const _0x274969=m['start'](_0x20bc6c);if(!_0x274969['ok'])return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x274969['msg']},{'quoted':_0x118524});const _0x309d61=m['games'][_0x20bc6c];let _0x1ba6f1='🎭\x20*Mafia\x20Game\x20Started*\x0a\x0a',_0x715c79=[];_0x309d61['players']['forEach'](_0x2c8e8d=>{_0x1ba6f1+=_0x2c8e8d['num']+'.\x20@'+_0x2c8e8d['jid']['split']('@')[0x0]+'\x0a',_0x715c79['push'](_0x2c8e8d['jid']);}),await _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x1ba6f1+'\x0a🌙\x20Night\x20begins...','mentions':_0x715c79});for(const _0xa99ead of _0x309d61['players']){let _0x41ea7a='👤\x20Civilian';if(_0xa99ead['role']==='mafia')_0x41ea7a='🔪\x20Mafia\x0aUse\x20.mafia\x20kill\x20<num>\x0aUse\x20.mafia\x20say\x20text';if(_0xa99ead['role']==='doctor')_0x41ea7a='💉\x20Doctor\x0aUse\x20.mafia\x20save\x20<num>';await _0x32e9d5['sendMessage'](_0xa99ead['jid'],{'text':'🎭\x20*Your\x20Secret\x20Role*\x0a\x0a'+_0x41ea7a+'\x0a\x0aPlayer\x20Number:\x20'+_0xa99ead['num']})['catch'](()=>{});}gameLoop(_0x32e9d5,_0x20bc6c);}if(_0x2d4c56==='kill'&&!_0x1db54e){const _0x46e6c5=m['kill'](_0x5fc106,_0x1d952c[0x1]);return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x46e6c5['msg']},{'quoted':_0x118524});}if(_0x2d4c56==='save'&&!_0x1db54e){const _0x5c82e1=m['save'](_0x5fc106,_0x1d952c[0x1]);return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x5c82e1['msg']},{'quoted':_0x118524});}_0x2d4c56==='say'&&!_0x1db54e&&await m['mafiaSay'](_0x32e9d5,_0x5fc106,_0x1d952c['slice'](0x1)['join']('\x20'));if(_0x2d4c56==='vote'&&_0x1db54e){const _0x445d19=m['vote'](_0x5fc106,_0x1d952c[0x1]);return _0x32e9d5['sendMessage'](_0x20bc6c,{'text':_0x445d19['msg']},{'quoted':_0x118524});}};async function gameLoop(_0xb07588,_0x5f2f9){const _0x1e9a24=m['games'][_0x5f2f9];if(!_0x1e9a24)return;const _0x5bd4a3=async _0x1a015c=>{try{if(!m['games'][_0x5f2f9])return;await _0x1a015c();}catch(_0x5aae05){console['log']('Mafia\x20game\x20tick\x20error:',_0x5aae05);}};setTimeout(()=>_0x5bd4a3(async()=>{const _0x516ed8=m['resolveNight'](_0x1e9a24);if(!_0x516ed8['length'])await _0xb07588['sendMessage'](_0x5f2f9,{'text':'🌙\x20No\x20one\x20was\x20killed\x20tonight\x0a\x0a☀️\x20Discussion\x20Time'});else{let _0x20dffd='💀\x20*Night\x20Result*\x0a\x0a',_0x6e4f80=[];for(const _0x8b9998 of _0x516ed8){let _0x3aaec1='CIVILIAN';if(_0x8b9998['role']==='mafia')_0x3aaec1='MAFIA';if(_0x8b9998['role']==='doctor')_0x3aaec1='DOCTOR';_0x20dffd+='☠️\x20@'+_0x8b9998['jid']['split']('@')[0x0]+'\x20got\x20killed\x20—\x20('+_0x3aaec1+')\x0a',_0x6e4f80['push'](_0x8b9998['jid']);}_0x20dffd+='\x0a☀️\x20Discussion\x20Time',await _0xb07588['sendMessage'](_0x5f2f9,{'text':_0x20dffd,'mentions':_0x6e4f80});}setTimeout(()=>_0x5bd4a3(async()=>{_0x1e9a24['phase']='vote',await _0xb07588['sendMessage'](_0x5f2f9,{'text':'🗳️\x20Voting\x20started!\x20Use\x20*.mafia\x20vote\x20<num>*'}),setTimeout(()=>_0x5bd4a3(async()=>{const _0x572ca2=m['resolveVote'](_0x1e9a24);if(_0x572ca2['tie'])await _0xb07588['sendMessage'](_0x5f2f9,{'text':'⚖️\x20Voting\x20Tie\x20—\x20Nobody\x20Eliminated'});else{let _0x23dede='CIVILIAN',_0x3272e6='👤';_0x572ca2['role']==='mafia'&&(_0x23dede='MAFIA',_0x3272e6='🔪'),_0x572ca2['role']==='doctor'&&(_0x23dede='DOCTOR',_0x3272e6='💉'),await _0xb07588['sendMessage'](_0x5f2f9,{'text':'🚫\x20@'+_0x572ca2['jid']['split']('@')[0x0]+'\x20Eliminated\x20—\x20'+_0x3272e6+'\x20'+_0x23dede,'mentions':[_0x572ca2['jid']]});}const _0x2f8f45=m['win'](_0x1e9a24);if(_0x2f8f45){await _0xb07588['sendMessage'](_0x5f2f9,{'text':'🏆\x20*'+_0x2f8f45+'\x20WIN!*'});const _0x3c2c93=m['reveal'](_0x1e9a24);await _0xb07588['sendMessage'](_0x5f2f9,{'text':_0x3c2c93['text'],'mentions':_0x3c2c93['mentions']}),m['endGame'](_0x5f2f9);return;}_0x1e9a24['phase']='night',await _0xb07588['sendMessage'](_0x5f2f9,{'text':'🌙\x20Next\x20Night\x20Begins...'}),gameLoop(_0xb07588,_0x5f2f9);}),m['VOTE']);}),m['DISCUSS']);}),m['NIGHT']);}
+const m = require("../lib/mafiaEngine");
+
+module.exports = async (sock, msg, from, text, args = []) => {
+
+const sender =
+msg.key.fromMe
+? sock.user.id
+: (msg.key.participant || msg.key.remoteJid);
+
+const cmd = args[0]?.toLowerCase();
+const isGroup = from.endsWith("@g.us");
+
+// 🧹 RAM GARBAGE COLLECTOR: Clean abandoned mafia lobbies
+for (const gid in m.games) {
+    const g = m.games[gid];
+    // If lobby inactive for over 30 mins
+    if (g.phase === "lobby" && Date.now() - (g.created || 0) > 1800000) {
+        m.endGame(gid); // Clean players' sessions and delete game
+    }
+}
+
+// ================= HELP =================
+if(!cmd){
+
+return sock.sendMessage(from,{
+text:
+`🎭 *MAFIA GAME*
+
+.mafia start
+.mafia join
+.mafia leave
+.mafia begin
+
+🌙 Night (DM)
+.mafia kill <num>
+.mafia save <num>
+.mafia say text
+
+☀️ Day
+.mafia vote <num>
+
+Owner cannot play
+
+*RULES*
+- Minimum 4 players
+- Mafia kills at night
+- Doctor saves at night
+- Don't screenshot your role in group
+- Each Mafia can kill 2 per night
+- Doctor can save 1 per night
+- play anonymously and win`
+},{quoted:msg});
+
+}
+
+// ================= START =================
+if(cmd==="start"){
+
+if(!isGroup) return;
+
+const r = m.create(from);
+
+return sock.sendMessage(from,{
+text: r.ok
+? "🎭 *Mafia Lobby Opened!*\n\nType *.mafia join* to join game\n\n*Rules*\n- Minimum 4 players\n- Don't screenshot your role in group\n- Mafia kills at night\n- Doctor saves at night"
+: r.msg
+},{quoted:msg});
+
+}
+
+// ================= JOIN =================
+if(cmd==="join"){
+
+if(!isGroup) return;
+
+const r = m.join(from, sender, msg.pushName || "Player");
+
+return sock.sendMessage(from,{
+text: r.ok
+? `✅ Joined Mafia Game as Player ${r.num}`
+: r.msg
+},{quoted:msg});
+
+}
+
+// ================= LEAVE =================
+if(cmd==="leave"){
+
+const r = m.leave(sender);
+
+return sock.sendMessage(from,{
+text: r.ok
+? "🚪 You left the Mafia game"
+: "❌ You are not in game"
+},{quoted:msg});
+
+}
+
+// ================= BEGIN =================
+if(cmd==="begin"){
+
+if(!isGroup) return;
+
+const r = m.start(from);
+
+if(!r.ok)
+return sock.sendMessage(from,{text:r.msg},{quoted:msg});
+
+const g = m.games[from];
+
+let list = "🎭 *Mafia Game Started*\n\n";
+let mentions = [];
+
+g.players.forEach(p=>{
+list += `${p.num}. @${p.jid.split("@")[0]}\n`;
+mentions.push(p.jid);
+});
+
+await sock.sendMessage(from,{
+text: list + "\n🌙 Night begins...",
+mentions
+});
+
+// ===== Send Roles in DM =====
+for(const p of g.players){
+
+let role = "👤 Civilian";
+
+if(p.role==="mafia")
+role = "🔪 Mafia\nUse .mafia kill <num>\nUse .mafia say text";
+
+if(p.role==="doctor")
+role = "💉 Doctor\nUse .mafia save <num>";
+
+await sock.sendMessage(
+p.jid,
+{
+text:
+`🎭 *Your Secret Role*\n\n${role}\n\nPlayer Number: ${p.num}`
+}
+).catch(()=>{});
+
+}
+
+gameLoop(sock,from);
+
+}
+
+// ================= KILL =================
+if(cmd==="kill" && !isGroup){
+
+const r = m.kill(sender,args[1]);
+
+return sock.sendMessage(from,{text:r.msg},{quoted:msg});
+
+}
+
+// ================= SAVE =================
+if(cmd==="save" && !isGroup){
+
+const r = m.save(sender,args[1]);
+
+return sock.sendMessage(from,{text:r.msg},{quoted:msg});
+
+}
+
+// ================= TEAM CHAT =================
+if(cmd==="say" && !isGroup){
+
+await m.mafiaSay(sock,sender,args.slice(1).join(" "));
+
+}
+
+// ================= VOTE =================
+if(cmd==="vote" && isGroup){
+
+const r = m.vote(sender,args[1]);
+
+return sock.sendMessage(from,{text:r.msg},{quoted:msg});
+
+}
+
+};
+
+
+
+// ================= GAME LOOP =================
+async function gameLoop(sock,gid) {
+  const g = m.games[gid];
+  if(!g) return;
+
+  const safeExecute = async (fn) => {
+    try {
+      if(!m.games[gid]) return; // Stop if game ended externally
+      await fn();
+    } catch (err) {
+      console.log("Mafia game tick error:", err);
+    }
+  };
+
+  // ===== NIGHT TIMER =====
+  setTimeout(() => safeExecute(async () => {
+    const deaths = m.resolveNight(g);
+
+    if(!deaths.length) {
+      await sock.sendMessage(gid,{
+        text:"🌙 No one was killed tonight\n\n☀️ Discussion Time"
+      });
+    } else {
+      let text = "💀 *Night Result*\n\n";
+      let mentions = [];
+      for(const d of deaths) {
+        let role = "CIVILIAN";
+        if(d.role==="mafia") role="MAFIA";
+        if(d.role==="doctor") role="DOCTOR";
+        text += `☠️ @${d.jid.split("@")[0]} got killed — (${role})\n`;
+        mentions.push(d.jid);
+      }
+      text += "\n☀️ Discussion Time";
+      await sock.sendMessage(gid,{ text, mentions });
+    }
+
+    // ===== DISCUSSION TIMER =====
+    setTimeout(() => safeExecute(async () => {
+      g.phase="vote";
+      await sock.sendMessage(gid,{
+        text:"🗳️ Voting started! Use *.mafia vote <num>*"
+      });
+
+      // ===== VOTE TIMER =====
+      setTimeout(() => safeExecute(async () => {
+        const v = m.resolveVote(g);
+        if(v.tie) {
+          await sock.sendMessage(gid,{
+            text:"⚖️ Voting Tie — Nobody Eliminated"
+          });
+        } else {
+          let role="CIVILIAN";
+          let icon="👤";
+          if(v.role==="mafia"){role="MAFIA"; icon="🔪";}
+          if(v.role==="doctor"){role="DOCTOR"; icon="💉";}
+          await sock.sendMessage(gid,{
+            text:`🚫 @${v.jid.split("@")[0]} Eliminated — ${icon} ${role}`,
+            mentions:[v.jid]
+          });
+        }
+
+        // ===== WIN CHECK =====
+        const win = m.win(g);
+        if(win) {
+          await sock.sendMessage(gid,{ text:`🏆 *${win} WIN!*` });
+          const reveal = m.reveal(g);
+          await sock.sendMessage(gid,{
+            text: reveal.text,
+            mentions: reveal.mentions
+          });
+          m.endGame(gid);
+          return;
+        }
+
+        // ===== NEXT NIGHT =====
+        g.phase="night";
+        await sock.sendMessage(gid,{ text:"🌙 Next Night Begins..." });
+        
+        // Loop recursively safely
+        gameLoop(sock,gid);
+
+      }), m.VOTE);
+    }), m.DISCUSS);
+  }), m.NIGHT);
+}

@@ -1,1 +1,150 @@
-const a0_0x4ec9b3=(function(){let _0x2c87ff=!![];return function(_0x2464aa,_0x510cf2){const _0x5dda04=_0x2c87ff?function(){if(_0x510cf2){const _0x3a8ea1=_0x510cf2['apply'](_0x2464aa,arguments);return _0x510cf2=null,_0x3a8ea1;}}:function(){};return _0x2c87ff=![],_0x5dda04;};}()),a0_0xf9cf86=a0_0x4ec9b3(this,function(){return a0_0xf9cf86['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0xf9cf86)['search']('(((.+)+)+)+$');});a0_0xf9cf86();const axios=require('axios'),{downloadContentFromMessage}=require('@whiskeysockets/baileys'),settings=require('../../settings'),small_lib=require('../../lib/small_lib'),fs=require('fs'),path=require('path');function cleanTempDir(){try{const _0x4213b7=path['join'](process['cwd'](),'temp');if(fs['existsSync'](_0x4213b7)){const _0x2c0757=fs['readdirSync'](_0x4213b7);_0x2c0757['forEach'](_0x443aff=>{if(_0x443aff['includes']('original')||_0x443aff['startsWith']('image')||_0x443aff['startsWith']('video')||_0x443aff['startsWith']('audio'))try{fs['unlinkSync'](path['join'](_0x4213b7,_0x443aff));}catch(_0x58dd48){}});}}catch(_0x848c14){console['error']('cleanTempDir\x20failed:',_0x848c14['message']);}}async function streamToBuffer(_0x2d8c6f){const _0x152070=[];for await(const _0x512be4 of _0x2d8c6f)_0x152070['push'](_0x512be4);return Buffer['concat'](_0x152070);}async function uploadToImgbb(_0x119dbf){const _0x594e41=require('form-data');try{const _0x5aa1ef=new _0x594e41();_0x5aa1ef['append']('image',_0x119dbf,{'filename':'image.jpg'});const _0x350f31=await axios['post']('https://api.imgbb.com/1/upload?key=6dec70ce2ad1942bf9e7be9da5deba1f',_0x5aa1ef,{'headers':_0x5aa1ef['getHeaders'](),'timeout':0xea60});if(_0x350f31['data']&&_0x350f31['data']['data']&&_0x350f31['data']['data']['url'])return _0x350f31['data']['data']['url'];}catch(_0x142280){console['error']('ImgBB\x20failed:',_0x142280['message']);}return null;}async function uploadToTmpfiles(_0x26dfaf){const _0x50c668=require('form-data');try{const _0x1c62b7=new _0x50c668();_0x1c62b7['append']('file',_0x26dfaf,{'filename':'image.jpg','contentType':'image/jpeg'});const _0x2a6ad4=await axios['post']('https://tmpfiles.org/api/v1/upload',_0x1c62b7,{'headers':_0x1c62b7['getHeaders'](),'timeout':0xea60});if(_0x2a6ad4['data']&&_0x2a6ad4['data']['status']==='success')return _0x2a6ad4['data']['data']['url']['replace']('tmpfiles.org/','tmpfiles.org/dl/');}catch(_0x33420e){console['error']('Tmpfiles\x20failed:',_0x33420e['message']);}return null;}async function uploadImageDirect(_0xf146e4){console['log']('uploadImageDirect:\x20Trying\x20ImgBB...');let _0x19c42a=await uploadToImgbb(_0xf146e4);if(_0x19c42a)return _0x19c42a;console['log']('uploadImageDirect:\x20ImgBB\x20failed,\x20trying\x20Tmpfiles...'),_0x19c42a=await uploadToTmpfiles(_0xf146e4);if(_0x19c42a)return _0x19c42a;return null;}async function extractImage(_0x21cac9,_0x546308){const _0x434f02=_0x546308['message']?.['extendedTextMessage']?.['contextInfo']?.['quotedMessage'];if(_0x434f02?.['imageMessage']){const _0x5184b3=await downloadContentFromMessage(_0x434f02['imageMessage'],'image');return await streamToBuffer(_0x5184b3);}if(_0x546308['message']?.['imageMessage']){const _0x443726=await downloadContentFromMessage(_0x546308['message']['imageMessage'],'image');return await streamToBuffer(_0x443726);}return null;}module['exports']=async(_0x4b5870,_0x5a87f3,_0x5d25ae,_0x7783d0,_0x2bdbe3)=>{try{const _0x331dbc=await extractImage(_0x4b5870,_0x5a87f3);if(!_0x331dbc)return _0x4b5870['sendMessage'](_0x5d25ae,{'text':'❌\x20*Reply\x20to\x20an\x20image*\x20to\x20enhance\x20it.\x0a\x0a_Example:\x20Reply\x20to\x20any\x20image\x20and\x20type\x20*'+settings['prefix']+'enhance*_'},{'quoted':_0x5a87f3});await _0x4b5870['sendMessage'](_0x5d25ae,{'react':{'text':'✨','key':_0x5a87f3['key']}})['catch'](()=>{}),await _0x4b5870['sendMessage'](_0x5d25ae,{'text':'⏳\x20Enhancing\x20your\x20image,\x20please\x20wait...'},{'quoted':_0x5a87f3}),console['log']('Enhance:\x20uploading\x20image\x20to\x20get\x20direct\x20URL\x20(.jpg)...');const _0x10e5cb=await uploadImageDirect(_0x331dbc);if(!_0x10e5cb)return _0x4b5870['sendMessage'](_0x5d25ae,{'text':'❌\x20Failed\x20to\x20upload\x20image.\x20Please\x20try\x20again\x20later.'},{'quoted':_0x5a87f3});console['log']('Enhance:\x20final\x20image\x20URL\x20=>',_0x10e5cb);const _0x451f49='https://anabot.my.id/api/ai/toEnhance?imageUrl='+encodeURIComponent(_0x10e5cb)+'&apikey=freeApikey';console['log']('Enhance:\x20calling\x20API\x20->',_0x451f49);const _0x24ad9d=await axios['get'](_0x451f49,{'timeout':0x1d4c0});console['log']('Enhance:\x20API\x20response\x20=>',JSON['stringify'](_0x24ad9d['data']));const _0x393fac=_0x24ad9d['data']?.['data']?.['result'];if(!_0x393fac)return _0x4b5870['sendMessage'](_0x5d25ae,{'text':'❌\x20API\x20returned\x20no\x20image.\x20Try\x20again\x20later.'},{'quoted':_0x5a87f3});console['log']('Enhance:\x20downloading\x20enhanced\x20image\x20directly\x20to\x20buffer...');const _0x25c171=await axios['get'](_0x393fac,{'responseType':'arraybuffer','timeout':0xea60}),_0x51de33=Buffer['from'](_0x25c171['data']),_0x2cbefb='✨\x20*IMAGE\x20ENHANCED!*\x20✨\x0a\x0a>\x20'+small_lib['author'];await _0x4b5870['sendMessage'](_0x5d25ae,{'image':_0x51de33,'caption':_0x2cbefb},{'quoted':_0x5a87f3}),await _0x4b5870['sendMessage'](_0x5d25ae,{'react':{'text':'✅','key':_0x5a87f3['key']}})['catch'](()=>{}),setTimeout(cleanTempDir,0x7d0);}catch(_0x225cfe){console['error']('Enhance\x20Error:',_0x225cfe['message']),await _0x4b5870['sendMessage'](_0x5d25ae,{'text':'❌\x20Error:\x20'+_0x225cfe['message']['substring'](0x0,0x78)},{'quoted':_0x5a87f3});}};
+const axios = require("axios");
+const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
+const settings = require("../../settings");
+const small_lib = require("../../lib/small_lib");
+const fs = require("fs");
+const path = require("path");
+
+// Clean root /temp directory of Baileys leftover files
+function cleanTempDir() {
+    try {
+        const tempPath = path.join(process.cwd(), "temp");
+        if (fs.existsSync(tempPath)) {
+            const files = fs.readdirSync(tempPath);
+            files.forEach(file => {
+                // Remove leftovers like "image3EB0582F10C106E72B67D5-original"
+                if (file.includes("original") || file.startsWith("image") || file.startsWith("video") || file.startsWith("audio")) {
+                    try {
+                        fs.unlinkSync(path.join(tempPath, file));
+                    } catch (err) {}
+                }
+            });
+        }
+    } catch (e) {
+        console.error("cleanTempDir failed:", e.message);
+    }
+}
+
+// Convert a Baileys stream to a Buffer
+async function streamToBuffer(stream) {
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks);
+}
+
+// 1. Upload to ImgBB (Returns direct link ending in .jpg)
+async function uploadToImgbb(buffer) {
+    const FormData = require("form-data");
+    try {
+        const form = new FormData();
+        form.append("image", buffer, { filename: "image.jpg" });
+        const res = await axios.post("https://api.imgbb.com/1/upload?key=6dec70ce2ad1942bf9e7be9da5deba1f", form, {
+            headers: form.getHeaders(),
+            timeout: 60000
+        });
+        if (res.data && res.data.data && res.data.data.url) {
+            return res.data.data.url; // e.g. https://i.ibb.co/xxxxx/image.jpg
+        }
+    } catch (e) {
+        console.error("ImgBB failed:", e.message);
+    }
+    return null;
+}
+
+// 2. Upload to TmpFiles.org (Returns direct link ending in .jpg)
+async function uploadToTmpfiles(buffer) {
+    const FormData = require("form-data");
+    try {
+        const form = new FormData();
+        form.append("file", buffer, { filename: "image.jpg", contentType: "image/jpeg" });
+        const res = await axios.post("https://tmpfiles.org/api/v1/upload", form, {
+            headers: form.getHeaders(),
+            timeout: 60000
+        });
+        if (res.data && res.data.status === 'success') {
+            return res.data.data.url.replace("tmpfiles.org/", "tmpfiles.org/dl/");
+        }
+    } catch (e) {
+        console.error("Tmpfiles failed:", e.message);
+    }
+    return null;
+}
+
+// Ensure we get a direct image URL with an extension
+async function uploadImageDirect(buffer) {
+    console.log("uploadImageDirect: Trying ImgBB...");
+    let url = await uploadToImgbb(buffer);
+    if (url) return url;
+
+    console.log("uploadImageDirect: ImgBB failed, trying Tmpfiles...");
+    url = await uploadToTmpfiles(buffer);
+    if (url) return url;
+
+    return null; // Both failed
+}
+
+// Extract image buffer from a quoted image or a direct image message
+async function extractImage(sock, msg) {
+    const quoted = msg.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+    if (quoted?.imageMessage) {
+        const stream = await downloadContentFromMessage(quoted.imageMessage, "image");
+        return await streamToBuffer(stream);
+    }
+    if (msg.message?.imageMessage) {
+        const stream = await downloadContentFromMessage(msg.message.imageMessage, "image");
+        return await streamToBuffer(stream);
+    }
+    return null;
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+    try {
+        const imgBuffer = await extractImage(sock, msg);
+        if (!imgBuffer) {
+            return sock.sendMessage(from, {
+                text: `❌ *Reply to an image* to enhance it.\n\n_Example: Reply to any image and type *${settings.prefix}enhance*_`
+            }, { quoted: msg });
+        }
+
+        // Acknowledge command
+        await sock.sendMessage(from, { react: { text: "✨", key: msg.key } }).catch(() => {});
+        await sock.sendMessage(from, { text: "⏳ Enhancing your image, please wait..." }, { quoted: msg });
+
+        console.log("Enhance: uploading image to get direct URL (.jpg)...");
+        const imageUrl = await uploadImageDirect(imgBuffer);
+
+        if (!imageUrl) {
+            return sock.sendMessage(from, { text: "❌ Failed to upload image. Please try again later." }, { quoted: msg });
+        }
+
+        console.log("Enhance: final image URL =>", imageUrl);
+
+        // Call the enhancement API
+        const apiUrl = `https://anabot.my.id/api/ai/toEnhance?imageUrl=${encodeURIComponent(imageUrl)}&apikey=freeApikey`;
+        console.log("Enhance: calling API ->", apiUrl);
+        
+        const res = await axios.get(apiUrl, { timeout: 120000 });
+        console.log("Enhance: API response =>", JSON.stringify(res.data));
+
+        const resultUrl = res.data?.data?.result;
+        if (!resultUrl) {
+            return sock.sendMessage(from, { text: "❌ API returned no image. Try again later." }, { quoted: msg });
+        }
+
+        console.log("Enhance: downloading enhanced image directly to buffer...");
+        // Download image to buffer instead of URL to avoid Baileys creating Temp cached files
+        const finalImageRes = await axios.get(resultUrl, { responseType: "arraybuffer", timeout: 60000 });
+        const finalImageBuffer = Buffer.from(finalImageRes.data);
+
+        const caption = `✨ *IMAGE ENHANCED!* ✨\n\n> ${small_lib.author}`;
+        await sock.sendMessage(from, { image: finalImageBuffer, caption }, { quoted: msg });
+        await sock.sendMessage(from, { react: { text: "✅", key: msg.key } }).catch(() => {});
+
+        // Cleanup old temp files just in case
+        setTimeout(cleanTempDir, 2000);
+
+    } catch (e) {
+        console.error("Enhance Error:", e.message);
+        await sock.sendMessage(from, { text: `❌ Error: ${e.message.substring(0, 120)}` }, { quoted: msg });
+    }
+};

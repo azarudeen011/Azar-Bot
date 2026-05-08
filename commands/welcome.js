@@ -13,7 +13,7 @@ module.exports = async (sock, msg, from, text, args) => {
     const sender = msg.key.participant || msg.key.remoteJid;
     const { isPairedOwner } = require("../lib/guards");
     const isAdmin = metadata.participants.some(p => p.id === sender && p.admin);
-    const isOwner = isPairedOwner(msg);
+    const isOwner = await isPairedOwner(sock, msg);
     let settings;
     try {
         settings = require("./settings");

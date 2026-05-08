@@ -1,1 +1,68 @@
-const a0_0x3cd3a2=(function(){let _0x5bfc46=!![];return function(_0x3e32f7,_0x289df3){const _0x1cb0a3=_0x5bfc46?function(){if(_0x289df3){const _0x471fc6=_0x289df3['apply'](_0x3e32f7,arguments);return _0x289df3=null,_0x471fc6;}}:function(){};return _0x5bfc46=![],_0x1cb0a3;};}()),a0_0x7d6604=a0_0x3cd3a2(this,function(){return a0_0x7d6604['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x7d6604)['search']('(((.+)+)+)+$');});a0_0x7d6604();const secure=require('../lib/small_lib');module['exports']=async(_0x4bc3d6,_0x346add,_0x183dc6)=>{try{await _0x4bc3d6['sendMessage'](_0x183dc6,{'react':{'text':'👑','key':_0x346add['key']}})['catch'](()=>{});}catch(_0x5bf40d){console['log']('Reaction\x20failed:',_0x5bf40d?.['message']||_0x5bf40d);}const {ownerName:_0x495682,ownerNumber:_0x5a38f2,botName:_0x4b80b5,author:_0x4a6066,channel:_0x3c4604,banner:_0x4a35ee}=secure,_0x8e410c='.',_0x10cae0='6.4',_0x43a6e1=('\x0aBEGIN:VCARD\x0aVERSION:3.0\x0aFN:'+_0x495682+'\x0aTEL;type=CELL;type=VOICE;waid='+_0x5a38f2+':+'+_0x5a38f2+'\x0aEND:VCARD\x0a\x20\x20')['trim'](),_0x8d103f=('\x0a👑\x20'+_0x495682+'\x20—\x20Official\x20Owner\x0a━━━━━━━━━━━━━━━━━━━\x0a🤖\x20Bot:\x20'+_0x4b80b5+'\x0a📱\x20Number:\x20wa.me/'+_0x5a38f2+'\x0a⚙️\x20Prefix:\x20'+_0x8e410c+'\x0a💫\x20Version:\x20'+_0x10cae0+'\x0a━━━━━━━━━━━━━━━━━━━\x0a>\x20Powered\x20by\x20'+_0x4a6066+'\x20⚡\x0a')['trim']();try{await _0x4bc3d6['sendMessage'](_0x183dc6,{'contacts':{'displayName':_0x495682,'contacts':[{'vcard':_0x43a6e1}]}}),await _0x4bc3d6['sendMessage'](_0x183dc6,{'image':{'url':_0x4a35ee||_0x3c4604['banner']},'caption':_0x8d103f,'contextInfo':{'forwardedNewsletterMessageInfo':{'newsletterJid':_0x3c4604['jid'],'serverMessageId':0x1,'newsletterName':_0x3c4604['name']},'isForwarded':!![],'forwardingScore':0x1}},{'quoted':_0x346add});}catch(_0x200253){console['error']('❌\x20Owner\x20command\x20failed:',_0x200253?.['message']||_0x200253),await _0x4bc3d6['sendMessage'](_0x183dc6,{'text':'⚠️\x20Failed\x20to\x20send\x20owner\x20info.'},{'quoted':_0x346add});}};
+// ==============================================
+// 👑 Azahrabot Owner Command (v6.4 — Banner + Native Channel Button)
+// Clean Banner • Native “View Channel” Button (Mobile + Desktop)
+// ==============================================
+
+const secure = require("../lib/small_lib");
+
+module.exports = async (sock, msg, from) => {
+  try {
+    await sock.sendMessage(from, { react: { text: "👑", key: msg.key } }).catch(() => {});
+  } catch (e) {
+    console.log("Reaction failed:", e?.message || e);
+  }
+
+  const { ownerName, ownerNumber, botName, author, channel, banner } = secure;
+  const prefix = ".";
+  const version = "6.4";
+
+  // 📇 vCard
+  const vcard = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${ownerName}
+TEL;type=CELL;type=VOICE;waid=${ownerNumber}:+${ownerNumber}
+END:VCARD
+  `.trim();
+
+  // 🧾 Owner Info
+  const caption = `
+👑 ${ownerName} — Official Owner
+━━━━━━━━━━━━━━━━━━━
+🤖 Bot: ${botName}
+📱 Number: wa.me/${ownerNumber}
+⚙️ Prefix: ${prefix}
+💫 Version: ${version}
+━━━━━━━━━━━━━━━━━━━
+> Powered by ${author} ⚡
+`.trim();
+
+  try {
+    // Step 1️⃣: Send contact first
+    await sock.sendMessage(from, {
+      contacts: { displayName: ownerName, contacts: [{ vcard }] },
+    });
+
+    // Step 2️⃣: Send one banner with text + real channel button
+    await sock.sendMessage(
+      from,
+      {
+        image: { url: banner || channel.banner }, // ✅ one clean banner
+        caption,
+        contextInfo: {
+          forwardedNewsletterMessageInfo: {
+            newsletterJid: channel.jid,
+            serverMessageId: 1,
+            newsletterName: channel.name,
+          },
+          isForwarded: true,
+          forwardingScore: 1,
+        },
+      },
+      { quoted: msg }
+    );
+  } catch (err) {
+    console.error("❌ Owner command failed:", err?.message || err);
+    await sock.sendMessage(from, { text: "⚠️ Failed to send owner info." }, { quoted: msg });
+  }
+};

@@ -16,19 +16,41 @@ module.exports = async (sock, msg, from) => {
       }, { quoted: msg });
     }
 
-    // 🧠 Fetch metadata
+    // 🔐 Admin check (Manual 'AntiLink trick' for maximum stability)
+    const { jidNormalizedUser } = require("@whiskeysockets/baileys");
+    const sender = msg.key.participant || msg.key.remoteJid;
     const metadata = await sock.groupMetadata(from);
     const participants = metadata.participants || [];
-    const sender = msg.key.participant || msg.key.remoteJid;
+    const botId = jidNormalizedUser(sock.user.id);
 
-    // 👑 Check admin access
-    const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
-    if (!isAdmin) {
-      return await sock.sendMessage(from, {
-        text: "❌ Only group admins can promote members.",
-      }, { quoted: msg });
+    // 🕵️ Find the bot in participants list
+    const me = participants.find(p => 
+      jidNormalizedUser(p.id) === botId || 
+      p.id.includes(botId.split('@')[0]) ||
+      (p.lid && p.lid === botId)
+    );
+
+    // 🛡️ Permissive check: If we can't find the bot in metadata, assume it MIGHT be admin
+    // This handles cases where groupMetadata is stale/incomplete.
+    const isBotAdmin = me ? (me.admin === "admin" || me.admin === "superadmin" || !!me.admin) : true;
+
+    if (!isBotAdmin) {
+      return await sock.sendMessage(from, { text: "❌ *ERROR:* I need to be an *Admin* to promote members!" }, { quoted: msg });
     }
+
+    const senderNum = sender.split('@')[0].split(':')[0];
+    const isSenderAdmin = participants.some(p => 
+      (p.id.includes(senderNum) || (p.lid && p.lid === sender)) && 
+      (p.admin === "admin" || p.admin === "superadmin" || !!p.admin)
+    );
+
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+
+    if (!isSenderAdmin && !isOwner) {
+      return await sock.sendMessage(from, { text: "❌ Only group admins can promote members." }, { quoted: msg });
+    }
+
 
     // 🧍 Identify target user (replied or mentioned)
     const mention = msg.message?.extendedTextMessage?.contextInfo?.mentionedJid?.[0];

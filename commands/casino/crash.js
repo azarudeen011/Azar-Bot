@@ -1,1 +1,139 @@
-const a0_0x33b928=(function(){let _0xd7265b=!![];return function(_0x358338,_0x2f8344){const _0x5aa4e9=_0xd7265b?function(){if(_0x2f8344){const _0x215d32=_0x2f8344['apply'](_0x358338,arguments);return _0x2f8344=null,_0x215d32;}}:function(){};return _0xd7265b=![],_0x5aa4e9;};}()),a0_0x59f79e=a0_0x33b928(this,function(){return a0_0x59f79e['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x59f79e)['search']('(((.+)+)+)+$');});a0_0x59f79e();const eco=require('../../lib/economy'),firebaseManager=require('../../lib/firebaseManager'),cooldownManager=require('../../lib/cooldownManager'),{requireRegistration}=require('../../lib/guards');function sleep(_0x34e95c){return new Promise(_0xec8ddd=>setTimeout(_0xec8ddd,_0x34e95c));}function getCrashPoint(){const _0x4787ee=0x2**0x34,_0x50f07e=Math['floor'](Math['random']()*_0x4787ee);if(_0x50f07e%0x19===0x0)return 0x1;return Math['max'](0x1,Math['floor']((0x64*_0x4787ee-_0x50f07e)/(_0x4787ee-_0x50f07e))/0x64);}module['exports']=async(_0x51189d,_0x1fcc29,_0x39e2ad,_0x5bb590,_0x1f49c0)=>{try{const _0x4ce22a=_0x1fcc29['key']['participant']||_0x1fcc29['key']['remoteJid'];if(!_0x1f49c0[0x0]||!_0x1f49c0[0x1])return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'🚀\x20*CRASH\x20GAME*\x20🚀\x0a━━━━━━━━━━━━━━\x0a⚠️\x20*Usage:*\x20`.crash\x20<multiplier>\x20<bet>`\x0a\x0a'+'Guess\x20the\x20cashout\x20multiplier!\x20If\x20the\x20rocket\x20crashes\x20*after*\x20your\x20multiplier,\x20you\x20win.\x0a\x0a'+'Example:\x20`.crash\x202.5\x20100`\x20(Cashout\x20at\x202.5x\x20with\x20$100\x20bet)'},{'quoted':_0x1fcc29});const _0x4de102=parseFloat(_0x1f49c0[0x0]);if(isNaN(_0x4de102)||_0x4de102<1.01)return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'❌\x20Invalid\x20multiplier!\x20Must\x20be\x20at\x20least\x201.01x.'},{'quoted':_0x1fcc29});const _0x346319=await eco['getUser'](_0x4ce22a),_0x5f01eb=cooldownManager['check'](_0x4ce22a,'crash');if(_0x5f01eb['onCooldown'])return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'⏳\x20*CRASH\x20COOLDOWN*\x20⏳\x0a\x0aYou\x27re\x20playing\x20too\x20fast!\x20Please\x20wait\x20**'+cooldownManager['formatTime'](_0x5f01eb['remaining'])+'**\x20before\x20your\x20next\x20run.\x0a\x0a_Tip:\x20You\x20can\x20still\x20play\x20other\x20games\x20like\x20.slot!_'},{'quoted':_0x1fcc29});let _0x53c06d=parseInt(_0x1f49c0[0x1]);if(_0x1f49c0[0x1]['toLowerCase']()==='all')_0x53c06d=_0x346319['balance'];if(isNaN(_0x53c06d)||_0x53c06d<=0x0)return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'❌\x20Invalid\x20bet\x20amount!'},{'quoted':_0x1fcc29});const _0x1eace7=await eco['spend'](_0x4ce22a,_0x53c06d);if(!_0x1eace7['success']){if(_0x1eace7['error']==='not_registered')return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'❌\x20You\x20are\x20not\x20registered\x20on\x20the\x20website!'},{'quoted':_0x1fcc29});if(_0x1eace7['needsBlackCard'])return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'❌\x20Insufficient\x20wallet\x20balance!\x20You\x20have\x20enough\x20in\x20your\x20bank\x20($'+(_0x1eace7['currentBank']||0x0)['toLocaleString']()+'),\x20but\x20you\x20need\x20a\x20*Black\x20Card*\x20to\x20spend\x20from\x20bank\x20directly.'},{'quoted':_0x1fcc29});const _0xa0ff28=_0x1eace7['currentWallet']||0x0;return await _0x51189d['sendMessage'](_0x39e2ad,{'text':'❌\x20You\x20don\x27t\x20have\x20enough\x20money!\x0aYour\x20wallet:\x20*$'+_0xa0ff28['toLocaleString']()+'*'},{'quoted':_0x1fcc29});}await firebaseManager['logTx'](_0x4ce22a,{'type':'casino','amount':-_0x53c06d,'note':'Crash\x20Bet'});let _0x7f4e28='🚀\x20*CRASH\x20GAME*\x20🚀\x0a━━━━━━━━━━━━━━\x0a';_0x7f4e28+='Bet:\x20*$'+_0x53c06d['toLocaleString']()+'*\x0a',_0x7f4e28+='Target:\x20*'+_0x4de102+'x*\x0a\x0a',_0x7f4e28+='🚀\x20Preparing\x20launch...';const _0x28149a=await _0x51189d['sendMessage'](_0x39e2ad,{'text':_0x7f4e28},{'quoted':_0x1fcc29}),_0x31c050=getCrashPoint();let _0x567727=0x1,_0x56baa6=[0x1,1.2,1.5,1.8,2.5,0x4,0x7,0xa];for(let _0x55130c of _0x56baa6){if(_0x55130c>=_0x31c050||_0x55130c>=_0x4de102)break;_0x567727=_0x55130c,await sleep(0x320);let _0x4f31aa='🚀\x20*CRASH\x20GAME*\x20🚀\x0a━━━━━━━━━━━━━━\x0a';_0x4f31aa+='🚀\x20Rocket\x20is\x20climbing!\x0a',_0x4f31aa+='📈\x20Current:\x20*'+_0x567727['toFixed'](0x2)+'x*\x0a';try{await _0x51189d['sendMessage'](_0x39e2ad,{'text':_0x4f31aa,'edit':_0x28149a['key']});}catch(_0x25d513){}}await sleep(0x320);let _0x2417f4=0x0,_0x248430='';if(_0x31c050>=_0x4de102)_0x2417f4=Math['floor'](_0x53c06d*_0x4de102),await eco['addMoney'](_0x4ce22a,_0x2417f4),await firebaseManager['logTx'](_0x4ce22a,{'type':'casino','amount':_0x2417f4,'note':'Crash\x20Win'}),_0x248430='🎉\x20*YOU\x20CASHED\x20OUT!*\x20🎉\x0aYou\x20successfully\x20escaped\x20at\x20*'+_0x4de102+'x*\x20before\x20it\x20crashed!\x0a\x0aPayout:\x20*$'+_0x2417f4['toLocaleString']()+'*';else{const _0x245a40=_0x4ce22a['split'](':')[0x0]['split']('@')[0x0]+(_0x4ce22a['includes']('@lid')?'@lid':'@s.whatsapp.net'),_0x3b11d5=require('../../lib/identityManager')['resolveNumber'](_0x245a40),_0x11adf7=await firebaseManager['fetchUser'](_0x3b11d5);_0x11adf7?.['cloverActive']?(await eco['addMoney'](_0x4ce22a,_0x53c06d),await firebaseManager['updateUser'](_0x3b11d5,{'cloverActive':![]}),_0x248430='🍀\x20*LUCKY\x20CLOVER\x20ACTIVATED!*\x20🍀\x0a\x0aYou\x20were\x20about\x20to\x20lose\x20*$'+_0x53c06d['toLocaleString']()+'*...\x0aBut\x20your\x20**Lucky\x20Clover**\x20glowed\x20and\x20returned\x20your\x20bet\x20to\x20your\x20wallet!\x20✨'):_0x248430='💥\x20*CRASHED!*\x20💥\x0aThe\x20rocket\x20blew\x20up\x20before\x20reaching\x20'+_0x4de102+'x!\x0aBetter\x20luck\x20next\x20time.';}const _0x51ea7e=await eco['getUser'](_0x4ce22a);let _0x380deb='💵\x20Wallet:\x20*$'+_0x51ea7e['balance']['toLocaleString']()+'*';if(_0x1eace7['from']==='bank')_0x380deb='🏦\x20Bank:\x20*$'+_0x51ea7e['bank']['toLocaleString']()+'*\x20(via\x20Black\x20Card)';let _0x5b4135='🚀\x20*CRASH\x20GAME*\x20🚀\x0a━━━━━━━━━━━━━━\x0a';_0x5b4135+='💥\x20Crashed\x20at:\x20*'+_0x31c050['toFixed'](0x2)+'x*\x0a',_0x5b4135+='━━━━━━━━━━━━━━\x0a',_0x5b4135+=_0x248430+'\x0a\x0a',_0x5b4135+=_0x380deb;try{await _0x51189d['sendMessage'](_0x39e2ad,{'text':_0x5b4135,'edit':_0x28149a['key']});}catch(_0x2b6e46){await _0x51189d['sendMessage'](_0x39e2ad,{'text':_0x5b4135},{'quoted':_0x1fcc29});}cooldownManager['set'](_0x4ce22a,'crash',0x12c);}catch(_0x5dd338){console['error']('Crash\x20Error:',_0x5dd338);}};
+const eco = require('../../lib/economy');
+const firebaseManager = require('../../lib/firebaseManager');
+const cooldownManager = require('../../lib/cooldownManager');
+const { requireRegistration } = require('../../lib/guards');
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+function getCrashPoint() {
+    // Standard casino crash algorithm (House edge ~ 4%)
+    const e = 2 ** 52;
+    const h = Math.floor(Math.random() * e);
+    if (h % 25 === 0) return 1.00; // 4% chance of instant crash
+    return Math.max(1.00, Math.floor((100 * e - h) / (e - h)) / 100.0);
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+    try {
+        const sender = msg.key.participant || msg.key.remoteJid;
+        // Global guard in index.js handles requireRegistration
+
+        if (!args[0] || !args[1]) {
+            return await sock.sendMessage(from, {
+                text: `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n⚠️ *Usage:* \`.crash <multiplier> <bet>\`\n\n` +
+                    `Guess the cashout multiplier! If the rocket crashes *after* your multiplier, you win.\n\n` +
+                    `Example: \`.crash 2.5 100\` (Cashout at 2.5x with $100 bet)`
+            }, { quoted: msg });
+        }
+
+        const cashout = parseFloat(args[0]);
+        if (isNaN(cashout) || cashout < 1.01) {
+            return await sock.sendMessage(from, { text: "❌ Invalid multiplier! Must be at least 1.01x." }, { quoted: msg });
+        }
+
+        const user = await eco.getUser(sender);
+
+        // ⏳ Per-Game Cooldown Check
+        const cd = cooldownManager.check(sender, 'crash');
+        if (cd.onCooldown) {
+            return await sock.sendMessage(from, {
+                text: `⏳ *CRASH COOLDOWN* ⏳\n\nYou're playing too fast! Please wait **${cooldownManager.formatTime(cd.remaining)}** before your next run.\n\n_Tip: You can still play other games like .slot!_`
+            }, { quoted: msg });
+        }
+
+        let bet = parseInt(args[1]);
+        if (args[1].toLowerCase() === "all") bet = user.balance;
+
+        if (isNaN(bet) || bet <= 0) {
+            return await sock.sendMessage(from, { text: "❌ Invalid bet amount!" }, { quoted: msg });
+        }
+
+        const payResult = await eco.spend(sender, bet);
+        if (!payResult.success) {
+            if (payResult.error === "not_registered") {
+                return await sock.sendMessage(from, { text: "❌ You are not registered on the website!" }, { quoted: msg });
+            }
+            if (payResult.needsBlackCard) {
+                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${(payResult.currentBank || 0).toLocaleString()}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
+            }
+            const currentWallet = payResult.currentWallet || 0;
+            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currentWallet.toLocaleString()}*` }, { quoted: msg });
+        }
+
+        await firebaseManager.logTx(sender, { type: "casino", amount: -bet, note: "Crash Bet" });
+
+        let spinText = `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n`;
+        spinText += `Bet: *$${bet.toLocaleString()}*\n`;
+        spinText += `Target: *${cashout}x*\n\n`;
+        spinText += `🚀 Preparing launch...`;
+
+        const sentMsg = await sock.sendMessage(from, { text: spinText }, { quoted: msg });
+
+        const actualCrash = getCrashPoint();
+
+        // Animation
+        let currentMult = 1.00;
+        let animationSteps = [1.00, 1.20, 1.50, 1.80, 2.50, 4.00, 7.00, 10.00];
+
+        for (let step of animationSteps) {
+            if (step >= actualCrash || step >= cashout) break;
+            currentMult = step;
+            await sleep(800);
+            let frame = `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n`;
+            frame += `🚀 Rocket is climbing!\n`;
+            frame += `📈 Current: *${currentMult.toFixed(2)}x*\n`;
+            try { await sock.sendMessage(from, { text: frame, edit: sentMsg.key }); } catch (e) { }
+        }
+
+        await sleep(800);
+
+        let winAmount = 0;
+        let resultMsg = "";
+
+        if (actualCrash >= cashout) {
+            winAmount = Math.floor(bet * cashout);
+            await eco.addMoney(sender, winAmount);
+            await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Crash Win" });
+            resultMsg = `🎉 *YOU CASHED OUT!* 🎉\nYou successfully escaped at *${cashout}x* before it crashed!\n\nPayout: *$${winAmount.toLocaleString()}*`;
+        } else {
+            // 🍀 CHECK FOR ACTIVE LUCKY CLOVER (Must be .used first)
+            const cleanSender = sender.split(':')[0].split('@')[0] + (sender.includes('@lid') ? '@lid' : '@s.whatsapp.net');
+            const phoneDigits = require('../../lib/identityManager').resolveNumber(cleanSender);
+            const freshUser = await firebaseManager.fetchUser(phoneDigits);
+
+            if (freshUser?.cloverActive) {
+                // Return money instantly
+                await eco.addMoney(sender, bet);
+                
+                // Consume Activation
+                await firebaseManager.updateUser(phoneDigits, { cloverActive: false });
+
+                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${bet.toLocaleString()}*...\nBut your **Lucky Clover** glowed and returned your bet to your wallet! ✨`;
+            } else {
+                resultMsg = `💥 *CRASHED!* 💥\nThe rocket blew up before reaching ${cashout}x!\nBetter luck next time.`;
+            }
+        }
+
+        const finalUser = await eco.getUser(sender);
+        let balanceMsg = `💵 Wallet: *$${finalUser.balance.toLocaleString()}*`;
+        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${finalUser.bank.toLocaleString()}* (via Black Card)`;
+
+        let finalFrame = `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n`;
+        finalFrame += `💥 Crashed at: *${actualCrash.toFixed(2)}x*\n`;
+        finalFrame += `━━━━━━━━━━━━━━\n`;
+        finalFrame += `${resultMsg}\n\n`;
+        finalFrame += balanceMsg;
+
+        try {
+            await sock.sendMessage(from, { text: finalFrame, edit: sentMsg.key });
+        } catch (e) {
+            await sock.sendMessage(from, { text: finalFrame }, { quoted: msg });
+        }
+
+        // 🛡️ Set Cooldown (5 minutes)
+        cooldownManager.set(sender, 'crash', 300);
+
+    } catch (e) {
+        console.error("Crash Error:", e);
+    }
+};

@@ -15,13 +15,15 @@ module.exports = async (sock, msg, from) => {
     const metadata = await sock.groupMetadata(from);
     const members = metadata.participants || [];
     const sender = msg.key.participant || msg.key.remoteJid;
-    const owner = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-    const isOwner = msg.key.fromMe || sender.includes(owner);
-
-    // 🔎 Admin check
-    const isAdmin = members.some(
-      (m) => m.id === sender && (m.admin === "admin" || m.admin === "superadmin")
+    const { jidNormalizedUser } = require("@whiskeysockets/baileys");
+    const { isPairedOwner } = require("../lib/guards");
+    
+    const isOwner = await isPairedOwner(sock, msg);
+    const isAdmin = members.some(m => 
+      (m.id === sender || m.lid === sender || jidNormalizedUser(m.id) === jidNormalizedUser(sender)) && 
+      (m.admin === "admin" || m.admin === "superadmin")
     );
+
     if (!isAdmin && !isOwner)
       return await sock.sendMessage(
         from,

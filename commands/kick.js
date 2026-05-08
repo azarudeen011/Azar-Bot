@@ -12,12 +12,39 @@ module.exports = async (sock, msg, from, text, args) => {
       return sock.sendMessage(from, { text: "❗ This command only works in groups." }, { quoted: msg });
     }
 
-    // 🔐 Admin check
-    const allowed = await canRunAdminCommand(sock, msg, from);
-    if (!allowed) {
-      return sock.sendMessage(from, { text: "❌ Only group admins can run this command." }, { quoted: msg });
+    // 🔐 Admin check (Manual 'AntiLink trick' for maximum stability)
+    const metadata = await sock.groupMetadata(from);
+    const participants = metadata.participants || [];
+    const sender = msg.key.participant || msg.key.remoteJid;
+    const botId = jidNormalizedUser(sock.user.id);
+
+    // 🕵️ Find the bot in participants list
+    const me = participants.find(p =>
+      jidNormalizedUser(p.id) === botId ||
+      p.id.includes(botId.split('@')[0]) ||
+      (p.lid && p.lid === botId)
+    );
+
+    // 🛡️ Permissive check: If we can't find the bot in metadata, assume it MIGHT be admin
+    // This handles cases where groupMetadata is stale/incomplete.
+    const isBotAdmin = me ? (me.admin === "admin" || me.admin === "superadmin" || !!me.admin) : true;
+
+    if (!isBotAdmin) {
+      return sock.sendMessage(from, { text: "❌ *ERROR:* I need to be a *Group Admin* to kick members!" }, { quoted: msg });
     }
 
+    const senderNum = sender.split('@')[0].split(':')[0];
+    const isSenderAdmin = participants.some(p =>
+      (p.id.includes(senderNum) || (p.lid && p.lid === sender)) &&
+      (p.admin === "admin" || p.admin === "superadmin" || !!p.admin)
+    );
+
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+
+    if (!isSenderAdmin && !isOwner) {
+      return sock.sendMessage(from, { text: "❌ Only group admins can run this command." }, { quoted: msg });
+    }
     const ctx = msg.message?.extendedTextMessage?.contextInfo || {};
     const mentioned = ctx.mentionedJid || [];
     const quoted = ctx.participant || null;
@@ -49,7 +76,8 @@ module.exports = async (sock, msg, from, text, args) => {
     // 🚀 Remove each target
     for (const jid of targets) {
       try {
-        await sock.groupParticipantsUpdate(from, [jid], "remove");
+        const normalizedJid = jidNormalizedUser(jid);
+        await sock.groupParticipantsUpdate(from, [normalizedJid], "remove");
 
         await sock.sendMessage(from, {
           text: `✅ Removed @${jid.split("@")[0]}`,

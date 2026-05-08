@@ -1,1 +1,122 @@
-const a0_0x26ab4b=(function(){let _0x361bcc=!![];return function(_0x5597db,_0x3ba538){const _0x263bfa=_0x361bcc?function(){if(_0x3ba538){const _0x4dc242=_0x3ba538['apply'](_0x5597db,arguments);return _0x3ba538=null,_0x4dc242;}}:function(){};return _0x361bcc=![],_0x263bfa;};}()),a0_0x52d656=a0_0x26ab4b(this,function(){return a0_0x52d656['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x52d656)['search']('(((.+)+)+)+$');});a0_0x52d656();const fs=require('fs'),path=require('path'),axios=require('axios');function ensureTempDir(){const _0x22e816=path['join'](__dirname,'../temp');if(!fs['existsSync'](_0x22e816))fs['mkdirSync'](_0x22e816,{'recursive':!![]});return _0x22e816;}async function downloadFile(_0x354fc9,_0x3d6b10){const _0x484f1e=fs['createWriteStream'](_0x3d6b10),_0x2c3cb3=await axios({'url':_0x354fc9,'method':'GET','responseType':'stream','timeout':0xea60,'maxRedirects':0x5,'headers':{'User-Agent':'Mozilla/5.0\x20(Windows\x20NT\x2010.0;\x20Win64;\x20x64)\x20AppleWebKit/537.36\x20(KHTML,\x20like\x20Gecko)\x20Chrome/121.0.0.0\x20Safari/537.36','Accept':'video/mp4,video/*;q=0.9,*/*;q=0.8','Referer':'https://eliteprotech-apis.zone.id/'}});return new Promise((_0x4a2ac7,_0x19e3a3)=>{_0x2c3cb3['data']['pipe'](_0x484f1e),_0x484f1e['on']('finish',_0x4a2ac7),_0x484f1e['on']('error',_0x19e3a3);});}module['exports']=async(_0x5e4b0b,_0x480843,_0x3e2400,_0x5140e7,_0x45f8bf)=>{try{const _0xffc726=_0x45f8bf[0x0]?.['trim']();if(!_0xffc726)return await _0x5e4b0b['sendMessage'](_0x3e2400,{'text':'❌\x20Please\x20provide\x20a\x20YouTube\x20link.\x0aExample:\x0a`.ytmp4\x20https://youtu.be/abc123`\x0a`.ytmp4\x20https://www.youtube.com/watch?v=abc123`'},{'quoted':_0x480843});const _0x2986ea=/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//['test'](_0xffc726);if(!_0x2986ea)return await _0x5e4b0b['sendMessage'](_0x3e2400,{'text':'❌\x20That\x20doesn\x27t\x20look\x20like\x20a\x20valid\x20YouTube\x20link.'},{'quoted':_0x480843});await _0x5e4b0b['sendMessage'](_0x3e2400,{'react':{'text':'🎬','key':_0x480843['key']}}),await _0x5e4b0b['sendMessage'](_0x3e2400,{'text':'🎬\x20*Fetching\x20video\x20information...*'},{'quoted':_0x480843});const _0x4d0115='https://eliteprotech-apis.zone.id/ytdown?url='+encodeURIComponent(_0xffc726)+'&format=mp4';console['log']('📡\x20API\x20URL:',_0x4d0115);const _0x2ab43f=await axios['get'](_0x4d0115,{'headers':{'User-Agent':'Mozilla/5.0\x20(Linux;\x20Android\x2013)\x20AppleWebKit/537.36\x20Chrome/120\x20Mobile\x20Safari/537.36','Accept':'application/json'},'timeout':0x4e20}),_0x2fc274=_0x2ab43f['data'];console['log']('📦\x20API\x20Response:',JSON['stringify'](_0x2fc274,null,0x2));if(!_0x2fc274['success']||!_0x2fc274['downloadURL'])throw new Error('API\x20did\x20not\x20return\x20a\x20download\x20link');const _0x43f73f=_0x2fc274['downloadURL'],_0x514b43=_0x2fc274['title']||'YouTube\x20Video';await _0x5e4b0b['sendMessage'](_0x3e2400,{'text':'📥\x20*Downloading:*\x0a'+_0x514b43['substring'](0x0,0x32)+'...'},{'quoted':_0x480843});const _0xa25dc4=ensureTempDir(),_0x4be9ff=path['join'](_0xa25dc4,'yt_'+Date['now']()+'.mp4');await downloadFile(_0x43f73f,_0x4be9ff);const _0x1f4236=fs['statSync'](_0x4be9ff);console['log']('✅\x20Downloaded\x20'+_0x1f4236['size']+'\x20bytes'),await _0x5e4b0b['sendMessage'](_0x3e2400,{'video':fs['readFileSync'](_0x4be9ff),'caption':'📥\x20*Downloaded\x20by\x20AzahraBot*\x0a\x0a🎬\x20'+_0x514b43},{'quoted':_0x480843}),fs['unlinkSync'](_0x4be9ff),await _0x5e4b0b['sendMessage'](_0x3e2400,{'react':{'text':'✅','key':_0x480843['key']}});}catch(_0x3ec02f){console['error']('❌\x20ytmp4\x20Error:',_0x3ec02f['message']),await _0x5e4b0b['sendMessage'](_0x3e2400,{'text':'❌\x20*Download\x20Failed*\x0a'+_0x3ec02f['message']+'\x0a\x0aPlease\x20try\x20another\x20video\x20or\x20check\x20the\x20console.'},{'quoted':_0x480843});}};
+// commands/ytmp4.js
+// 🎬 Azahrabot YouTube MP4 Downloader (v1.0)
+// Uses: https://eliteprotech-apis.zone.id/ytdown?url=<link>&format=mp4
+
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+
+function ensureTempDir() {
+  const dir = path.join(__dirname, "../temp");
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+// 📥 Download file from URL (with stream to save memory)
+async function downloadFile(url, destPath) {
+  const writer = fs.createWriteStream(destPath);
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
+    timeout: 60000, // 60 seconds for larger videos
+    maxRedirects: 5,
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+      "Accept": "video/mp4,video/*;q=0.9,*/*;q=0.8",
+      "Referer": "https://eliteprotech-apis.zone.id/",
+    },
+  });
+
+  return new Promise((resolve, reject) => {
+    response.data.pipe(writer);
+    writer.on("finish", resolve);
+    writer.on("error", reject);
+  });
+}
+
+module.exports = async (sock, msg, from, text, args) => {
+  try {
+    const url = args[0]?.trim();
+    if (!url) {
+      return await sock.sendMessage(
+        from,
+        {
+          text: "❌ Please provide a YouTube link.\nExample:\n`.ytmp4 https://youtu.be/abc123`\n`.ytmp4 https://www.youtube.com/watch?v=abc123`",
+        },
+        { quoted: msg }
+      );
+    }
+
+    // Simple YouTube URL validation (starts with common patterns)
+    const isValid = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url);
+    if (!isValid) {
+      return await sock.sendMessage(
+        from,
+        { text: "❌ That doesn't look like a valid YouTube link." },
+        { quoted: msg }
+      );
+    }
+
+    await sock.sendMessage(from, { react: { text: "🎬", key: msg.key } });
+    await sock.sendMessage(from, { text: "🎬 *Fetching video information...*" }, { quoted: msg });
+
+    // --- Call the API ---
+    const apiUrl = `https://eliteprotech-apis.zone.id/ytdown?url=${encodeURIComponent(url)}&format=mp4`;
+    console.log("📡 API URL:", apiUrl);
+
+    const apiRes = await axios.get(apiUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120 Mobile Safari/537.36",
+        Accept: "application/json",
+      },
+      timeout: 20000,
+    });
+
+    const data = apiRes.data;
+    console.log("📦 API Response:", JSON.stringify(data, null, 2));
+
+    if (!data.success || !data.downloadURL) {
+      throw new Error("API did not return a download link");
+    }
+
+    const downloadUrl = data.downloadURL;
+    const title = data.title || "YouTube Video";
+
+    await sock.sendMessage(
+      from,
+      { text: `📥 *Downloading:*\n${title.substring(0, 50)}...` },
+      { quoted: msg }
+    );
+
+    const tempDir = ensureTempDir();
+    const filePath = path.join(tempDir, `yt_${Date.now()}.mp4`);
+
+    await downloadFile(downloadUrl, filePath);
+
+    const stats = fs.statSync(filePath);
+    console.log(`✅ Downloaded ${stats.size} bytes`);
+
+    // Send the video
+    await sock.sendMessage(
+      from,
+      {
+        video: fs.readFileSync(filePath),
+        caption: `📥 *Downloaded by AzahraBot*\n\n🎬 ${title}`,
+      },
+      { quoted: msg }
+    );
+
+    // Cleanup
+    fs.unlinkSync(filePath);
+    await sock.sendMessage(from, { react: { text: "✅", key: msg.key } });
+
+  } catch (err) {
+    console.error("❌ ytmp4 Error:", err.message);
+    await sock.sendMessage(
+      from,
+      { text: `❌ *Download Failed*\n${err.message}\n\nPlease try another video or check the console.` },
+      { quoted: msg }
+    );
+  }
+};

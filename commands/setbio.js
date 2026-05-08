@@ -1,1 +1,20 @@
-const a0_0x54cac7=(function(){let _0x28b5f8=!![];return function(_0x5685db,_0xa82b41){const _0x49565e=_0x28b5f8?function(){if(_0xa82b41){const _0x4d4774=_0xa82b41['apply'](_0x5685db,arguments);return _0xa82b41=null,_0x4d4774;}}:function(){};return _0x28b5f8=![],_0x49565e;};}()),a0_0x22070d=a0_0x54cac7(this,function(){return a0_0x22070d['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x22070d)['search']('(((.+)+)+)+$');});a0_0x22070d();const {isPairedOwner}=require('../lib/guards');module['exports']=async(_0x127359,_0x1d753c,_0x397d2f,_0xa4a5b6)=>{if(!await isPairedOwner(_0x127359,_0x1d753c))return _0x127359['sendMessage'](_0x397d2f,{'text':'❌\x20This\x20command\x20is\x20only\x20for\x20the\x20bot\x20owner.'},{'quoted':_0x1d753c});const _0x57367b=_0xa4a5b6['join']('\x20');if(!_0x57367b)return _0x127359['sendMessage'](_0x397d2f,{'text':'❓\x20Please\x20provide\x20the\x20bio\x20text.\x0aUsage:\x20`.setbio\x20Hello\x20world`'},{'quoted':_0x1d753c});try{await _0x127359['updateProfileStatus'](_0x57367b),await _0x127359['sendMessage'](_0x397d2f,{'text':'✅\x20Bio\x20successfully\x20updated\x20to:\x0a\x0a\x22'+_0x57367b+'\x22'},{'quoted':_0x1d753c});}catch(_0x42ce0e){console['error']('Error\x20in\x20setbio\x20command:',_0x42ce0e),await _0x127359['sendMessage'](_0x397d2f,{'text':'❌\x20Failed\x20to\x20update\x20bio.\x20'+(_0x42ce0e['message']||'')},{'quoted':_0x1d753c});}};
+const { isPairedOwner } = require("../lib/guards");
+
+module.exports = async (sock, msg, from, text, args) => {
+  if (!(await isPairedOwner(sock, msg))) {
+    return sock.sendMessage(from, { text: "❌ This command is only for the bot owner." }, { quoted: msg });
+  }
+
+  const bioText = args.join(" ");
+  if (!bioText) {
+    return sock.sendMessage(from, { text: "❓ Please provide the bio text.\nUsage: `.setbio Hello world`" }, { quoted: msg });
+  }
+
+  try {
+    await sock.updateProfileStatus(bioText);
+    await sock.sendMessage(from, { text: `✅ Bio successfully updated to:\n\n"${bioText}"` }, { quoted: msg });
+  } catch (err) {
+    console.error("Error in setbio command:", err);
+    await sock.sendMessage(from, { text: "❌ Failed to update bio. " + (err.message || "") }, { quoted: msg });
+  }
+};

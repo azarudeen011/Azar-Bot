@@ -1,1 +1,674 @@
-const a0_0x550c92=(function(){let _0x47ebbf=!![];return function(_0x3d771d,_0x2cbbbb){const _0x2cac3f=_0x47ebbf?function(){if(_0x2cbbbb){const _0x1b2633=_0x2cbbbb['apply'](_0x3d771d,arguments);return _0x2cbbbb=null,_0x1b2633;}}:function(){};return _0x47ebbf=![],_0x2cac3f;};}()),a0_0x2d6c22=a0_0x550c92(this,function(){return a0_0x2d6c22['toString']()['search']('(((.+)+)+)+$')['toString']()['constructor'](a0_0x2d6c22)['search']('(((.+)+)+)+$');});a0_0x2d6c22();const {isDictionaryWord}=require('../lib/dictionary'),wcgStore=require('../lib/wcgStore');if(!global['__WCG__'])global['__WCG__']={};const GAMES=global['__WCG__'],now=()=>Date['now'](),numFromJid=_0x4c022b=>_0x4c022b?.['replace'](/\D/g,'')||'';function cleanNumber(_0x4b268d){if(!_0x4b268d)return'';return _0x4b268d['toString']()['replace'](/[^0-9]/g,'');}function formatTime(_0x15713d){if(_0x15713d<=0x0)return'0s';const _0x13c87b=Math['floor'](_0x15713d/0x3c),_0x47b2f1=_0x15713d%0x3c;return _0x13c87b>0x0?_0x13c87b+'m\x20'+_0x47b2f1+'s':_0x47b2f1+'s';}function getMention(_0x562bd9){return'@'+_0x562bd9['split']('@')[0x0];}function getRandomStartWord(){const _0x4bd04d=['cat','dog','sun','moon','star','fish','bird','tree','book','pen','car','bus','red','blue','big','small','hot','cold','new','old','good','bad','happy','sad','run','walk','talk','eat','drink','sleep','play','work'];return _0x4bd04d[Math['floor'](Math['random']()*_0x4bd04d['length'])];}function isValidLength(_0x51a427,_0x151578){const _0x49bee1=0x3+Math['floor']((_0x151578-0x1)/0x2);return _0x51a427['length']===_0x49bee1;}function checkForWinner(_0x1dc390,_0x44d27e,_0x574b67){if(!_0x574b67['active'])return![];const _0x4fcd13=Object['keys'](_0x574b67['players'])['length'];if(_0x4fcd13===0x1){const _0x55ad13=Object['keys'](_0x574b67['players'])[0x0],_0x5443dd=_0x574b67['players'][_0x55ad13];_0x574b67['active']=![];if(_0x574b67['turnTimeout'])clearTimeout(_0x574b67['turnTimeout']);if(_0x574b67['isMultiplayer'])return _0x1dc390['sendMessage'](_0x44d27e,{'text':'🏆\x20*GAME\x20OVER\x20-\x20WINNER!*\x20🏆\x0a\x0a'+('🎉\x20Congratulations\x20'+getMention(_0x55ad13)+'!\x0a')+('📊\x20Final\x20Score:\x20'+_0x5443dd['score']+'\x20points\x0a')+('📈\x20Level\x20reached:\x20'+_0x574b67['level']+'\x0a\x0a')+'_Game\x20ended\x20-\x20all\x20other\x20players\x20left\x20or\x20were\x20eliminated_','mentions':[_0x55ad13]}),!![];return![];}return![];}module['exports']=async function(_0x408ad1,_0x5de2e8,_0x6dbfda,_0x4dcff8,_0x21babf){const _0x4ef2c5=_0x5de2e8['key']['participant']||_0x5de2e8['key']['remoteJid'],_0x2ea284=_0x4ef2c5['split']('@')[0x0],_0x4f31db=_0x5de2e8['pushName']||'Player',_0xca463f=_0x6dbfda['endsWith']('@g.us');!GAMES[_0x6dbfda]&&(GAMES[_0x6dbfda]={'active':![],'players':{},'usedWords':new Set(),'currentWord':null,'level':0x1,'timeLimit':0x3c,'joinTimeLimit':0x78,'lastMoveAt':now(),'startedAt':now(),'currentPlayer':null,'turnOrder':[],'turnIndex':0x0,'starter':null,'isMultiplayer':![],'gameStartTimeout':null,'turnTimeout':null});const _0x23f75b=GAMES[_0x6dbfda],_0x2b611e=_0x21babf[0x0]?.['toLowerCase']();for(const _0x5b24cc in GAMES){if(_0x5b24cc===_0x6dbfda)continue;const _0x3e18dd=GAMES[_0x5b24cc];!_0x3e18dd['active']&&now()-(_0x3e18dd['lastMoveAt']||_0x3e18dd['startedAt']||0x0)>0x927c0&&delete GAMES[_0x5b24cc];}if(!_0x2b611e||_0x2b611e==='help'){const _0xb11580=_0x23f75b['active']?0x3+Math['floor']((_0x23f75b['level']-0x1)/0x2):0x3,_0x5314dd='🎮\x20*WORD\x20CHAIN\x20GAME\x20(WCG)*\x20🎮\x0a\x0a*Commands:*\x0a┌─────────────────────────┐\x0a│\x20.wcg\x20start\x20\x20\x20\x20-\x20Start\x20new\x20game\x20│\x0a│\x20.wcg\x20join\x20\x20\x20\x20\x20-\x20Join\x20the\x20game\x20\x20\x20│\x0a│\x20.wcg\x20leave\x20\x20\x20\x20-\x20Leave\x20the\x20game\x20\x20│\x0a│\x20.wcg\x20status\x20\x20\x20-\x20Game\x20status\x20\x20\x20\x20\x20│\x0a│\x20.wcg\x20end\x20\x20\x20\x20\x20\x20-\x20End\x20game\x20(owner)│\x0a│\x20.wcg\x20[word]\x20\x20\x20-\x20Play\x20a\x20word\x20\x20\x20\x20\x20│\x0a│\x20.wcg\x20leaderboard\x20-\x20Top\x20players\x20\x20│\x0a└─────────────────────────┘\x0a\x0a*Rules:*\x0a•\x20Words\x20must\x20be\x20real\x20English\x20dictionary\x20words\x0a•\x20Current\x20level:\x20'+(_0x23f75b['active']?_0x23f75b['level']:0x1)+'\x20→\x20'+_0xb11580+'\x20letters\x20required\x0a•\x20Each\x20word\x20must\x20start\x20with\x20last\x20letter\x20of\x20previous\x20word\x0a•\x20Longer\x20words\x20=\x20more\x20points\x0a•\x20Higher\x20levels\x20=\x20faster\x20time\x20limits\x0a\x0a*Points:*\x20Word\x20length\x20+\x20Level\x0aExample:\x20\x22cat\x22\x20(3\x20letters)\x20at\x20level\x201\x20=\x204\x20points\x0a\x0a'+(_0xca463f?'📱\x20*Group\x20Mode:*\x20Anyone\x20can\x20join':'💬\x20*DM\x20Mode:*\x201-on-1\x20with\x20bot');return _0x408ad1['sendMessage'](_0x6dbfda,{'text':_0x5314dd},{'quoted':_0x5de2e8});}if(_0x2b611e==='start'){if(_0x23f75b['active'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'⚠️\x20A\x20game\x20is\x20already\x20running\x20in\x20this\x20chat.\x0aUse\x20`.wcg\x20end`\x20to\x20stop\x20it\x20first.'},{'quoted':_0x5de2e8});if(_0x23f75b['gameStartTimeout'])clearTimeout(_0x23f75b['gameStartTimeout']);if(_0x23f75b['turnTimeout'])clearTimeout(_0x23f75b['turnTimeout']);_0x23f75b['active']=!![],_0x23f75b['players']={},_0x23f75b['usedWords']=new Set(),_0x23f75b['currentWord']=null,_0x23f75b['level']=0x1,_0x23f75b['timeLimit']=0x3c,_0x23f75b['joinTimeLimit']=0x78,_0x23f75b['lastMoveAt']=now(),_0x23f75b['startedAt']=now(),_0x23f75b['currentPlayer']=null,_0x23f75b['turnOrder']=[],_0x23f75b['turnIndex']=0x0,_0x23f75b['starter']=_0x4ef2c5,_0x23f75b['players'][_0x4ef2c5]={'score':0x0,'name':_0x4f31db,'number':_0x2ea284},_0x23f75b['gameStartTimeout']=setTimeout(()=>{_0x23f75b['active']&&(Object['keys'](_0x23f75b['players'])['length']>=0x1?_0x18f8d9(_0x408ad1,_0x6dbfda,_0x23f75b):(_0x23f75b['active']=![],_0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20*Game\x20Cancelled*\x0aNo\x20one\x20joined\x20within\x20120\x20seconds.'})));},_0x23f75b['joinTimeLimit']*0x3e8);const _0x21956a=formatTime(_0x23f75b['joinTimeLimit']);return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'🎮\x20*Word\x20Chain\x20Game\x20Started\x20by\x20'+getMention(_0x4ef2c5)+'!*\x0a\x0a'+'•\x20Type\x20`.wcg\x20join`\x20to\x20participate\x0a'+('•\x20Join\x20window:\x20'+_0x21956a+'\x0a')+'•\x20Game\x20will\x20start\x20automatically\x20when\x20players\x20join\x0a'+'•\x20You\x20are\x20automatically\x20in\x20the\x20game\x20as\x20starter','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});}if(_0x2b611e==='join'){if(!_0x23f75b['active'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20No\x20active\x20game.\x20Start\x20one\x20with\x20`.wcg\x20start`'},{'quoted':_0x5de2e8});if(_0x23f75b['turnOrder']['length']>0x0||_0x23f75b['currentWord']!==null)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20Game\x20has\x20already\x20started.\x20Wait\x20for\x20next\x20round\x20or\x20new\x20game.'},{'quoted':_0x5de2e8});if(_0x23f75b['players'][_0x4ef2c5])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'✅\x20You\x27re\x20already\x20in\x20the\x20game!'},{'quoted':_0x5de2e8});_0x23f75b['players'][_0x4ef2c5]={'score':0x0,'name':_0x4f31db,'number':_0x2ea284};const _0x15e04e=Object['keys'](_0x23f75b['players'])['length'],_0x1a4c0f=Math['max'](0x0,Math['floor']((_0x23f75b['startedAt']+_0x23f75b['joinTimeLimit']*0x3e8-now())/0x3e8));return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'✅\x20*'+getMention(_0x4ef2c5)+'*\x20joined\x20the\x20game!\x0a'+('Players:\x20'+_0x15e04e+'\x0a')+('⏳\x20Join\x20window:\x20'+formatTime(_0x1a4c0f)),'mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});}function _0x18f8d9(_0x3b126f,_0x3fe0a8,_0x308585){if(!_0x308585['active']||_0x308585['turnOrder']['length']>0x0)return;_0x308585['turnOrder']=Object['keys'](_0x308585['players']),_0x308585['isMultiplayer']=_0x308585['turnOrder']['length']>0x1,_0x308585['turnIndex']=0x0,_0x308585['currentPlayer']=_0x308585['turnOrder'][0x0];const _0x3b40ab=getRandomStartWord();_0x308585['currentWord']=_0x3b40ab,_0x308585['usedWords']['add'](_0x3b40ab),_0x308585['lastMoveAt']=now();_0x308585['gameStartTimeout']&&(clearTimeout(_0x308585['gameStartTimeout']),_0x308585['gameStartTimeout']=null);_0x320c72(_0x3b126f,_0x3fe0a8,_0x308585);let _0x5db0f4=_0x308585['turnOrder']['map'](_0x11fef8=>getMention(_0x11fef8))['join'](',\x20');_0x3b126f['sendMessage'](_0x3fe0a8,{'text':'🎮\x20*GAME\x20STARTED!*\x0a\x0a'+('Players:\x20'+_0x5db0f4+'\x0a\x0a')+('🔤\x20*Initial\x20word:*\x20\x22'+_0x3b40ab+'\x22\x0a')+('📏\x20Level\x20'+_0x308585['level']+':\x203-letter\x20words\x20required\x0a')+('🎯\x20Next\x20turn:\x20'+getMention(_0x308585['currentPlayer'])+'\x0a')+('⏳\x20Time\x20limit:\x20'+_0x308585['timeLimit']+'s'),'mentions':_0x308585['turnOrder']});}function _0x320c72(_0x5922e0,_0x4015ba,_0x1df737){if(_0x1df737['turnTimeout'])clearTimeout(_0x1df737['turnTimeout']);_0x1df737['turnTimeout']=setTimeout(()=>{if(!_0x1df737['active'])return;const _0x301162=_0x1df737['currentPlayer'];_0x1df737['turnOrder']=_0x1df737['turnOrder']['filter'](_0x5e6a47=>_0x5e6a47!==_0x301162),delete _0x1df737['players'][_0x301162];if(checkForWinner(_0x5922e0,_0x4015ba,_0x1df737))return;if(_0x1df737['turnOrder']['length']===0x0)return _0x1df737['active']=![],_0x5922e0['sendMessage'](_0x4015ba,{'text':'⏰\x20*GAME\x20OVER*\x0aNo\x20players\x20remaining.'});_0x1df737['turnIndex']=_0x1df737['turnIndex']%_0x1df737['turnOrder']['length'],_0x1df737['currentPlayer']=_0x1df737['turnOrder'][_0x1df737['turnIndex']],_0x1df737['lastMoveAt']=now(),_0x320c72(_0x5922e0,_0x4015ba,_0x1df737),_0x5922e0['sendMessage'](_0x4015ba,{'text':'⏰\x20'+getMention(_0x301162)+'\x20timed\x20out\x20and\x20was\x20*ELIMINATED*!\x0a'+('New\x20turn:\x20'+getMention(_0x1df737['currentPlayer'])+'\x20('+_0x1df737['timeLimit']+'s)'),'mentions':[_0x301162,_0x1df737['currentPlayer']]});},_0x1df737['timeLimit']*0x3e8);}if(_0x2b611e==='leave'){if(!_0x23f75b['active'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20No\x20active\x20game.'},{'quoted':_0x5de2e8});if(!_0x23f75b['players'][_0x4ef2c5])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20You\x27re\x20not\x20in\x20the\x20game.'},{'quoted':_0x5de2e8});delete _0x23f75b['players'][_0x4ef2c5];if(_0x23f75b['turnOrder']['length']>0x0){_0x23f75b['turnOrder']=_0x23f75b['turnOrder']['filter'](_0x1c55ed=>_0x1c55ed!==_0x4ef2c5);if(checkForWinner(_0x408ad1,_0x6dbfda,_0x23f75b))return;if(_0x23f75b['currentPlayer']===_0x4ef2c5){if(_0x23f75b['turnOrder']['length']>0x0)_0x23f75b['turnIndex']=_0x23f75b['turnIndex']%_0x23f75b['turnOrder']['length'],_0x23f75b['currentPlayer']=_0x23f75b['turnOrder'][_0x23f75b['turnIndex']],_0x23f75b['lastMoveAt']=now(),_0x23f75b['turnTimeout']&&(clearTimeout(_0x23f75b['turnTimeout']),_0x320c72(_0x408ad1,_0x6dbfda,_0x23f75b));else{_0x23f75b['active']=![];if(_0x23f75b['turnTimeout'])clearTimeout(_0x23f75b['turnTimeout']);return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'🏁\x20Game\x20ended.\x20No\x20players\x20remaining.'},{'quoted':_0x5de2e8});}}else{const _0x39c591=_0x23f75b['turnOrder']['findIndex'](_0x1ed902=>_0x1ed902===_0x23f75b['currentPlayer']);_0x39c591>=0x0&&(_0x23f75b['turnIndex']=_0x39c591);}}if(Object['keys'](_0x23f75b['players'])['length']===0x0){_0x23f75b['active']=![];if(_0x23f75b['turnTimeout'])clearTimeout(_0x23f75b['turnTimeout']);return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'🏁\x20Game\x20ended.\x20No\x20players\x20remaining.'},{'quoted':_0x5de2e8});}return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'👋\x20'+getMention(_0x4ef2c5)+'\x20left\x20the\x20game.','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});}if(_0x2b611e==='end'){let _0x44da23;try{_0x44da23=require('./settings');}catch{_0x44da23=require('../settings');}const _0x37a357=_0x44da23['ownerNumber']?.['replace'](/\D/g,''),_0x15bada=_0x5de2e8['key']['fromMe']||_0x2ea284===_0x37a357;if(!_0x15bada)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20Only\x20bot\x20owner\x20can\x20force\x20end\x20a\x20game.'},{'quoted':_0x5de2e8});if(!_0x23f75b['active'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20No\x20active\x20game.'},{'quoted':_0x5de2e8});_0x23f75b['active']=![];if(_0x23f75b['gameStartTimeout'])clearTimeout(_0x23f75b['gameStartTimeout']);if(_0x23f75b['turnTimeout'])clearTimeout(_0x23f75b['turnTimeout']);return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'🛑\x20Game\x20ended\x20by\x20owner.'},{'quoted':_0x5de2e8});}if(_0x2b611e==='status'){if(!_0x23f75b['active'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20No\x20active\x20game.\x20Start\x20one\x20with\x20`.wcg\x20start`'},{'quoted':_0x5de2e8});let _0x186081='🎮\x20*WCG\x20STATUS*\x0a\x0a';const _0x1ef999=Object['keys'](_0x23f75b['players'])['map'](_0x382250=>{const _0x49842d=_0x23f75b['players'][_0x382250];return'•\x20'+getMention(_0x382250)+'\x20-\x20'+_0x49842d['score']+'\x20pts';})['join']('\x0a');_0x186081+='*Players:*\x20'+Object['keys'](_0x23f75b['players'])['length']+'\x0a'+(_0x1ef999||'None\x20yet')+'\x0a\x0a';const _0x599ec8=0x3+Math['floor']((_0x23f75b['level']-0x1)/0x2);_0x186081+='*Level:*\x20'+_0x23f75b['level']+'\x0a',_0x186081+='*Required\x20letters:*\x20'+_0x599ec8+'\x0a',_0x186081+='*Time\x20limit:*\x20'+_0x23f75b['timeLimit']+'s\x20per\x20move\x0a\x0a';if(_0x23f75b['turnOrder']['length']>0x0){const _0x1fcae0=Math['max'](0x0,Math['floor']((_0x23f75b['lastMoveAt']+_0x23f75b['timeLimit']*0x3e8-now())/0x3e8));return _0x186081+='*Current\x20turn:*\x20'+getMention(_0x23f75b['currentPlayer'])+'\x0a',_0x186081+='*Time\x20left:*\x20'+formatTime(_0x1fcae0)+'\x0a',_0x186081+='*Current\x20word:*\x20\x22'+(_0x23f75b['currentWord']||'None')+'\x22\x0a',_0x186081+='*Words\x20used:*\x20'+_0x23f75b['usedWords']['size'],_0x186081+='\x0a\x0aType\x20`.wcg\x20leave`\x20to\x20leave\x20the\x20game.',_0x408ad1['sendMessage'](_0x6dbfda,{'text':_0x186081,'mentions':Object['keys'](_0x23f75b['players'])},{'quoted':_0x5de2e8});}else{const _0x51fd56=Math['max'](0x0,Math['floor']((_0x23f75b['startedAt']+_0x23f75b['joinTimeLimit']*0x3e8-now())/0x3e8));return _0x186081+='*Status:*\x20Waiting\x20for\x20players\x0a',_0x186081+='*Join\x20window:*\x20'+formatTime(_0x51fd56)+'\x0a',_0x186081+='*Starter:*\x20'+getMention(_0x23f75b['starter'])+'\x0a',_0x186081+='*Players\x20joined:*\x20'+Object['keys'](_0x23f75b['players'])['length'],_0x408ad1['sendMessage'](_0x6dbfda,{'text':_0x186081,'mentions':[_0x23f75b['starter']]},{'quoted':_0x5de2e8});}}if(_0x2b611e==='leaderboard'){const _0x3ece8f=wcgStore['getTop'](0xa);if(!_0x3ece8f['length'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'📉\x20No\x20WCG\x20scores\x20yet.\x20Play\x20a\x20game\x20to\x20earn\x20points!'},{'quoted':_0x5de2e8});const _0x16f611=_0x3ece8f['map']((_0x3a9f35,_0x53c4e5)=>{const _0x9b6491=_0x53c4e5===0x0?'🥇':_0x53c4e5===0x1?'🥈':_0x53c4e5===0x2?'🥉':'🎮';return _0x9b6491+'\x20'+(_0x53c4e5+0x1)+'.\x20+'+_0x3a9f35['number']+'\x20—\x20'+_0x3a9f35['score']+'\x20pts';})['join']('\x0a');return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'🏆\x20*WCG\x20Global\x20Leaderboard*\x20🏆\x0a\x0a'+_0x16f611},{'quoted':_0x5de2e8});}if(!_0x23f75b['active'])return;if(!_0x23f75b['players'][_0x4ef2c5])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20You\x27re\x20not\x20in\x20the\x20game.\x20Join\x20with\x20`.wcg\x20join`'},{'quoted':_0x5de2e8});if(!_0x23f75b['currentWord'])return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'⏳\x20Game\x20hasn\x27t\x20started\x20yet.\x20Waiting\x20for\x20players\x20to\x20join...'},{'quoted':_0x5de2e8});if(_0x23f75b['currentPlayer']!==_0x4ef2c5)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20It\x27s\x20'+getMention(_0x23f75b['currentPlayer'])+'\x27s\x20turn,\x20not\x20yours.','mentions':[_0x23f75b['currentPlayer']]},{'quoted':_0x5de2e8});const _0x2d8ac1=_0x2b611e['toLowerCase']();if(!/^[a-z]+$/i['test'](_0x2d8ac1))return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20'+getMention(_0x4ef2c5)+'\x20invalid\x20format.\x0aUse\x20only\x20letters\x20(A-Z).','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});const _0x4f4c15=0x3+Math['floor']((_0x23f75b['level']-0x1)/0x2);if(_0x2d8ac1['length']!==_0x4f4c15)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20'+getMention(_0x4ef2c5)+'\x20word\x20must\x20be\x20**'+_0x4f4c15+'**\x20letters\x20long\x20at\x20Level\x20'+_0x23f75b['level']+'.','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});const _0x250b68=await isDictionaryWord(_0x2d8ac1);if(!_0x250b68)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20'+getMention(_0x4ef2c5)+'\x20\x22'+_0x2d8ac1+'\x22\x20is\x20not\x20a\x20valid\x20dictionary\x20word.\x0aTry\x20again.','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});if(_0x23f75b['usedWords']['has'](_0x2d8ac1))return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20'+getMention(_0x4ef2c5)+'\x20\x22'+_0x2d8ac1+'\x22\x20already\x20used\x20in\x20this\x20game.','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});const _0x158a5c=_0x23f75b['currentWord']['slice'](-0x1);if(_0x2d8ac1[0x0]!==_0x158a5c)return _0x408ad1['sendMessage'](_0x6dbfda,{'text':'❌\x20'+getMention(_0x4ef2c5)+'\x20word\x20must\x20start\x20with\x20\x27'+_0x158a5c+'\x27.','mentions':[_0x4ef2c5]},{'quoted':_0x5de2e8});_0x23f75b['usedWords']['add'](_0x2d8ac1),_0x23f75b['currentWord']=_0x2d8ac1;const _0x386977=_0x2d8ac1['length']+_0x23f75b['level'];_0x23f75b['players'][_0x4ef2c5]['score']+=_0x386977,wcgStore['addScore'](_0x2ea284,_0x386977),_0x23f75b['turnIndex']=(_0x23f75b['turnIndex']+0x1)%_0x23f75b['turnOrder']['length'],_0x23f75b['currentPlayer']=_0x23f75b['turnOrder'][_0x23f75b['turnIndex']],_0x23f75b['lastMoveAt']=now();_0x23f75b['turnTimeout']&&(clearTimeout(_0x23f75b['turnTimeout']),_0x320c72(_0x408ad1,_0x6dbfda,_0x23f75b));const _0x49ecfc=_0x23f75b['turnOrder']['length'];if(_0x23f75b['usedWords']['size']%_0x49ecfc===0x0){_0x23f75b['level']++,_0x23f75b['timeLimit']=Math['max'](0xf,0x3c-_0x23f75b['level']*0x2);const _0x2afe97=0x3+Math['floor']((_0x23f75b['level']-0x1)/0x2);_0x408ad1['sendMessage'](_0x6dbfda,{'text':'🎉\x20*LEVEL\x20UP!\x20Now\x20Level\x20'+_0x23f75b['level']+'*\x0a'+('📏\x20Required\x20letters:\x20'+_0x2afe97+'\x0a')+('⏳\x20Time\x20limit:\x20'+_0x23f75b['timeLimit']+'s')});}const _0x52a865=0x3+Math['floor']((_0x23f75b['level']-0x1)/0x2);let _0x5cebd3='✅\x20'+getMention(_0x4ef2c5)+'\x20played\x20*'+_0x2d8ac1+'*\x0a'+('🎯\x20+'+_0x386977+'\x20points\x20(Total:\x20'+_0x23f75b['players'][_0x4ef2c5]['score']+')\x0a')+('📈\x20Level:\x20'+_0x23f75b['level']+'\x0a')+('📏\x20Next\x20word:\x20'+_0x52a865+'\x20letters\x0a')+('🎯\x20Next\x20turn:\x20'+getMention(_0x23f75b['currentPlayer'])+'\x20('+_0x23f75b['timeLimit']+'s)\x0a\x0a')+'Type\x20`.wcg\x20leave`\x20to\x20leave\x20the\x20game.';await _0x408ad1['sendMessage'](_0x6dbfda,{'text':_0x5cebd3,'mentions':[_0x4ef2c5,_0x23f75b['currentPlayer']]},{'quoted':_0x5de2e8}),checkForWinner(_0x408ad1,_0x6dbfda,_0x23f75b);};
+// ==============================================
+// 🎮 WCG — Word Chain Game (FINAL FIXED VERSION)
+// Features:
+// ✅ Winner announcement when only one player remains
+// ✅ Proper mentions in status and leaderboard
+// ✅ Player elimination on timeout
+// ✅ Game ends when only one player left
+// ==============================================
+
+const { isDictionaryWord } = require("../lib/dictionary");
+const wcgStore = require("../lib/wcgStore");
+
+// -----------------------------
+// In-memory game state (per chat)
+// -----------------------------
+if (!global.__WCG__) global.__WCG__ = {};
+const GAMES = global.__WCG__;
+
+// -----------------------------
+// Helpers
+// -----------------------------
+const now = () => Date.now();
+const numFromJid = (jid) => jid?.replace(/\D/g, "") || "";
+
+// Clean number from mention or JID
+function cleanNumber(input) {
+  if (!input) return "";
+  return input.toString().replace(/[^0-9]/g, "");
+}
+
+// Format time remaining
+function formatTime(seconds) {
+  if (seconds <= 0) return "0s";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+}
+
+// Get mention string for a player
+function getMention(jid) {
+  return `@${jid.split('@')[0]}`;
+}
+
+// Generate random 3-letter word from common words
+function getRandomStartWord() {
+  const starters = [
+    "cat", "dog", "sun", "moon", "star", "fish", "bird", "tree", 
+    "book", "pen", "car", "bus", "red", "blue", "big", "small",
+    "hot", "cold", "new", "old", "good", "bad", "happy", "sad",
+    "run", "walk", "talk", "eat", "drink", "sleep", "play", "work"
+  ];
+  return starters[Math.floor(Math.random() * starters.length)];
+}
+
+// Check if word meets current level length requirement
+function isValidLength(word, level) {
+  const requiredLength = 3 + Math.floor((level - 1) / 2);
+  return word.length === requiredLength;
+}
+
+// Check if game should end (only one player left) and announce winner
+function checkForWinner(sock, from, game) {
+  if (!game.active) return false;
+
+  const playerCount = Object.keys(game.players).length;
+
+  if (playerCount === 1) {
+    // Only one player left - they are the winner!
+    const winnerJid = Object.keys(game.players)[0];
+    const winner = game.players[winnerJid];
+
+    // End the game
+    game.active = false;
+    if (game.turnTimeout) clearTimeout(game.turnTimeout);
+
+    // Announce winner if it was a multiplayer game
+    if (game.isMultiplayer) {
+      sock.sendMessage(from, {
+        text: `🏆 *GAME OVER - WINNER!* 🏆\n\n` +
+              `🎉 Congratulations ${getMention(winnerJid)}!\n` +
+              `📊 Final Score: ${winner.score} points\n` +
+              `📈 Level reached: ${game.level}\n\n` +
+              `_Game ended - all other players left or were eliminated_`,
+        mentions: [winnerJid]
+      });
+      return true;
+    }
+    return false;
+  }
+
+  return false;
+}
+
+// -----------------------------
+// Main Command
+// -----------------------------
+module.exports = async function (sock, msg, from, text, args) {
+  const senderJid = msg.key.participant || msg.key.remoteJid;
+  const senderNumber = senderJid.split("@")[0];
+  const senderName = msg.pushName || `Player`;
+  const isGroup = from.endsWith("@g.us");
+
+  // Initialize game for this chat if not exists
+  if (!GAMES[from]) {
+    GAMES[from] = {
+      active: false,
+      players: {},          // jid -> { score, name, number }
+      usedWords: new Set(),
+      currentWord: null,
+      level: 1,
+      timeLimit: 60,        // seconds per turn
+      joinTimeLimit: 120,   // seconds to join before game starts
+      lastMoveAt: now(),
+      startedAt: now(),
+      currentPlayer: null,  // whose turn it is
+      turnOrder: [],        // array of player jids
+      turnIndex: 0,
+      starter: null,        // who started the game
+      isMultiplayer: false, // track if game started with 1+ players
+      gameStartTimeout: null,
+      turnTimeout: null,
+    };
+  }
+
+  const game = GAMES[from];
+  const cmd = args[0]?.toLowerCase();
+
+  // 🧹 RAM GARBAGE COLLECTOR: Delete dead games to free memory
+  for (const gId in GAMES) {
+    if (gId === from) continue; // Skip current chat
+    const g = GAMES[gId];
+    // If game is inactive for over 10 minutes, wipe it from RAM
+    if (!g.active && now() - (g.lastMoveAt || g.startedAt || 0) > 600000) {
+      delete GAMES[gId];
+    }
+  }
+
+  // =================================================
+  // HELP / NO COMMAND
+  // =================================================
+  if (!cmd || cmd === "help") {
+    const requiredLength = game.active ? 3 + Math.floor((game.level - 1) / 2) : 3;
+    const helpText = `🎮 *WORD CHAIN GAME (WCG)* 🎮
+
+*Commands:*
+┌─────────────────────────┐
+│ .wcg start    - Start new game │
+│ .wcg join     - Join the game   │
+│ .wcg leave    - Leave the game  │
+│ .wcg status   - Game status     │
+│ .wcg end      - End game (owner)│
+│ .wcg [word]   - Play a word     │
+│ .wcg leaderboard - Top players  │
+└─────────────────────────┘
+
+*Rules:*
+• Words must be real English dictionary words
+• Current level: ${game.active ? game.level : 1} → ${requiredLength} letters required
+• Each word must start with last letter of previous word
+• Longer words = more points
+• Higher levels = faster time limits
+
+*Points:* Word length + Level
+Example: "cat" (3 letters) at level 1 = 4 points
+
+${isGroup ? "📱 *Group Mode:* Anyone can join" : "💬 *DM Mode:* 1-on-1 with bot"}`;
+
+    return sock.sendMessage(from, { text: helpText }, { quoted: msg });
+  }
+
+  // =================================================
+  // START GAME
+  // =================================================
+  if (cmd === "start") {
+    if (game.active) {
+      return sock.sendMessage(from, { 
+        text: "⚠️ A game is already running in this chat.\nUse `.wcg end` to stop it first." 
+      }, { quoted: msg });
+    }
+
+    // Clear any existing timeouts
+    if (game.gameStartTimeout) clearTimeout(game.gameStartTimeout);
+    if (game.turnTimeout) clearTimeout(game.turnTimeout);
+
+    // Reset game
+    game.active = true;
+    game.players = {};
+    game.usedWords = new Set();
+    game.currentWord = null;
+    game.level = 1;
+    game.timeLimit = 60;
+    game.joinTimeLimit = 120;
+    game.lastMoveAt = now();
+    game.startedAt = now();
+    game.currentPlayer = null;
+    game.turnOrder = [];
+    game.turnIndex = 0;
+    game.starter = senderJid;
+
+    // Auto-add the starter
+    game.players[senderJid] = { 
+      score: 0,
+      name: senderName,
+      number: senderNumber
+    };
+
+    // Set join timeout
+    game.gameStartTimeout = setTimeout(() => {
+      if (game.active) {
+        // Check if we have at least the starter
+        if (Object.keys(game.players).length >= 1) {
+          // Start the game
+          startGame(sock, from, game);
+        } else {
+          game.active = false;
+          sock.sendMessage(from, { 
+            text: "❌ *Game Cancelled*\nNo one joined within 120 seconds." 
+          });
+        }
+      }
+    }, game.joinTimeLimit * 1000);
+
+    const joinTimeLeft = formatTime(game.joinTimeLimit);
+
+    return sock.sendMessage(from, { 
+      text: `🎮 *Word Chain Game Started by ${getMention(senderJid)}!*\n\n` +
+            `• Type \`.wcg join\` to participate\n` +
+            `• Join window: ${joinTimeLeft}\n` +
+            `• Game will start automatically when players join\n` +
+            `• You are automatically in the game as starter`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // JOIN
+  // =================================================
+  if (cmd === "join") {
+    if (!game.active) {
+      return sock.sendMessage(from, { 
+        text: "❌ No active game. Start one with `.wcg start`" 
+      }, { quoted: msg });
+    }
+
+    // Check if join window still open
+    if (game.turnOrder.length > 0 || game.currentWord !== null) {
+      return sock.sendMessage(from, { 
+        text: "❌ Game has already started. Wait for next round or new game." 
+      }, { quoted: msg });
+    }
+
+    if (game.players[senderJid]) {
+      return sock.sendMessage(from, { 
+        text: `✅ You're already in the game!` 
+      }, { quoted: msg });
+    }
+
+    // Add player
+    game.players[senderJid] = { 
+      score: 0,
+      name: senderName,
+      number: senderNumber
+    };
+
+    const playerCount = Object.keys(game.players).length;
+    const joinTimeLeft = Math.max(0, Math.floor(
+      (game.startedAt + game.joinTimeLimit * 1000 - now()) / 1000
+    ));
+
+    return sock.sendMessage(from, { 
+      text: `✅ *${getMention(senderJid)}* joined the game!\n` +
+            `Players: ${playerCount}\n` +
+            `⏳ Join window: ${formatTime(joinTimeLeft)}`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // START GAME FUNCTION (called when join window ends)
+  // =================================================
+  function startGame(sock, from, game) {
+    if (!game.active || game.turnOrder.length > 0) return;
+
+    game.turnOrder = Object.keys(game.players);
+    game.isMultiplayer = game.turnOrder.length > 1;
+    game.turnIndex = 0;
+    game.currentPlayer = game.turnOrder[0];
+
+    // Bot gives initial word
+    const startWord = getRandomStartWord();
+    game.currentWord = startWord;
+    game.usedWords.add(startWord);
+    game.lastMoveAt = now();
+
+    // Clear join timeout
+    if (game.gameStartTimeout) {
+      clearTimeout(game.gameStartTimeout);
+      game.gameStartTimeout = null;
+    }
+
+    // Set turn timeout
+    setTurnTimeout(sock, from, game);
+
+    // Send start message with initial word
+    let playersList = game.turnOrder.map(jid => getMention(jid)).join(", ");
+    sock.sendMessage(from, { 
+      text: `🎮 *GAME STARTED!*\n\n` +
+            `Players: ${playersList}\n\n` +
+            `🔤 *Initial word:* "${startWord}"\n` +
+            `📏 Level ${game.level}: 3-letter words required\n` +
+            `🎯 Next turn: ${getMention(game.currentPlayer)}\n` +
+            `⏳ Time limit: ${game.timeLimit}s`,
+      mentions: game.turnOrder
+    });
+  }
+
+  // =================================================
+  // SET TURN TIMEOUT
+  // =================================================
+  function setTurnTimeout(sock, from, game) {
+    if (game.turnTimeout) clearTimeout(game.turnTimeout);
+
+    game.turnTimeout = setTimeout(() => {
+      if (!game.active) return;
+
+      const currentPlayer = game.currentPlayer;
+
+      // Remove current player from game (eliminated)
+      game.turnOrder = game.turnOrder.filter(jid => jid !== currentPlayer);
+      delete game.players[currentPlayer];
+
+      // Check if game should end (winner)
+      if (checkForWinner(sock, from, game)) {
+        return;
+      }
+
+      if (game.turnOrder.length === 0) {
+        // No players left
+        game.active = false;
+        return sock.sendMessage(from, { 
+          text: "⏰ *GAME OVER*\nNo players remaining." 
+        });
+      }
+
+      // Move to next player
+      game.turnIndex = game.turnIndex % game.turnOrder.length;
+      game.currentPlayer = game.turnOrder[game.turnIndex];
+      game.lastMoveAt = now();
+
+      // Set new timeout
+      setTurnTimeout(sock, from, game);
+
+      sock.sendMessage(from, { 
+        text: `⏰ ${getMention(currentPlayer)} timed out and was *ELIMINATED*!\n` +
+              `New turn: ${getMention(game.currentPlayer)} (${game.timeLimit}s)`,
+        mentions: [currentPlayer, game.currentPlayer]
+      });
+    }, game.timeLimit * 1000);
+  }
+
+  // =================================================
+  // LEAVE
+  // =================================================
+  if (cmd === "leave") {
+    if (!game.active) {
+      return sock.sendMessage(from, { text: "❌ No active game." }, { quoted: msg });
+    }
+
+    if (!game.players[senderJid]) {
+      return sock.sendMessage(from, { text: "❌ You're not in the game." }, { quoted: msg });
+    }
+
+    // Remove player
+    delete game.players[senderJid];
+
+    // Update turn order if game started
+    if (game.turnOrder.length > 0) {
+      game.turnOrder = game.turnOrder.filter(jid => jid !== senderJid);
+
+      // Check if game should end (winner)
+      if (checkForWinner(sock, from, game)) {
+        return;
+      }
+
+      // Adjust if current player left
+      if (game.currentPlayer === senderJid) {
+        if (game.turnOrder.length > 0) {
+          game.turnIndex = game.turnIndex % game.turnOrder.length;
+          game.currentPlayer = game.turnOrder[game.turnIndex];
+          game.lastMoveAt = now();
+
+          // Reset timeout for new player
+          if (game.turnTimeout) {
+            clearTimeout(game.turnTimeout);
+            setTurnTimeout(sock, from, game);
+          }
+        } else {
+          // No players left
+          game.active = false;
+          if (game.turnTimeout) clearTimeout(game.turnTimeout);
+          return sock.sendMessage(from, { 
+            text: "🏁 Game ended. No players remaining." 
+          }, { quoted: msg });
+        }
+      } else {
+        // Adjust index if player before current left
+        const currentIndex = game.turnOrder.findIndex(jid => jid === game.currentPlayer);
+        if (currentIndex >= 0) {
+          game.turnIndex = currentIndex;
+        }
+      }
+    }
+
+    // If no players left, end game
+    if (Object.keys(game.players).length === 0) {
+      game.active = false;
+      if (game.turnTimeout) clearTimeout(game.turnTimeout);
+      return sock.sendMessage(from, { 
+        text: "🏁 Game ended. No players remaining." 
+      }, { quoted: msg });
+    }
+
+    return sock.sendMessage(from, { 
+      text: `👋 ${getMention(senderJid)} left the game.`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // END GAME (force end - owner only)
+  // =================================================
+  if (cmd === "end") {
+    const { isPairedOwner } = require("../lib/guards");
+    const isOwner = await isPairedOwner(sock, msg);
+
+    if (!isOwner) {
+      return sock.sendMessage(from, { 
+        text: "❌ Only bot owner can force end a game." 
+      }, { quoted: msg });
+    }
+
+    if (!game.active) {
+      return sock.sendMessage(from, { text: "❌ No active game." }, { quoted: msg });
+    }
+
+    game.active = false;
+    if (game.gameStartTimeout) clearTimeout(game.gameStartTimeout);
+    if (game.turnTimeout) clearTimeout(game.turnTimeout);
+
+    return sock.sendMessage(from, { 
+      text: "🛑 Game ended by owner." 
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // STATUS
+  // =================================================
+  if (cmd === "status") {
+    if (!game.active) {
+      return sock.sendMessage(from, { 
+        text: "❌ No active game. Start one with `.wcg start`" 
+      }, { quoted: msg });
+    }
+
+    let statusText = `🎮 *WCG STATUS*\n\n`;
+
+    // Players list with proper mentions
+    const playersList = Object.keys(game.players).map(jid => {
+      const p = game.players[jid];
+      return `• ${getMention(jid)} - ${p.score} pts`;
+    }).join("\n");
+
+    statusText += `*Players:* ${Object.keys(game.players).length}\n${playersList || "None yet"}\n\n`;
+
+    // Required word length for current level
+    const requiredLength = 3 + Math.floor((game.level - 1) / 2);
+
+    statusText += `*Level:* ${game.level}\n`;
+    statusText += `*Required letters:* ${requiredLength}\n`;
+    statusText += `*Time limit:* ${game.timeLimit}s per move\n\n`;
+
+    if (game.turnOrder.length > 0) {
+      // Game in progress
+      const timeLeft = Math.max(0, Math.floor(
+        (game.lastMoveAt + game.timeLimit * 1000 - now()) / 1000
+      ));
+      statusText += `*Current turn:* ${getMention(game.currentPlayer)}\n`;
+      statusText += `*Time left:* ${formatTime(timeLeft)}\n`;
+      statusText += `*Current word:* "${game.currentWord || "None"}"\n`;
+      statusText += `*Words used:* ${game.usedWords.size}`;
+      statusText += `\n\nType \`.wcg leave\` to leave the game.`;
+
+      return sock.sendMessage(from, { 
+        text: statusText,
+        mentions: Object.keys(game.players)
+      }, { quoted: msg });
+    } else {
+      // Join window
+      const joinTimeLeft = Math.max(0, Math.floor(
+        (game.startedAt + game.joinTimeLimit * 1000 - now()) / 1000
+      ));
+      statusText += `*Status:* Waiting for players\n`;
+      statusText += `*Join window:* ${formatTime(joinTimeLeft)}\n`;
+      statusText += `*Starter:* ${getMention(game.starter)}\n`;
+      statusText += `*Players joined:* ${Object.keys(game.players).length}`;
+
+      return sock.sendMessage(from, { 
+        text: statusText,
+        mentions: [game.starter]
+      }, { quoted: msg });
+    }
+  }
+
+  // =================================================
+  // LEADERBOARD (GLOBAL)
+  // =================================================
+  if (cmd === "leaderboard") {
+    const top = wcgStore.getTop(10);
+
+    if (!top.length) {
+      return sock.sendMessage(from, { 
+        text: "📉 No WCG scores yet. Play a game to earn points!" 
+      }, { quoted: msg });
+    }
+
+    const textLb = top
+      .map((p, i) => {
+        const medal =
+          i === 0 ? "🥇" :
+          i === 1 ? "🥈" :
+          i === 2 ? "🥉" : "🎮";
+
+        return `${medal} ${i + 1}. +${p.number} — ${p.score} pts`;
+      })
+      .join("\n");
+
+    return sock.sendMessage(from, {
+      text: `🏆 *WCG Global Leaderboard* 🏆\n\n${textLb}`
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // PLAY WORD (.wcg <word>)
+  // =================================================
+  if (!game.active) return;
+
+  // Check if player is in game
+  if (!game.players[senderJid]) {
+    return sock.sendMessage(from, { 
+      text: `❌ You're not in the game. Join with \`.wcg join\`` 
+    }, { quoted: msg });
+  }
+
+  // Check if game has started (current word exists)
+  if (!game.currentWord) {
+    return sock.sendMessage(from, { 
+      text: `⏳ Game hasn't started yet. Waiting for players to join...` 
+    }, { quoted: msg });
+  }
+
+  // Check if it's this player's turn
+  if (game.currentPlayer !== senderJid) {
+    return sock.sendMessage(from, { 
+      text: `❌ It's ${getMention(game.currentPlayer)}'s turn, not yours.`,
+      mentions: [game.currentPlayer]
+    }, { quoted: msg });
+  }
+
+  const word = cmd.toLowerCase();
+
+  // Format check (letters only)
+  if (!/^[a-z]+$/i.test(word)) {
+    return sock.sendMessage(from, { 
+      text: `❌ ${getMention(senderJid)} invalid format.\nUse only letters (A-Z).`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // Check word length for current level
+  const requiredLength = 3 + Math.floor((game.level - 1) / 2);
+  if (word.length !== requiredLength) {
+    return sock.sendMessage(from, { 
+      text: `❌ ${getMention(senderJid)} word must be **${requiredLength}** letters long at Level ${game.level}.`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // Dictionary check (REAL WORD)
+  const isDict = await isDictionaryWord(word);
+  if (!isDict) {
+    return sock.sendMessage(from, { 
+      text: `❌ ${getMention(senderJid)} "${word}" is not a valid dictionary word.\nTry again.`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // Check if word already used
+  if (game.usedWords.has(word)) {
+    return sock.sendMessage(from, { 
+      text: `❌ ${getMention(senderJid)} "${word}" already used in this game.`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // Chain rule check
+  const lastLetter = game.currentWord.slice(-1);
+  if (word[0] !== lastLetter) {
+    return sock.sendMessage(from, { 
+      text: `❌ ${getMention(senderJid)} word must start with '${lastLetter}'.`,
+      mentions: [senderJid]
+    }, { quoted: msg });
+  }
+
+  // =================================================
+  // ACCEPT MOVE - VALID WORD
+  // =================================================
+
+  // Add to used words
+  game.usedWords.add(word);
+  game.currentWord = word;
+
+  // Calculate points
+  const points = word.length + game.level;
+  game.players[senderJid].score += points;
+
+  // Save to global leaderboard
+  wcgStore.addScore(senderNumber, points);
+
+  // Move to next player
+  game.turnIndex = (game.turnIndex + 1) % game.turnOrder.length;
+  game.currentPlayer = game.turnOrder[game.turnIndex];
+  game.lastMoveAt = now();
+
+  // Reset turn timeout for next player
+  if (game.turnTimeout) {
+    clearTimeout(game.turnTimeout);
+    setTurnTimeout(sock, from, game);
+  }
+
+  // Level up after each full round (all players played once)
+  const playersCount = game.turnOrder.length;
+  if (game.usedWords.size % playersCount === 0) {
+    game.level++;
+    // Reduce time limit as level increases (min 15s)
+    game.timeLimit = Math.max(15, 60 - (game.level * 2));
+
+    // Announce level up
+    const newRequiredLength = 3 + Math.floor((game.level - 1) / 2);
+    sock.sendMessage(from, { 
+      text: `🎉 *LEVEL UP! Now Level ${game.level}*\n` +
+            `📏 Required letters: ${newRequiredLength}\n` +
+            `⏳ Time limit: ${game.timeLimit}s`
+    });
+  }
+
+  // Required length for next turn
+  const nextRequiredLength = 3 + Math.floor((game.level - 1) / 2);
+
+  // Send success message
+  let responseText = `✅ ${getMention(senderJid)} played *${word}*\n` +
+                     `🎯 +${points} points (Total: ${game.players[senderJid].score})\n` +
+                     `📈 Level: ${game.level}\n` +
+                     `📏 Next word: ${nextRequiredLength} letters\n` +
+                     `🎯 Next turn: ${getMention(game.currentPlayer)} (${game.timeLimit}s)\n\n` +
+                     `Type \`.wcg leave\` to leave the game.`;
+
+  await sock.sendMessage(from, { 
+    text: responseText,
+    mentions: [senderJid, game.currentPlayer]
+  }, { quoted: msg });
+
+  // Check if after this move, only one player remains (due to some leaving during turn)
+  checkForWinner(sock, from, game);
+};
