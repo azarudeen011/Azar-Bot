@@ -101,30 +101,6 @@
     "messages": [
       {
         "role": "assistant",
-        "content": "chillin' here, just vibin' 😎 what you up to?"
-      },
-      {
-        "role": "user",
-        "content": "Can u find my gay"
-      },
-      {
-        "role": "assistant",
-        "content": "bruh, you tryna find love or what? 😂 got any details?"
-      },
-      {
-        "role": "user",
-        "content": "Find my gay"
-      },
-      {
-        "role": "assistant",
-        "content": "AzahraBot: lol, you tryna play matchmaker? 😏 what’s your type?"
-      },
-      {
-        "role": "user",
-        "content": "Good girl"
-      },
-      {
-        "role": "assistant",
         "content": "AzahraBot: nice, so you like the sweet ones? 😏 what else you into?"
       },
       {
@@ -142,8 +118,94 @@
       {
         "role": "assistant",
         "content": "AzahraBot: bruh, you good? just chillin' here if you wanna chat 😅"
+      },
+      {
+        "role": "user",
+        "content": "No"
+      },
+      {
+        "role": "assistant",
+        "content": "k, no worries! just vibin’ here if you change your mind 😌 [MOOD: wave]"
+      },
+      {
+        "role": "user",
+        "content": "I don't know"
+      },
+      {
+        "role": "assistant",
+        "content": "bruh, just go with the flow, you’ll figure it out 😅 [MOOD: shrug]"
+      },
+      {
+        "role": "user",
+        "content": "I dk"
+      },
+      {
+        "role": "assistant",
+        "content": "bruh, sounds like a mood. just take it easy, you got this! 😌 [MOOD: shrug]"
       }
     ],
-    "lastSeen": 1778222697085
+    "lastSeen": 1778302202490
+  },
+  "123489587609600@lid": {
+    "messages": [
+      {
+        "role": "assistant",
+        "content": "yoo what's good 🔥 [MOOD: smile]"
+      },
+      {
+        "role": "user",
+        "content": "Azahra say in voice note I'm cute anime girl"
+      },
+      {
+        "role": "assistant",
+        "content": "sure! here it goes! 🎤✨ *\"i'm a cute anime girl!\"* [MOOD: blush]"
+      },
+      {
+        "role": "user",
+        "content": "Azahra speak and say how are u azar to mee"
+      },
+      {
+        "role": "assistant",
+        "content": "sure! give me a sec! 🎤✨ *\"how are you, azar?\"* [MOOD: happy]"
+      },
+      {
+        "role": "user",
+        "content": "Hi azahra say azar how are u in voice"
+      },
+      {
+        "role": "assistant",
+        "content": "yoo what's up? 🎤✨ *\"azar, how are you?\"* [MOOD: smile]"
+      },
+      {
+        "role": "user",
+        "content": "Hi azahra"
+      },
+      {
+        "role": "assistant",
+        "content": "yoo what's good 🔥 [MOOD: smile]"
+      },
+      {
+        "role": "user",
+        "content": "Hi azahra say azar how are u in voice"
+      },
+      {
+        "role": "assistant",
+        "content": "yoo what's good? 🎤✨ *\"azar, how are you?\"* [MOOD: smile]"
+      }
+    ],
+    "lastSeen": 1778302303969
+  },
+  "42559216844843@lid": {
+    "messages": [
+      {
+        "role": "user",
+        "content": "I know"
+      },
+      {
+        "role": "assistant",
+        "content": "oh really? what do you know, genius? 😏 [MOOD: smug]"
+      }
+    ],
+    "lastSeen": 1778302316010
   }
 }
