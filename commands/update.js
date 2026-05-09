@@ -22,14 +22,14 @@ const PROTECTED = new Set([
   "session",
   "session_backups",
   "data",
-  "database",
   "node_modules",
   "temp",
   ".env",
   ".git",
   ".replit",
-  "package.json",
-  "package-lock.json"
+  ".auth",
+  ".backup",
+  "logs"
 ]);
 
 // ==============================
@@ -131,32 +131,25 @@ async function restart(sock, from) {
 // 🚀 MAIN
 // ==============================
 module.exports = async (sock, msg, from) => {
-  const sender = msg.key?.participant || msg.key?.remoteJid || "";
-  const owner = (secure.ownerNumber || "").replace(/\D/g, "");
-
-  const isOwner =
-    msg.key.fromMe ||
-    sender.includes(owner) ||
-    owner.includes(sender);
-
-  if (!isOwner) {
-    return sock.sendMessage(from, { text: "❌ Owner only." }, { quoted: msg });
-  }
-
   try {
+    const isOwner = await isPairedOwner(sock, msg);
+    if (!isOwner) {
+      return sock.sendMessage(from, { text: "❌ Owner only." }, { quoted: msg });
+    }
+
     await sock.sendMessage(from, { text: "🔍 Checking for updates..." }, { quoted: msg });
 
     const zipUrl = secure.updateZipUrl;
     if (!zipUrl) {
-      return sock.sendMessage(from, { text: "❌ No update URL configured." }, { quoted: msg });
+      return sock.sendMessage(from, { text: "❌ No update URL configured in small_lib.js." }, { quoted: msg });
     }
 
-    await sock.sendMessage(from, { text: "⬇️ Downloading update from repo..." }, { quoted: msg });
+    await sock.sendMessage(from, { text: "⬇️ Downloading latest files from GitHub..." }, { quoted: msg });
 
     await updateViaZip(zipUrl, process.cwd());
 
     await sock.sendMessage(from, {
-      text: "✅ *Update complete!*\n\n🔒 Session — untouched\n📂 Data folder — untouched\n♻️ Restarting now..."
+      text: "✅ *UPDATE SUCCESSFUL!*\n━━━━━━━━━━━━━━\n📂 Core files — Updated\n📦 Dependencies — Scheduled\n🔒 Session & Data — Protected\n\n♻️ *Restarting now...*"
     }, { quoted: msg });
 
     await restart(sock, from);
@@ -168,7 +161,7 @@ module.exports = async (sock, msg, from) => {
     if (fs.existsSync(tmpDir)) fs.rmSync(tmpDir, { recursive: true, force: true });
 
     await sock.sendMessage(from, {
-      text: `❌ Update failed:\n${err.message}`
+      text: `❌ *Update Failed*\n━━━━━━━━━━━━━━\nReason: ${err.message}`
     }, { quoted: msg });
   }
 };

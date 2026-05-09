@@ -1,9 +1,9 @@
 {
   "autoreact": false,
   "autostatusview": false,
-  "autostatusreact": true,
+  "autostatusreact": false,
   "autotyping": false,
   "autoread": false,
   "pmblocker": false,
-  "": true
+  "": false
 }
