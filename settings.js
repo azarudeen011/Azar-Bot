@@ -1,6 +1,6 @@
 module.exports = {
   botOwner: "Azar",
-  ownerNumber: "447884542113",
+  ownerNumber: "917358646943",
   ownerLid: "",
   prefix: ".",
   botName: "AzahraBot",
