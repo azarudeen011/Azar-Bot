@@ -1,37 +1,13 @@
 // ==============================================
-// ⚡ Azahrabot Ping (Pure Kontal Style)
+// ⚡ Azahrabot Ping (One-Line Sharp Style)
 // ==============================================
-
-const kontolreply = require("../kontal"); // kontal handles branding
 
 module.exports = async (sock, msg, from) => {
   try {
-    // ⚡ React first
-    await sock.sendMessage(from, {
-      react: { text: "⚡", key: msg.key }
-    }).catch(() => {});
-  } catch {}
+    const latency = Math.abs(Date.now() - (msg.messageTimestamp * 1000));
+    const finalText = `*🚀 sᴘᴇᴇᴅ : [ ${latency} ᴍs ] ⏤͟͟͞͞★ ᴀᴢᴀʜʀᴀ ʙᴏᴛ 🐉*`;
 
-  try {
-    const start = Date.now();
-
-    await sock.sendMessage(
-      from,
-      { text: "⏳ *Calculating speed...*" },
-      { quoted: msg }
-    );
-
-    const ping = Date.now() - start;
-
-    const finalText = `
-╭━━━〔 🐉 AZAHRA BOT STATUS 〕━━━⬣
-┃ 🚀 Speed : ${ping} ms
-╰━━━━━━━━━━━━━━━━━━━━⬣
-`;
-
-    // 🔥 Uses kontal.js EXACT branding style
-    await kontolreply(sock, msg, finalText);
-
+    await sock.sendMessage(from, { text: finalText }, { quoted: msg });
   } catch (err) {
     console.error("❌ Ping error:", err.message);
     await sock.sendMessage(
