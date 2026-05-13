@@ -37,7 +37,7 @@ module.exports = async (sock, msg, from, text, args) => {
         const cd = cooldownManager.check(sender, 'crash');
         if (cd.onCooldown) {
             return await sock.sendMessage(from, {
-                text: `⏳ *CRASH COOLDOWN* ⏳\n\nYou're playing too fast! Please wait **${cooldownManager.formatTime(cd.remaining)}** before your next run.\n\n_Tip: You can still play other games like .slot!_`
+                text: `⏳ *CRASH COOLDOWN* ⏳\n\nYou're playing too fast! Please wait *${cooldownManager.formatTime(cd.remaining)}* before your next run.\n\n_Tip: You can still play other games like .slot!_`
             }, { quoted: msg });
         }
 
@@ -48,22 +48,23 @@ module.exports = async (sock, msg, from, text, args) => {
             return await sock.sendMessage(from, { text: "❌ Invalid bet amount!" }, { quoted: msg });
         }
 
+        const currency = new Intl.NumberFormat('en-US');
         const payResult = await eco.spend(sender, bet);
         if (!payResult.success) {
             if (payResult.error === "not_registered") {
                 return await sock.sendMessage(from, { text: "❌ You are not registered on the website!" }, { quoted: msg });
             }
             if (payResult.needsBlackCard) {
-                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${(payResult.currentBank || 0).toLocaleString()}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
+                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${currency.format(payResult.currentBank || 0)}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
             }
             const currentWallet = payResult.currentWallet || 0;
-            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currentWallet.toLocaleString()}*` }, { quoted: msg });
+            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currency.format(currentWallet)}*` }, { quoted: msg });
         }
 
         await firebaseManager.logTx(sender, { type: "casino", amount: -bet, note: "Crash Bet" });
 
         let spinText = `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n`;
-        spinText += `Bet: *$${bet.toLocaleString()}*\n`;
+        spinText += `Bet: *$${currency.format(bet)}*\n`;
         spinText += `Target: *${cashout}x*\n\n`;
         spinText += `🚀 Preparing launch...`;
 
@@ -94,7 +95,7 @@ module.exports = async (sock, msg, from, text, args) => {
             winAmount = Math.floor(bet * cashout);
             await eco.addMoney(sender, winAmount);
             await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Crash Win" });
-            resultMsg = `🎉 *YOU CASHED OUT!* 🎉\nYou successfully escaped at *${cashout}x* before it crashed!\n\nPayout: *$${winAmount.toLocaleString()}*`;
+            resultMsg = `🎉 *YOU CASHED OUT!* 🎉\nYou successfully escaped at *${cashout}x* before it crashed!\n\nPayout: *$${currency.format(winAmount)}*`;
         } else {
             // 🍀 CHECK FOR ACTIVE LUCKY CLOVER (Must be .used first)
             const cleanSender = sender.split(':')[0].split('@')[0] + (sender.includes('@lid') ? '@lid' : '@s.whatsapp.net');
@@ -108,15 +109,15 @@ module.exports = async (sock, msg, from, text, args) => {
                 // Consume Activation
                 await firebaseManager.updateUser(phoneDigits, { cloverActive: false });
 
-                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${bet.toLocaleString()}*...\nBut your **Lucky Clover** glowed and returned your bet to your wallet! ✨`;
+                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${currency.format(bet)}*...\nBut your *Lucky Clover* glowed and returned your bet to your wallet! ✨`;
             } else {
                 resultMsg = `💥 *CRASHED!* 💥\nThe rocket blew up before reaching ${cashout}x!\nBetter luck next time.`;
             }
         }
 
         const finalUser = await eco.getUser(sender);
-        let balanceMsg = `💵 Wallet: *$${finalUser.balance.toLocaleString()}*`;
-        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${finalUser.bank.toLocaleString()}* (via Black Card)`;
+        let balanceMsg = `💵 Wallet: *$${currency.format(finalUser.balance)}*`;
+        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${currency.format(finalUser.bank)}* (via Black Card)`;
 
         let finalFrame = `🚀 *CRASH GAME* 🚀\n━━━━━━━━━━━━━━\n`;
         finalFrame += `💥 Crashed at: *${actualCrash.toFixed(2)}x*\n`;

@@ -87,6 +87,7 @@ module.exports = async (sock, msg, from, text, args) => {
                 return await sock.sendMessage(from, { text: "❌ You need to find at least one gem to cash out!" }, { quoted: msg });
             }
 
+            const currency = new Intl.NumberFormat('en-US');
             const finalMult = getMultiplier(game.minesCount, game.gemsFound);
             const winAmount = Math.floor(game.bet * finalMult);
             
@@ -101,7 +102,7 @@ module.exports = async (sock, msg, from, text, args) => {
             cashoutFrame += `━━━━━━━━━━━━━━\n`;
             cashoutFrame += `🎉 *VICTORY!*\n`;
             cashoutFrame += `📈 Multiplier: *${finalMult.toFixed(2)}x*\n`;
-            cashoutFrame += `Payout: *$${winAmount.toLocaleString()}*\n\n`;
+            cashoutFrame += `Payout: *$${currency.format(winAmount)}*\n\n`;
             cashoutFrame += `_Your winnings have been added to your wallet._`;
 
             return await sock.sendMessage(from, { text: cashoutFrame, edit: game.msgKey });
@@ -117,6 +118,7 @@ module.exports = async (sock, msg, from, text, args) => {
 
             // Check if it's a mine
             if (game.grid[cellIndex] === 'mine') {
+                const currency = new Intl.NumberFormat('en-US');
                 game.revealed.add(cellIndex);
                 activeGames.delete(sender);
                 const gridText = renderGrid(game.revealed, game.grid, true);
@@ -125,11 +127,12 @@ module.exports = async (sock, msg, from, text, args) => {
                 lossFrame += gridText;
                 lossFrame += `━━━━━━━━━━━━━━\n`;
                 lossFrame += `💥 *BOOM!* You hit a mine at square ${cellIndex + 1}.\n`;
-                lossFrame += `Loss: *$${game.bet.toLocaleString()}*`;
+                lossFrame += `Loss: *$${currency.format(game.bet)}*`;
                 
                 return await sock.sendMessage(from, { text: lossFrame, edit: game.msgKey });
             } else {
                 // GEM FOUND
+                const currency = new Intl.NumberFormat('en-US');
                 game.revealed.add(cellIndex);
                 game.gemsFound++;
                 
@@ -145,7 +148,7 @@ module.exports = async (sock, msg, from, text, args) => {
                 winFrame += `💎 *Gems:* ${game.gemsFound}/${25 - game.minesCount}\n`;
                 winFrame += `📊 *Progress:* ${progress}\n`;
                 winFrame += `📈 *Multiplier:* ${currentMult.toFixed(2)}x\n`;
-                winFrame += `💰 *Value:* $${currentProfit.toLocaleString()}\n\n`;
+                winFrame += `💰 *Value:* $${currency.format(currentProfit)}\n\n`;
                 winFrame += `👉 Type \`.mines <1-25>\` to dig.\n`;
                 winFrame += `👉 Type \`.mines cashout\` to win!`;
 
@@ -188,14 +191,15 @@ module.exports = async (sock, msg, from, text, args) => {
     const cd = cooldownManager.check(sender, 'mines');
     if (cd.onCooldown) {
         return await sock.sendMessage(from, {
-            text: `⏳ *MINES COOLDOWN* ⏳\nWait **${cooldownManager.formatTime(cd.remaining)}** before starting a new game.`
+            text: `⏳ *MINES COOLDOWN* ⏳\nWait *${cooldownManager.formatTime(cd.remaining)}* before starting a new game.`
         }, { quoted: msg });
     }
 
     // Spend Money
+    const currency = new Intl.NumberFormat('en-US');
     const payResult = await eco.spend(sender, bet);
     if (!payResult.success) {
-        return await sock.sendMessage(from, { text: `❌ You don't have enough money! (Wallet: $${(payResult.currentWallet || 0).toLocaleString()})` }, { quoted: msg });
+        return await sock.sendMessage(from, { text: `❌ You don't have enough money! (Wallet: $${currency.format(payResult.currentWallet || 0)})` }, { quoted: msg });
     }
 
     await firebaseManager.logTx(sender, { type: "casino", amount: -bet, note: "Mines Start" });
@@ -207,7 +211,7 @@ module.exports = async (sock, msg, from, text, args) => {
     let startFrame = `💣 *MINES GAME* 💣\n━━━━━━━━━━━━━━\n`;
     startFrame += renderGrid(revealed, grid);
     startFrame += `━━━━━━━━━━━━━━\n`;
-    startFrame += `Bet: *$${bet.toLocaleString()}*\n`;
+    startFrame += `Bet: *$${currency.format(bet)}*\n`;
     startFrame += `Mines: *${minesCount}*\n\n`;
     startFrame += `👉 Type \`.mines <1-25>\` to start digging!`;
 

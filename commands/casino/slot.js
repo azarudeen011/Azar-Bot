@@ -52,16 +52,17 @@ module.exports = async (sock, msg, from, text, args) => {
             }, { quoted: msg });
         }
 
+        const currency = new Intl.NumberFormat('en-US');
         const payResult = await eco.spend(sender, bet);
         if (!payResult.success) {
             if (payResult.error === "not_registered") {
                 return await sock.sendMessage(from, { text: "❌ You are not registered on the website!" }, { quoted: msg });
             }
             if (payResult.needsBlackCard) {
-                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${(payResult.currentBank || 0).toLocaleString()}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
+                return await sock.sendMessage(from, { text: `❌ Insufficient wallet balance! You have enough in your bank ($${currency.format(payResult.currentBank || 0)}), but you need a *Black Card* to spend from bank directly.` }, { quoted: msg });
             }
             const currentWallet = payResult.currentWallet || 0;
-            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currentWallet.toLocaleString()}*` }, { quoted: msg });
+            return await sock.sendMessage(from, { text: `❌ You don't have enough money!\nYour wallet: *$${currency.format(currentWallet)}*` }, { quoted: msg });
         }
 
         await firebaseManager.logTx(sender, { type: "casino", amount: -bet, note: "Slots Bet" });
@@ -102,7 +103,7 @@ module.exports = async (sock, msg, from, text, args) => {
         if (winAmount > 0) {
             await eco.addMoney(sender, winAmount);
             await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Slots Win" });
-            resultMsg = `🎉 *YOU WON!* 🎉\nPayout: *$${winAmount.toLocaleString()}*`;
+            resultMsg = `🎉 *YOU WON!* 🎉\nPayout: *$${currency.format(winAmount)}*`;
         } else {
             // 🍀 CHECK FOR ACTIVE LUCKY CLOVER (Must be .used first)
             const cleanSender = sender.split(':')[0].split('@')[0] + (sender.includes('@lid') ? '@lid' : '@s.whatsapp.net');
@@ -116,15 +117,15 @@ module.exports = async (sock, msg, from, text, args) => {
                 // Consume Activation
                 await firebaseManager.updateUser(phoneDigits, { cloverActive: false });
 
-                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${bet.toLocaleString()}*...\nBut your **Lucky Clover** glowed and returned your bet to your wallet! ✨`;
+                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${currency.format(bet)}*...\nBut your *Lucky Clover* glowed and returned your bet to your wallet! ✨`;
             } else {
                 resultMsg = `💥 *YOU LOST!* 💥\nBetter luck next time.`;
             }
         }
 
         const finalUser = await eco.getUser(sender);
-        let balanceMsg = `💵 Wallet: *$${finalUser.balance.toLocaleString()}*`;
-        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${finalUser.bank.toLocaleString()}* (via Black Card)`;
+        let balanceMsg = `💵 Wallet: *$${currency.format(finalUser.balance)}*`;
+        if (payResult.from === "bank") balanceMsg = `🏦 Bank: *$${currency.format(finalUser.bank)}* (via Black Card)`;
 
         let finalFrame = `🎰 *AZAR SLOTS* 🎰\n━━━━━━━━━━━━━━\n`;
         finalFrame += `[ ${final1} | ${final2} | ${final3} ]\n`;
