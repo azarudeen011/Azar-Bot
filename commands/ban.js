@@ -22,14 +22,14 @@ module.exports = async (sock, msg, from) => {
         text: "🚫 You are not allowed to use ban command."
       }, { quoted: msg });
 
-    const { isPairedOwner } = require("../lib/guards");
+    const { isSudo } = require("../lib/guards");
     const ownerJid = settings.ownerNumber.replace(/[^0-9]/g, "") + "@s.whatsapp.net";
     const ownerLid = settings.ownerLid || "";
 
     // 🧩 Fetch admin list
     const metadata = await sock.groupMetadata(from);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || (await isPairedOwner(sock, msg));
+    const isAdmin = admins.includes(sender) || (await isSudo(sock, msg));
 
     if (!isAdmin)
       return sock.sendMessage(from, {

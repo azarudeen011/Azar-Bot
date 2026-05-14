@@ -184,6 +184,16 @@ return sock.sendMessage(from,{text:r.msg},{quoted:msg});
 
 }
 
+// ================= END GAME =================
+if(cmd==="end"){
+    const { isSudo } = require("../lib/guards");
+    if (!(await isSudo(sock, msg))) {
+        return sock.sendMessage(from, { text: "❌ Only owner or sudo can end the game." }, { quoted: msg });
+    }
+    m.endGame(from);
+    return sock.sendMessage(from, { text: "🛑 Mafia game has been force-ended." }, { quoted: msg });
+}
+
 };
 
 

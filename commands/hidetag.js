@@ -5,10 +5,12 @@
 // ==============================================
 
 const settings = require("../settings");
+const { isSudo } = require("../lib/guards");
 const secure = require("../lib/small_lib");
 
 module.exports = async (sock, msg, from) => {
   try {
+    const isOwner = await isSudo(sock, msg);
     // ✅ Must be in a group
     if (!from.endsWith("@g.us")) {
       return await sock.sendMessage(from, {
@@ -23,7 +25,7 @@ module.exports = async (sock, msg, from) => {
 
     // 👑 Admin check
     const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || isOwner;
 
     if (!isAdmin) {
       return await sock.sendMessage(from, {

@@ -430,8 +430,8 @@ ${isGroup ? "📱 *Group Mode:* Anyone can join" : "💬 *DM Mode:* 1-on-1 with 
   // END GAME (force end - owner only)
   // =================================================
   if (cmd === "end") {
-    const { isPairedOwner } = require("../lib/guards");
-    const isOwner = await isPairedOwner(sock, msg);
+    const { isSudo } = require("../lib/guards");
+    const isOwner = await isSudo(sock, msg);
 
     if (!isOwner) {
       return sock.sendMessage(from, { 

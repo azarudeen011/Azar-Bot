@@ -8,11 +8,11 @@ const fs = require("fs");
 const path = require("path");
 const settings = require("../settings");
 
-const { isPairedOwner } = require("../lib/guards");
+const { isSudo } = require("../lib/guards");
 
 module.exports = async (sock, msg, from) => {
   try {
-    const isOwner = await isPairedOwner(sock, msg);
+    const isOwner = await isSudo(sock, msg);
 
     if (!isOwner) {
       return await sock.sendMessage(from, { text: "❌ This command is only for the owner!" }, { quoted: msg });

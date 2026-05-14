@@ -6,11 +6,11 @@ const { requireRegistration } = require('../../lib/guards');
 function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 
 function getCrashPoint() {
-    // Standard casino crash algorithm (House edge ~ 4%)
+    // Standard casino crash algorithm (House edge ~ 5%)
     const e = 2 ** 52;
     const h = Math.floor(Math.random() * e);
-    if (h % 25 === 0) return 1.00; // 4% chance of instant crash
-    return Math.max(1.00, Math.floor((100 * e - h) / (e - h)) / 100.0);
+    if (h % 10 === 0) return 1.00; // 10% chance of instant crash
+    return Math.max(1.00, Math.floor((95 * e - h) / (e - h)) / 100.0);
 }
 
 module.exports = async (sock, msg, from, text, args) => {

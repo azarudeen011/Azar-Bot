@@ -65,12 +65,12 @@ module.exports = async (sock, msg, from, text, args) => {
 
         await sleep(2000);
 
-        const resultSide = Math.random() < 0.5 ? 'heads' : 'tails';
+        const resultSide = Math.random() < 0.46 ? normalizedChoice : (normalizedChoice === 'heads' ? 'tails' : 'heads');
         const emoji = resultSide === 'heads' ? '🗣️' : '🦅';
 
         let winAmount = 0;
         if (resultSide === normalizedChoice) {
-            winAmount = bet * 2;
+            winAmount = Math.floor(bet * 1.9);
             await eco.addMoney(sender, winAmount);
             await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Coinflip Win" });
         }

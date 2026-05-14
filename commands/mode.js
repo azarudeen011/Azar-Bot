@@ -30,10 +30,10 @@ function setMode(mode) {
   fs.writeFileSync(dataFile, JSON.stringify({ mode }, null, 2));
 }
 
-const { isPairedOwner } = require("../lib/guards");
+const { isSudo } = require("../lib/guards");
 
 module.exports = async (sock, msg, from, text, args) => {
-  const isOwner = await isPairedOwner(sock, msg);
+  const isOwner = await isSudo(sock, msg);
 
   const mode = getMode();
   const newMode = args[0]?.toLowerCase();
@@ -42,7 +42,7 @@ module.exports = async (sock, msg, from, text, args) => {
   if (!isOwner) {
     await sock.sendMessage(
       from,
-      { text: "❌ Only the bot owner can access this command." },
+      { text: "❌ Only the bot owner or sudo users can access this command." },
       { quoted: msg }
     );
     return;

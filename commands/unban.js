@@ -24,12 +24,12 @@ module.exports = async (sock, msg, from) => {
         text: "🚫 You are not allowed to use unban command."
       }, { quoted: msg });
 
-    const { isPairedOwner } = require("../lib/guards");
+    const { isSudo } = require("../lib/guards");
 
     // 🧩 Fetch admins
     const metadata = await sock.groupMetadata(from);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || (await isPairedOwner(sock, msg));
+    const isAdmin = admins.includes(sender) || (await isSudo(sock, msg));
 
     if (!isAdmin)
       return sock.sendMessage(from, {
