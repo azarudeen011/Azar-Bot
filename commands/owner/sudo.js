@@ -1,18 +1,35 @@
 const firebaseManager = require('../../lib/firebaseManager');
 const { isPairedOwner } = require('../../lib/guards');
-const settings = require('../../../settings');
+let settings;
+try {
+    settings = require("./settings");
+} catch {
+    try {
+        settings = require("../settings");
+    } catch {
+        try {
+            settings = require("../../settings");
+        } catch {
+            try {
+                settings = require("../../../settings");
+            } catch {
+                console.error("❌ Failed to load settings.js from sudo.js");
+            }
+        }
+    }
+}
 
 module.exports = async (sock, msg, from, text, args) => {
     try {
         const sender = msg.key.participant || msg.key.remoteJid;
-        
+
         // 🔒 ONLY PRIMARY OWNER CAN MANAGE SUDO
         if (!(await isPairedOwner(sock, msg))) {
             return sock.sendMessage(from, { text: "❌ *ACCESS DENIED*\n\nOnly the primary bot owner can manage the Sudo list." }, { quoted: msg });
         }
 
         const action = args[0]?.toLowerCase();
-        
+
         if (!action || !['add', 'del', 'list', 'rm'].includes(action)) {
             let help = `🛡️ *SUDO MANAGEMENT* 🛡️\n\n`;
             help += `👉 \`.sudo add @user\`\n`;
@@ -26,7 +43,7 @@ module.exports = async (sock, msg, from, text, args) => {
         if (action === 'list') {
             const sudos = await firebaseManager.fetchSudos();
             const keys = Object.keys(sudos);
-            
+
             if (keys.length === 0) {
                 return sock.sendMessage(from, { text: "ℹ️ No Sudo users found in the database." }, { quoted: msg });
             }
@@ -37,9 +54,9 @@ module.exports = async (sock, msg, from, text, args) => {
             });
             list += `━━━━━━━━━━━━━━\nTotal: ${keys.length}`;
 
-            return sock.sendMessage(from, { 
-                text: list, 
-                mentions: keys.map(n => n + "@s.whatsapp.net") 
+            return sock.sendMessage(from, {
+                text: list,
+                mentions: keys.map(n => n + "@s.whatsapp.net")
             }, { quoted: msg });
         }
 

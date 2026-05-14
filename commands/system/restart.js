@@ -1,8 +1,8 @@
 let settings;
 try {
-  settings = require("./settings");
+    settings = require("./settings");
 } catch {
-  try { settings = require("../settings"); } catch { settings = require("../../settings"); }
+    try { settings = require("../settings"); } catch { settings = require("../../settings"); }
 }
 
 const { isPairedOwner } = require("../../lib/guards");
