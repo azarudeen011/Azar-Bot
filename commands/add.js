@@ -38,10 +38,10 @@ module.exports = async (sock, msg, from, text, args) => {
       (p.admin === "admin" || p.admin === "superadmin" || !!p.admin)
     );
 
-    const { isPairedOwner } = require("../lib/guards");
-    const isOwner = await isPairedOwner(sock, msg);
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
 
-    if (!isSenderAdmin && !isOwner) {
+    if (!isSenderAdmin && !isSudoUser) {
       return sock.sendMessage(from, { text: "❌ Only group admins can add members." }, { quoted: msg });
     }
 

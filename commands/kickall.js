@@ -29,8 +29,11 @@ module.exports = async (sock, msg, from) => {
       meta.owner || participants.find(p => p.admin === "superadmin")?.id
     );
 
-    // 🔐 Check if sender is admin
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    // 🔐 Check permissions
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
+
     if (!isAdmin) {
       return await sock.sendMessage(from, {
         text: "❌ Only admins can use .kickall",

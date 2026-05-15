@@ -97,22 +97,17 @@ module.exports = async (sock, msg, from, text, args) => {
             await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Crash Win" });
             resultMsg = `🎉 *YOU CASHED OUT!* 🎉\nYou successfully escaped at *${cashout}x* before it crashed!\n\nPayout: *$${currency.format(winAmount)}*`;
         } else {
-            // 🍀 CHECK FOR ACTIVE LUCKY CLOVER (Must be .used first)
-            const cleanSender = sender.split(':')[0].split('@')[0] + (sender.includes('@lid') ? '@lid' : '@s.whatsapp.net');
-            const phoneDigits = require('../../lib/identityManager').resolveNumber(cleanSender);
-            const freshUser = await firebaseManager.fetchUser(phoneDigits);
-
-            if (freshUser?.cloverActive) {
-                // Return money instantly
-                await eco.addMoney(sender, bet);
-                
-                // Consume Activation
-                await firebaseManager.updateUser(phoneDigits, { cloverActive: false });
-
-                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYou were about to lose *$${currency.format(bet)}*...\nBut your *Lucky Clover* glowed and returned your bet to your wallet! ✨`;
+            const cloverResult = await eco.applyClover(sender, bet, true);
+            if (cloverResult.active) {
+                resultMsg = `🍀 *LUCKY CLOVER ACTIVATED!* 🍀\n\nYour *Lucky Clover* glowed and returned **$${currency.format(cloverResult.returned)}** to your wallet! ✨\n_(75% protection, 500M cap applied)_`;
             } else {
                 resultMsg = `💥 *CRASHED!* 💥\nThe rocket blew up before reaching ${cashout}x!\nBetter luck next time.`;
             }
+        }
+
+        // Even if the user won, we must ensure the clover is consumed (Single Charge Rule)
+        if (winAmount > 0) {
+            await eco.applyClover(sender, bet, false);
         }
 
         const finalUser = await eco.getUser(sender);

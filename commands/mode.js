@@ -35,62 +35,54 @@ const { isSudo } = require("../lib/guards");
 module.exports = async (sock, msg, from, text, args) => {
   const isOwner = await isSudo(sock, msg);
 
+  // 🔧 Restrict command usage
+  if (!isOwner) {
+    return sock.sendMessage(from, { text: "❌ Only the bot owner or sudo users can access this command." }, { quoted: msg });
+  }
+
   const mode = getMode();
   const newMode = args[0]?.toLowerCase();
 
-  // 🔧 Restrict command usage
-  if (!isOwner) {
-    await sock.sendMessage(
-      from,
-      { text: "❌ Only the bot owner or sudo users can access this command." },
-      { quoted: msg }
-    );
-    return;
-  }
-
   // 🧾 Show current mode (no args)
   if (!newMode) {
-    const caption = `
-⚙️ *${secure.botName} Mode Status*
-━━━━━━━━━━━━━━━━━━━
-📢 *Current Mode:* ${mode.toUpperCase()}
-
-🪄 *Options:*
-• public → everyone can use commands
-• private → only owner (in DM & groups)
-━━━━━━━━━━━━━━━━━━━
-💡 Example:
-.mode public
-.mode private
-━━━━━━━━━━━━━━━━━━━
-> powered by *${secure.author} ⚡*
-    `.trim();
-
-    await sock.sendMessage(from, { text: caption }, { quoted: msg });
-    return;
+    let response = `╭━━━〔 ⚙️ ʙᴏᴛ ᴍᴏᴅᴇ 〕━━━⬣\n`;
+    response += `┃\n`;
+    response += `┃ 📢 *Current:* ${mode.toUpperCase()}\n`;
+    response += `┃\n`;
+    response += `┃ 🛠️ *Available Modes:*\n`;
+    response += `┃ • \`.mode public\` (Everyone)\n`;
+    response += `┃ • \`.mode private\` (Owner Only)\n`;
+    response += `┃ • \`.mode groups\` (Authorized Only)\n`;
+    response += `┃\n`;
+    response += `┃ 💡 *Tip:* In 'Groups' mode, use\n`;
+    response += `┃ \`.authorize\` in a group to allow it.\n`;
+    response += `┃\n`;
+    
+    // Use global to check authorized groups if available
+    if (mode === "groups") {
+      const count = global.getAuthorizedGroupsCount ? global.getAuthorizedGroupsCount() : 0;
+      response += `┃ 🏰 *Authorized Groups:* ${count}\n`;
+    }
+    
+    response += `┃\n`;
+    response += `╰━━━━━━━━━━━━━━━━━━━━━━⬣\n`;
+    response += `> ✨ AzahraBot Management 🚀`;
+    
+    return sock.sendMessage(from, { text: response }, { quoted: msg });
   }
 
   // 🛑 Validate mode type
-  if (!["public", "private"].includes(newMode)) {
-    await sock.sendMessage(
-      from,
-      { text: "⚙️ Invalid mode.\nUse `.mode public` or `.mode private`" },
-      { quoted: msg }
-    );
-    return;
+  if (!["public", "private", "groups"].includes(newMode)) {
+    return sock.sendMessage(from, { text: "❌ Invalid mode! Use: \`.mode public\`, \`.mode private\`, or \`.mode groups\`" }, { quoted: msg });
   }
 
   // 💾 Save mode & confirm
   setMode(newMode);
-  console.log(`🟢 Mode switched to: ${newMode.toUpperCase()}`);
+  
+  let statusMsg = "";
+  if (newMode === "public") statusMsg = "🌍 Bot is now *Public* for all users.";
+  if (newMode === "private") statusMsg = "🔒 Bot is now *Private* (Owner only).";
+  if (newMode === "groups") statusMsg = "🏰 Bot is now in *Selective Public* mode.\n(Only authorized groups can use it).";
 
-  const confirm = `
-✅ *${secure.botName} Mode Updated Successfully!*
-━━━━━━━━━━━━━━━━━━━
-🆕 *Now Operating In:* ${newMode.toUpperCase()}
-━━━━━━━━━━━━━━━━━━━
-> ${secure.botName} is now in *${newMode}* mode.
-  `.trim();
-
-  await sock.sendMessage(from, { text: confirm }, { quoted: msg });
+  return sock.sendMessage(from, { text: `✅ *MODE UPDATED*\n\n${statusMsg}` }, { quoted: msg });
 };

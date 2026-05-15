@@ -17,7 +17,9 @@ module.exports = async (sock, msg, from, text, args) => {
 
     const metadata = await sock.groupMetadata(from);
     const sender = msg.key.participant || msg.key.remoteJid;
-    const isAdmin = metadata.participants.some(p => (p.id === sender || msg.key.fromMe) && p.admin);
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = metadata.participants.some(p => (p.id === sender || msg.key.fromMe) && p.admin) || isSudoUser;
 
     if (!isAdmin) {
       return await sock.sendMessage(from, {

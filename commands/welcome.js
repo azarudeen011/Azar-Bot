@@ -7,13 +7,11 @@ module.exports = async (sock, msg, from, text, args) => {
     const isGroup = from.endsWith("@g.us");
     if (!isGroup) return sock.sendMessage(from, { text: "❌ This command is only for groups." }, { quoted: msg });
 
-    // Check admin
-    const metadata = await sock.groupMetadata(from).catch(() => null);
-    if (!metadata) return;
-    const sender = msg.key.participant || msg.key.remoteJid;
-    const { isPairedOwner } = require("../lib/guards");
-    const isAdmin = metadata.participants.some(p => p.id === sender && p.admin);
-    const isOwner = await isPairedOwner(sock, msg);
+    // Check privileges
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = metadata.participants.some(p => p.id === sender && p.admin) || isSudoUser || msg.key.fromMe;
+    
     let settings;
     try {
         settings = require("./settings");
@@ -21,7 +19,7 @@ module.exports = async (sock, msg, from, text, args) => {
         try { settings = require("../settings"); } catch { settings = require("../../settings"); }
     }
 
-    if (!isAdmin && !isOwner) {
+    if (!isAdmin) {
         return sock.sendMessage(from, { text: "❌ Only group admins can toggle the welcome system." }, { quoted: msg });
     }
 

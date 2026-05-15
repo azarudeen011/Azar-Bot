@@ -10,8 +10,10 @@ module.exports = async (sock, msg, from, text, args) => {
 
     const metadata = await sock.groupMetadata(from);
     const sender = msg.key.participant || msg.key.remoteJid || msg.participant;
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
 
     if (!isAdmin) return await sock.sendMessage(from, { text: "❌ Only group admins can add bad words." }, { quoted: msg });
 

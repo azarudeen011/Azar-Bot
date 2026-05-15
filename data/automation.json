@@ -4,5 +4,5 @@
   "autostatusreact": false,
   "autotyping": false,
   "autoread": false,
-  "pmblocker": false
+  "pmblocker": true
 }

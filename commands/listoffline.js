@@ -21,11 +21,13 @@ module.exports = async (sock, msg, from, text) => {
     const sender = jidNormalizedUser(msg.key.participant || msg.key.remoteJid);
 
     // Admin check
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const adminList = participants
       .filter(p => p.admin)
       .map(p => jidNormalizedUser(p.id));
 
-    const isAdmin = adminList.includes(sender) || msg.key.fromMe;
+    const isAdmin = adminList.includes(sender) || msg.key.fromMe || isSudoUser;
     if (!isAdmin)
       return sock.sendMessage(from, { text: "❌ Admins only!" }, { quoted: msg });
 

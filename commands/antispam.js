@@ -38,12 +38,14 @@ module.exports = async function (sock, msg, from, text, args) {
   // admin check
   const sender = msg.key.participant;
   const metadata = await sock.groupMetadata(from).catch(() => null);
+  const { isSudo } = require("../lib/guards");
+  const isSudoUser = await isSudo(sock, msg);
   const admins =
     metadata?.participants
       ?.filter((p) => p.admin)
       .map((p) => p.id) || [];
 
-  const isAdmin = msg.key.fromMe || admins.includes(sender);
+  const isAdmin = msg.key.fromMe || admins.includes(sender) || isSudoUser;
   if (!isAdmin) {
     return sock.sendMessage(from, {
       text: "❌ Only group admins can use this command.",

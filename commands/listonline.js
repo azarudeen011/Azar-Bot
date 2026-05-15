@@ -14,11 +14,11 @@ module.exports = async (sock, msg, from, text, args) => {
 
     const meta = await sock.groupMetadata(from);
     const sender = msg.key.participant || msg.key.remoteJid;
-    const { isPairedOwner } = require("../lib/guards");
-    const isOwner = await isPairedOwner(sock, msg);
-    const isAdmin = meta.participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = meta.participants.some(p => (p.id === sender || p.lid === sender) && p.admin) || isSudoUser || msg.key.fromMe;
 
-    if (!isAdmin && !isOwner) {
+    if (!isAdmin) {
       return await sock.sendMessage(from, { text: "❌ Only admins can use this command." }, { quoted: msg });
     }
 

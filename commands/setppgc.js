@@ -21,12 +21,12 @@ module.exports = async (sock, msg, from) => {
 
     // 🔍 Identify sender
     const sender = msg.key.participant || msg.key.remoteJid;
-    const { isPairedOwner } = require("../lib/guards");
-    const isOwner = await isPairedOwner(sock, msg);
-    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin) || isSudoUser || msg.key.fromMe;
 
     // 🔐 Restrict access
-    if (!isAdmin && !isOwner) {
+    if (!isAdmin) {
       return await sock.sendMessage(
         from,
         { text: "❌ Only group admins can use this command." },

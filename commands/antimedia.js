@@ -10,8 +10,10 @@ module.exports = async (sock, msg, from, text, args) => {
   try {
     const metadata = await sock.groupMetadata(from);
     const sender = msg.key.participant || msg.key.remoteJid;
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const admins = metadata.participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
 
     if (!isAdmin) {
       return sock.sendMessage(from, {

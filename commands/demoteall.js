@@ -30,8 +30,10 @@ module.exports = async (sock, msg, from) => {
       .map(p => p.id);
 
     // 🔐 Check permissions
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const isBotAdmin = admins.includes(botJid);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
 
     if (!isAdmin) {
       return await sock.sendMessage(from, {

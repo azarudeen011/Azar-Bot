@@ -20,10 +20,12 @@ module.exports = async (sock, msg, from, text, args) => {
     const metadata = await sock.groupMetadata(from);
     const participants = metadata.participants || [];
     const sender = msg.key.participant || msg.key.remoteJid;
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
 
-    // 👑 Verify admin privileges
+    // 👑 Verify privileges
     const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
     if (!isAdmin) {
       return await sock.sendMessage(from, {
         text: "❌ Only group admins can configure AntiTag settings."

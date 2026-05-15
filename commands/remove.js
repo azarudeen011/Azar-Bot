@@ -44,15 +44,14 @@ module.exports = async (sock, msg, from, text, args = []) => {
     if (!from.endsWith("@g.us"))
       return sock.sendMessage(from, { text: "❌ This command only works in group chats." }, { quoted: msg });
 
-    const ownerNum = (settings.ownerNumber || "").replace(/[^0-9]/g, "");
-    const ownerJid = `${ownerNum}@s.whatsapp.net`;
     const senderJid = msg.key.participant || msg.key.remoteJid || "";
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
 
-    const senderIsOwner = msg.key.fromMe || senderJid.includes(ownerNum);
     const senderIsAdmin = await isSenderAdmin(sock, from, senderJid);
     const botIsAdmin = await isBotAdmin(sock, from);
 
-    if (!senderIsAdmin && !senderIsOwner)
+    if (!senderIsAdmin && !isSudoUser)
       return sock.sendMessage(from, { text: "❌ Only group admins can use this command." }, { quoted: msg });
 
     if (!botIsAdmin)

@@ -29,10 +29,10 @@ function saveAutomation(data) {
   fs.writeFileSync(automationPath, JSON.stringify(data, null, 2));
 }
 
-const { isPairedOwner } = require("../../lib/guards");
+const { isSudo } = require("../../lib/guards");
 
 module.exports = async function automationController(sock, msg, from, text, args) {
-  if (!(await isPairedOwner(sock, msg))) {
+  if (!(await isSudo(sock, msg))) {
     return sock.sendMessage(from, {
       text: "❌ Owner only command."
     }, { quoted: msg });

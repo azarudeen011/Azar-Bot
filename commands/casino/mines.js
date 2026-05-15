@@ -94,6 +94,9 @@ module.exports = async (sock, msg, from, text, args) => {
             await eco.addMoney(sender, winAmount);
             await firebaseManager.logTx(sender, { type: "casino", amount: winAmount, note: "Mines Cashout" });
             
+            // Consume Clover (Single Charge Rule)
+            await eco.applyClover(sender, game.bet, false);
+            
             activeGames.delete(sender);
             const gridText = renderGrid(game.revealed, game.grid, true);
 
@@ -116,18 +119,24 @@ module.exports = async (sock, msg, from, text, args) => {
             // Clear inactivity timer
             if (game.timer) clearTimeout(game.timer);
 
-            // Check if it's a mine
             if (game.grid[cellIndex] === 'mine') {
                 const currency = new Intl.NumberFormat('en-US');
                 game.revealed.add(cellIndex);
                 activeGames.delete(sender);
                 const gridText = renderGrid(game.revealed, game.grid, true);
                 
+                let resultMsg = "";
+                const cloverResult = await eco.applyClover(sender, game.bet, true);
+                if (cloverResult.active) {
+                    resultMsg = `\n\n🍀 *LUCKY CLOVER ACTIVATED!* 🍀\nYour *Lucky Clover* glowed and returned **$${currency.format(cloverResult.returned)}** to your wallet! ✨\n_(75% protection, 500M cap applied)_`;
+                } else {
+                    resultMsg = `\n\n💥 *BOOM!* You hit a mine at square ${cellIndex + 1}.\nLoss: *$${currency.format(game.bet)}*`;
+                }
+
                 let lossFrame = `💣 *MINES: EXPLODED* 💣\n━━━━━━━━━━━━━━\n`;
                 lossFrame += gridText;
                 lossFrame += `━━━━━━━━━━━━━━\n`;
-                lossFrame += `💥 *BOOM!* You hit a mine at square ${cellIndex + 1}.\n`;
-                lossFrame += `Loss: *$${currency.format(game.bet)}*`;
+                lossFrame += resultMsg;
                 
                 return await sock.sendMessage(from, { text: lossFrame, edit: game.msgKey });
             } else {

@@ -17,13 +17,13 @@ module.exports = async (sock, msg, from) => {
     const participants = metadata?.participants || [];
     const allIds = participants.map(p => p.id);
 
-    // 👑 check admin
+    // 👑 check privileges
     const sender = msg.key.participant || msg.key.remoteJid || "";
-    const { isPairedOwner } = require("../lib/guards");
-    const isOwner = await isPairedOwner(sock, msg);
-    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin);
-
-    if (!isAdmin && !isOwner) {
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin) || isSudoUser || msg.key.fromMe;
+    
+    if (!isAdmin) {
       return await sock.sendMessage(from, {
         text: "❌ Yoo only group admins can use .everyone ya!."
       });

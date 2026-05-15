@@ -20,9 +20,12 @@ module.exports = async (sock, msg, from) => {
     const participants = metadata.participants || [];
     const sender = msg.key.participant || msg.key.remoteJid;
 
-    // 👑 Verify admin access
+    // 👑 Verify privileges
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
+
     if (!isAdmin) {
       return await sock.sendMessage(from, {
         text: "❌ Only group admins can lock the group.",

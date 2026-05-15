@@ -16,15 +16,14 @@ module.exports = async (sock, msg, from) => {
     const members = metadata.participants || [];
     const sender = msg.key.participant || msg.key.remoteJid;
     const { jidNormalizedUser } = require("@whiskeysockets/baileys");
-    const { isPairedOwner } = require("../lib/guards");
-    
-    const isOwner = await isPairedOwner(sock, msg);
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const isAdmin = members.some(m => 
       (m.id === sender || m.lid === sender || jidNormalizedUser(m.id) === jidNormalizedUser(sender)) && 
       (m.admin === "admin" || m.admin === "superadmin")
-    );
+    ) || isSudoUser || msg.key.fromMe;
 
-    if (!isAdmin && !isOwner)
+    if (!isAdmin)
       return await sock.sendMessage(
         from,
         { text: "❌ Only group admins can use .tagall." },

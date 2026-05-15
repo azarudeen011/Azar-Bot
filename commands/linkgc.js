@@ -19,8 +19,10 @@ module.exports = async (sock, msg, from) => {
     const metadata = await sock.groupMetadata(from);
     const participants = metadata.participants || [];
     const sender = msg.key.participant || msg.key.remoteJid;
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
     const admins = participants.filter(p => p.admin).map(p => p.id);
-    const isAdmin = admins.includes(sender) || msg.key.fromMe;
+    const isAdmin = admins.includes(sender) || msg.key.fromMe || isSudoUser;
 
     // ❌ Only admins can get the group link
     if (!isAdmin) {

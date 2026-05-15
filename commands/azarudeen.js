@@ -17,7 +17,17 @@ module.exports = async (sock, msg, from) => {
     const participants = metadata?.participants || [];
     const allIds = participants.map(p => p.id);
 
-    // Admin check removed: accessible to all members
+    // 👑 check privileges
+    const sender = msg.key.participant || msg.key.remoteJid || "";
+    const { isSudo } = require("../lib/guards");
+    const isSudoUser = await isSudo(sock, msg);
+    const isAdmin = participants.some(p => (p.id === sender || p.lid === sender) && p.admin) || isSudoUser || msg.key.fromMe;
+    
+    if (!isAdmin) {
+      return await sock.sendMessage(from, {
+        text: "❌ Only group admins can use this command."
+      });
+    }
 
     // 💬 Send the exact requested visible text, while secretly tagging everyone
     await sock.sendMessage(from, {
