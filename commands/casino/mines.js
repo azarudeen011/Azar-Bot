@@ -11,7 +11,7 @@ const activeGames = new Map();
  */
 function getMultiplier(mines, gemsFound) {
     if (gemsFound === 0) return 0;
-    let mult = 0.92; // House edge (8%)
+    let mult = 0.97; // House edge reduced to 3%
     
     // Multiplier Calculation: (25! / (25-n)!) / ((25-m)! / (25-m-n)!)
     const n = gemsFound;

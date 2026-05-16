@@ -22,16 +22,16 @@ Before you can play, you need cash!
 🍒 *2. SLOT MACHINE (The Classic!)*
 *👉 \`.slot <bet>\`* (Example: \`.slot 1000\`)
 Watch the reels spin live! If they match, you win BIG!
-🔥 *Jackpot:* 7️⃣7️⃣7️⃣ pays *10x* your bet!
-💎 *Diamonds:* 💎💎💎 pays *8x*
-🍒 *Cherries:* 🍒🍒🍒 pays *5x*
-*(Even 2 matching symbols gives you 1.5x your money back!)*
+🔥 *Jackpot:* 7️⃣7️⃣7️⃣ pays *35x* your bet!
+💎 *Diamonds:* 💎💎💎 pays *20x*
+🍒 *Cherries:* 🍒🍒🍒 pays *10x*
+*(Even 2 matching symbols returns your bet!)*
 
 🎡 *3. ROULETTE (The Big Wheel!)*
 *👉 \`.roulette <color> <bet>\`* (Example: \`.roulette red 500\`)
 Predict where the spinning ball will land!
 🔴 *Red* or ⚫ *Black* — Safe bet. Doubles your money (2x).
-🟢 *Green* — The ultimate risk! Only 1 number is green. If it hits, you win *14x* your bet!! 
+🟢 *Green* — The ultimate risk! Only 1 number is green. If it hits, you win *35x* your bet!! 
 
 🪙 *4. COINFLIP (50/50 Chance!)*
 *👉 \`.coinflip <heads/tails> <bet>\`* (Example: \`.coinflip tails all\`)

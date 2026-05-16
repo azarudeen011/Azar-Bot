@@ -1,22 +1,31 @@
 const fs = require("fs");
 const path = require("path");
 
-const welcomeFile = path.join(__dirname, "../data/welcome.json");
+const welcomeFile = path.join(process.cwd(), "data", "welcome.json");
 
 module.exports = async (sock, msg, from, text, args) => {
     const isGroup = from.endsWith("@g.us");
     if (!isGroup) return sock.sendMessage(from, { text: "❌ This command is only for groups." }, { quoted: msg });
 
+    // Fetch group metadata and sender
+    const metadata = await sock.groupMetadata(from);
+    const participants = metadata.participants || [];
+    const sender = msg.key.participant || msg.key.remoteJid;
+
     // Check privileges
     const { isSudo } = require("../lib/guards");
     const isSudoUser = await isSudo(sock, msg);
-    const isAdmin = metadata.participants.some(p => p.id === sender && p.admin) || isSudoUser || msg.key.fromMe;
+    const admins = participants.filter(p => p.admin).map(p => p.id);
+    const isAdmin = admins.includes(sender) || isSudoUser || msg.key.fromMe;
     
-    let settings;
     try {
-        settings = require("./settings");
+        settings = require("../settings");
     } catch {
-        try { settings = require("../settings"); } catch { settings = require("../../settings"); }
+        try {
+            settings = require("../../settings");
+        } catch {
+            settings = { welcome: true }; // Fallback
+        }
     }
 
     if (!isAdmin) {
@@ -41,8 +50,10 @@ module.exports = async (sock, msg, from, text, args) => {
         fs.writeFileSync(welcomeFile, JSON.stringify(welcomeData, null, 2));
         return sock.sendMessage(from, { text: "❌ Welcome messages DISABLED for this group." }, { quoted: msg });
     } else {
+        const auto = global.autoConfig || {};
         const status = welcomeData[from] ? "ON ✅" : "OFF ❌";
-        const globalStatus = settings.welcome ? "Active ✅" : "Disabled in Settings ⚠️";
+        const isGlobalOn = settings.welcome !== false && auto.welcome !== false;
+        const globalStatus = isGlobalOn ? "Active ✅" : "Disabled ⚠️";
         return sock.sendMessage(from, {
             text: `👋 *Welcome Configuration*\n\n` +
                 `Group Status: *${status}*\n` +

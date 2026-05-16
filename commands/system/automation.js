@@ -17,6 +17,7 @@ function getAutomation() {
       autoread: false,
       autostatusview: false,
       autostatusreact: false,
+      welcome: true,
     };
     fs.mkdirSync(path.dirname(automationPath), { recursive: true });
     fs.writeFileSync(automationPath, JSON.stringify(defaultData, null, 2));

@@ -79,8 +79,8 @@ module.exports = async (sock, msg, from, text, args) => {
 
         let winAmount = 0;
         if (resultColor === colorBet) {
-            if (resultColor === 'green') winAmount = bet * 12;
-            else winAmount = Math.floor(bet * 1.85);
+            if (resultColor === 'green') winAmount = bet * 35;
+            else winAmount = Math.floor(bet * 2);
         }
 
         let resultMsg = "";

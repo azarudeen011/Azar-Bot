@@ -10,13 +10,13 @@ function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
 function getPayout(bet, result) {
     const [r1, r2, r3] = result;
     if (r1 === r2 && r2 === r3) {
-        if (r1 === "7️⃣") return bet * 7;
-        if (r1 === "💎") return bet * 5;
-        if (r1 === "🍒") return bet * 3;
-        return bet * 2;
+        if (r1 === "7️⃣") return bet * 35;
+        if (r1 === "💎") return bet * 20;
+        if (r1 === "🍒") return bet * 10;
+        return bet * 5;
     }
     if (r1 === r2 || r2 === r3 || r1 === r3) {
-        return bet; // Return bet only, no profit
+        return bet * 2; // Return 2x for mini-win (profit)
     }
     return 0;
 }

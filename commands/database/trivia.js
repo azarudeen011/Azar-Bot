@@ -75,29 +75,42 @@ module.exports = async (sock, msg, from, text, args) => {
       }, { quoted: msg });
     }
 
-    const random = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+    try {
+      const getAI = require("../../lib/aiFun");
+      const TRIVIA_PROMPT = `Generate 1 unique General Knowledge trivia question. 
+Output ONLY valid JSON in this format: 
+{"q": "Question here", "options": ["Option1", "Option2", "Option3", "Option4"], "a": "Correct Option"}
+No conversational text, no markdowns, just JSON.`;
 
-    game.active = true;
-    game.question = random.q;
-    game.answer = random.a.toLowerCase();
+      const aiResponse = await getAI(TRIVIA_PROMPT, "You are a trivia master. Return JSON only.");
+      const trivia = JSON.parse(aiResponse.replace(/```json|```/g, "").trim());
 
-    // 60 sec timeout
-    game.timeout = setTimeout(() => {
-      if (game.active) {
-        sock.sendMessage(from, {
-          text: `⏰ Time's up!\nCorrect answer was: *${random.a}*`
-        });
-        game.active = false;
-      }
-    }, 60_000);
+      game.active = true;
+      game.question = trivia.q;
+      game.answer = trivia.a.toLowerCase();
 
-    return sock.sendMessage(from, {
-      text:
-        `🧠 *TRIVIA QUESTION*\n\n` +
-        `📌 ${random.q}\n\n` +
-        random.options.map(o => `• ${o}`).join("\n") +
-        `\n\nType: *.answer <option>*\n⏳ 60 seconds`
-    }, { quoted: msg });
+      // 60 sec timeout
+      game.timeout = setTimeout(() => {
+        if (game.active) {
+          sock.sendMessage(from, {
+            text: `⏰ Time's up!\nCorrect answer was: *${trivia.a}*`
+          });
+          game.active = false;
+        }
+      }, 60000);
+
+      return sock.sendMessage(from, {
+        text:
+          `🧠 *AI TRIVIA QUESTION*\n\n` +
+          `📌 ${trivia.q}\n\n` +
+          trivia.options.map(o => `• ${o}`).join("\n") +
+          `\n\nType: *.answer <option>*\n⏳ 60 seconds`
+      }, { quoted: msg });
+
+    } catch (err) {
+      console.error("Trivia AI Error:", err);
+      return sock.sendMessage(from, { text: "❌ Failed to generate AI Trivia. Try again." }, { quoted: msg });
+    }
   }
 
   // =========================
