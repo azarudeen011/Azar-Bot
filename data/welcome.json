@@ -2,6 +2,9 @@
   "120363410239738151@g.us": true,
   "120363425363499529@g.us": true,
   "120363425906988952@g.us": true,
-  "120363408097302072@g.us": true,
+  "120363408097302072@g.us": {
+    "enabled": true,
+    "text": "Hey @user ! Welcome to our @group , hope u have fun and enjoy kindly read our @desc and we have total @members members in our group 🥳🙌🫂"
+  },
   "120363423804066582@g.us": true
 }
