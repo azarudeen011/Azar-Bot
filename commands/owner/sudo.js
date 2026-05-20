@@ -1,4 +1,4 @@
-const firebaseManager = require('../../lib/firebaseManager');
+const sudoManager = require('../../lib/sudoManager');
 const { isPairedOwner } = require('../../lib/guards');
 let settings;
 try {
@@ -41,7 +41,7 @@ module.exports = async (sock, msg, from, text, args) => {
 
         // --- LIST ---
         if (action === 'list') {
-            const sudos = await firebaseManager.fetchSudos();
+            const sudos = await sudoManager.fetchSudos();
             const keys = Object.keys(sudos);
 
             if (keys.length === 0) {
@@ -69,12 +69,12 @@ module.exports = async (sock, msg, from, text, args) => {
         const targetNum = target.split('@')[0].split(':')[0];
 
         if (action === 'add') {
-            await firebaseManager.addSudo(target);
+            await sudoManager.addSudo(target);
             return sock.sendMessage(from, { text: `✅ *SUDO ADDED*\n\nUser @${targetNum} now has Sudo privileges.`, mentions: [target] }, { quoted: msg });
         }
 
         if (action === 'del' || action === 'rm') {
-            await firebaseManager.removeSudo(target);
+            await sudoManager.removeSudo(target);
             return sock.sendMessage(from, { text: `🗑️ *SUDO REMOVED*\n\nUser @${targetNum} no longer has Sudo privileges.`, mentions: [target] }, { quoted: msg });
         }
 
