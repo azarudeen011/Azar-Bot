@@ -74,6 +74,13 @@ module.exports = async (sock, msg, from, text) => {
       if (ts >= threshold) active.add(user);
     }
 
+    // 🌐 Include global.activity (real-time tracker) as a bulletproof fallback
+    if (global.activity && global.activity[from]) {
+      for (const [rawJid, ts] of Object.entries(global.activity[from])) {
+        if (ts >= threshold) active.add(jidNormalizedUser(rawJid));
+      }
+    }
+
     // ❌ Filter inactive users
     const inactive = participants
       .map(p => jidNormalizedUser(p.id))

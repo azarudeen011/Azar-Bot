@@ -69,6 +69,24 @@ module.exports = async (sock, msg, from) => {
       }, { quoted: msg });
     }
 
+    // 🛡️ ANTI-DEMOTE ENFORCEMENT
+    const { getConfig, DEMOTE_FILE } = require("../lib/small_lib/anti/promotedemote");
+    const demoteConfig = getConfig(DEMOTE_FILE)[from];
+    if (demoteConfig && (demoteConfig.kick || demoteConfig.warn || demoteConfig.silent) && !isSudoUser && !msg.key.fromMe) {
+      // It is enabled, and the user is NOT Sudo. Punish them!
+      await sock.groupParticipantsUpdate(from, [sender], "demote");
+      if (!demoteConfig.silent) {
+        let msgText = `🚨 *Anti-Demote Triggered via Command* 🚨\n\n@${sender.split("@")[0]} tried to demote an admin!\n`;
+        if (demoteConfig.kick) msgText += `Action: Offender demoted & kicked.`;
+        else if (demoteConfig.warn) msgText += `Action: Offender demoted & warned.`;
+        await sock.sendMessage(from, { text: msgText, mentions: [sender, target] });
+      }
+      if (demoteConfig.kick) {
+        await sock.groupParticipantsUpdate(from, [sender], "remove");
+      }
+      return; // Stop the demotion
+    }
+
     // 🔧 Demote user
     await sock.groupParticipantsUpdate(from, [target], "demote");
 

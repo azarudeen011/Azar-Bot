@@ -63,6 +63,24 @@ module.exports = async (sock, msg, from) => {
       }, { quoted: msg });
     }
 
+    // 🛡️ ANTI-PROMOTE ENFORCEMENT
+    const { getConfig, PROMOTE_FILE } = require("../lib/small_lib/anti/promotedemote");
+    const promoteConfig = getConfig(PROMOTE_FILE)[from];
+    if (promoteConfig && (promoteConfig.kick || promoteConfig.warn || promoteConfig.silent) && !isSudoUser && !msg.key.fromMe) {
+      const victims = [...new Set([sender, target])];
+      await sock.groupParticipantsUpdate(from, victims, "demote");
+      if (!promoteConfig.silent) {
+        let msgText = `🚨 *Anti-Promote Triggered via Command* 🚨\n\n@${sender.split("@")[0]} tried to promote a member!\n`;
+        if (promoteConfig.kick) msgText += `Action: Demote & Kick.`;
+        else if (promoteConfig.warn) msgText += `Action: Demote & Warn.`;
+        await sock.sendMessage(from, { text: msgText, mentions: victims });
+      }
+      if (promoteConfig.kick) {
+        await sock.groupParticipantsUpdate(from, victims, "remove");
+      }
+      return; // Stop the promotion
+    }
+
     // 🏆 Promote member
     await sock.groupParticipantsUpdate(from, [target], "promote");
 

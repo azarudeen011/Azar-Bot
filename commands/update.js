@@ -3,8 +3,10 @@
 const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const AdmZip = require("adm-zip"); // 🔥 NEW
+const AdmZip = require("adm-zip");
+const axios = require("axios");
 const secure = require("../lib/small_lib");
+const { isSudo } = require("../lib/guards");
 
 function run(cmd) {
   return new Promise((resolve, reject) => {
@@ -28,36 +30,34 @@ const PROTECTED = new Set([
   ".git",
   ".replit",
   ".auth",
+  "backups",
   ".backup",
   "logs"
 ]);
 
 // ==============================
-// 🌐 DOWNLOAD WITH REDIRECT FIX
+// 🌐 ROBUST AXIOS DOWNLOAD
 // ==============================
-function downloadFile(url, dest, redirects = 0) {
+async function downloadFile(url, dest) {
+  const writer = fs.createWriteStream(dest);
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "stream",
+    headers: { "User-Agent": "Mozilla/5.0" }
+  });
+
+  response.data.pipe(writer);
+
   return new Promise((resolve, reject) => {
-    if (redirects > 5) return reject(new Error("Too many redirects"));
-
-    const client = url.startsWith("https") ? require("https") : require("http");
-
-    client.get(url, { headers: { "User-Agent": "Mozilla/5.0" } }, (res) => {
-
-      if ([301, 302, 303, 307, 308].includes(res.statusCode)) {
-        return resolve(downloadFile(res.headers.location, dest, redirects + 1));
-      }
-
-      if (res.statusCode !== 200) {
-        return reject(new Error(`HTTP ${res.statusCode}`));
-      }
-
-      const file = fs.createWriteStream(dest);
-      res.pipe(file);
-
-      file.on("finish", () => file.close(resolve));
-      file.on("error", reject);
-
-    }).on("error", reject);
+    writer.on("finish", () => {
+      writer.close();
+      resolve();
+    });
+    writer.on("error", (err) => {
+      writer.close();
+      fs.unlink(dest, () => reject(err));
+    });
   });
 }
 
@@ -82,7 +82,7 @@ function safeCopy(src, dest) {
 }
 
 // ==============================
-// 📦 ZIP UPDATE (FIXED)
+// 📦 ZIP UPDATE (FALLBACK)
 // ==============================
 async function updateViaZip(zipUrl, cwd) {
   const tmpDir = path.join(cwd, "tmp_update");
@@ -91,26 +91,51 @@ async function updateViaZip(zipUrl, cwd) {
   fs.mkdirSync(tmpDir);
 
   const zipPath = path.join(tmpDir, "update.zip");
-
   await downloadFile(zipUrl, zipPath);
 
-  // 🔥 USE ADM-ZIP INSTEAD OF SYSTEM UNZIP
   const zip = new AdmZip(zipPath);
   zip.extractAllTo(tmpDir, true);
 
-  // Find the extracted folder — skip update.zip, only look at directories
-  const extractedFolders = fs.readdirSync(tmpDir).filter((e) => {
-    return e !== "update.zip" && fs.lstatSync(path.join(tmpDir, e)).isDirectory();
-  });
+  // Check if it's a single root folder (like GitHub zips) or directly extracted files
+  const entries = fs.readdirSync(tmpDir).filter(e => e !== "update.zip");
+  let rootDirToCopy = tmpDir;
 
-  if (extractedFolders.length === 0) throw new Error("No folder found inside zip");
+  if (entries.length === 1 && fs.lstatSync(path.join(tmpDir, entries[0])).isDirectory()) {
+    // It's a GitHub-style zip with a single root wrapper folder
+    rootDirToCopy = path.join(tmpDir, entries[0]);
+  } else if (entries.length === 0) {
+    throw new Error("The update zip file is empty.");
+  }
 
-  const extracted = path.join(tmpDir, extractedFolders[0]);
+  // Copy all contents from the determined root directory into cwd
+  safeCopy(rootDirToCopy, cwd);
 
-  safeCopy(extracted, cwd);
-
+  // Cleanup
   fs.rmSync(tmpDir, { recursive: true, force: true });
+  return true;
+}
 
+// ==============================
+// 🔄 GIT UPDATE (PRIMARY)
+// ==============================
+async function updateViaGit(cwd) {
+  if (!fs.existsSync(path.join(cwd, ".git"))) {
+    return false; // Not a git repository
+  }
+
+  await run("git fetch --all");
+
+  let branch = "main";
+  try {
+    const branches = await run("git branch -r");
+    if (branches.includes("origin/master") && !branches.includes("origin/main")) {
+      branch = "master";
+    }
+  } catch (e) {
+    // Ignore errors, default to main
+  }
+
+  await run(`git reset --hard origin/${branch}`);
   return true;
 }
 
@@ -118,12 +143,28 @@ async function updateViaZip(zipUrl, cwd) {
 // 🔄 RESTART
 // ==============================
 async function restart(sock, from) {
-  await sock.sendMessage(from, { text: "♻️ Restarting bot..." });
+  await sock.sendMessage(from, { text: "♻️ Restarting server automatically..." });
 
   try {
     await run("pm2 restart all");
   } catch {
-    setTimeout(() => process.exit(0), 500);
+    // PM2 is not installed or running. Spawn natively.
+    if (process.platform === "win32") {
+      const { exec } = require("child_process");
+      // Spawns a new visible command prompt window on Windows
+      exec("start cmd.exe /K node index.js", { cwd: process.cwd() });
+    } else {
+      const { spawn } = require("child_process");
+      // Spawns detached background process on Linux/Mac
+      const child = spawn(process.argv[0], process.argv.slice(1), {
+        detached: true,
+        stdio: "ignore",
+        cwd: process.cwd()
+      });
+      child.unref();
+    }
+    // Give it a moment to boot before killing the old process
+    setTimeout(() => process.exit(0), 1500);
   }
 }
 
@@ -132,24 +173,36 @@ async function restart(sock, from) {
 // ==============================
 module.exports = async (sock, msg, from) => {
   try {
-    const isOwner = await isPairedOwner(sock, msg);
-    if (!isOwner) {
-      return sock.sendMessage(from, { text: "❌ Owner only." }, { quoted: msg });
+    const isSudoUser = await isSudo(sock, msg);
+    if (!isSudoUser && !msg.key.fromMe) {
+      return sock.sendMessage(from, { text: "❌ Sudo/Owner only." }, { quoted: msg });
     }
 
-    await sock.sendMessage(from, { text: "🔍 Checking for updates..." }, { quoted: msg });
+    await sock.sendMessage(from, { text: "🔍 Checking for updates from GitHub..." }, { quoted: msg });
 
-    const zipUrl = secure.updateZipUrl;
-    if (!zipUrl) {
-      return sock.sendMessage(from, { text: "❌ No update URL configured in small_lib.js." }, { quoted: msg });
+    const cwd = process.cwd();
+    let updateMethod = "Git Pull";
+
+    // 1. Try Git Update first (Best for hosting servers)
+    try {
+      const gitSuccess = await updateViaGit(cwd);
+      if (!gitSuccess) {
+        throw new Error("Not a git repository");
+      }
+    } catch (gitErr) {
+      // 2. Fallback to Zip Download
+      updateMethod = "Zip Download";
+      const zipUrl = secure.updateZipUrl;
+      if (!zipUrl) {
+        return sock.sendMessage(from, { text: "❌ No update URL configured and not a git repo." }, { quoted: msg });
+      }
+
+      await sock.sendMessage(from, { text: `⬇️ Git pull failed. Falling back to Zip Download...` }, { quoted: msg });
+      await updateViaZip(zipUrl, cwd);
     }
-
-    await sock.sendMessage(from, { text: "⬇️ Downloading latest files from GitHub..." }, { quoted: msg });
-
-    await updateViaZip(zipUrl, process.cwd());
 
     await sock.sendMessage(from, {
-      text: "✅ *UPDATE SUCCESSFUL!*\n━━━━━━━━━━━━━━\n📂 Core files — Updated\n📦 Dependencies — Scheduled\n🔒 Session & Data — Protected\n\n♻️ *Restarting now...*"
+      text: `✅ *UPDATE SUCCESSFUL!*\n━━━━━━━━━━━━━━\n📥 Method: ${updateMethod}\n📂 Core files — Updated\n🔒 .auth & Backups — Protected\n\n♻️ *Server is restarting...*`
     }, { quoted: msg });
 
     await restart(sock, from);
